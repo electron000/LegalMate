@@ -45,7 +45,7 @@ Follow these steps to set up the frontend locally and connect it to your backend
 ### **2\. Installation**
 
 1. **Clone the repository:**  
-   git clone \[https://github.com/YOUR\_USERNAME/LegalMate-Frontend.git\](https://github.com/YOUR\_USERNAME/LegalMate-Frontend.git)  
+   git clone \ [https://github.com/electron000/LegalMate.git \] (https://github.com/electron000/LegalMate.git)  
    cd LegalMate-Frontend
 
 2. **Install dependencies:**  
