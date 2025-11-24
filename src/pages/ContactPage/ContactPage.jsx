@@ -98,7 +98,7 @@ const ContactPage = () => {
                     id="name"
                     name="name"
                     className="input-field"
-                    placeholder="John Doe"
+                    placeholder="Arun Jyoti"
                     value={formData.name}
                     onChange={handleChange}
                   />
@@ -114,7 +114,7 @@ const ContactPage = () => {
                     id="email"
                     name="email"
                     className="input-field"
-                    placeholder="john@example.com"
+                    placeholder="arun@example.com"
                     value={formData.email}
                     onChange={handleChange}
                   />

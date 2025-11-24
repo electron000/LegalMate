@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { DocGenService, downloadBlob } from '../../../../../api'; 
 import DocFormRenderer from './DocFormRenderer';
@@ -7,8 +6,6 @@ import './DocForm.css';
 import { X, Save, Loader2, FileText, Download, RefreshCw } from 'lucide-react';
 
 const DocForm = ({ toolConfig }) => {
-  const navigate = useNavigate();
-  const handleClose = () => navigate('/tools');
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -121,7 +118,7 @@ const DocForm = ({ toolConfig }) => {
                     title={isReviewing ? 'Regenerate Preview' : 'Generate Preview'}
                   >
                     {loading && !isReviewing ? (
-                      <Loader2 size={20} className="tf-animate-spin" />
+                      <Loader2 size={20} className="tf-animate-spin tf-spin" />
                     ) : isReviewing ? (
                       <RefreshCw size={20} />
                     ) : (
@@ -129,14 +126,7 @@ const DocForm = ({ toolConfig }) => {
                     )}
                     {loading && !isReviewing ? 'Generating...' : (isReviewing ? 'Regenerate' : 'Generate')}
                   </button>
-                  <button
-                    type="button"
-                    onClick={handleClose}
-                    className="tf-nav-btn"
-                    title="Back to Tools"
-                  >
-                    <X size={20} />
-                  </button>
+                  {/* Close Button Removed */}
                 </div>
               </div>
             </div>
@@ -150,21 +140,21 @@ const DocForm = ({ toolConfig }) => {
                     <h2 className="tf-preview-title">
                       <FileText size={18} style={{ marginRight: '0.5rem' }} />
                       Generated Document (Preview)
-                    </h2>
+                   </h2>
                     <div className="tf-preview-actions">
                       <button
                         type="button"
                         onClick={handleDownloadText}
-                        className="tf-nav-btn tf-download"
+                        className="tf-icon-btn tf-download-btn"
                         title="Download DOCX"
                         disabled={loading}
                       >
-                        {loading ? <Loader2 size={18} className="tf-animate-spin" /> : <Download size={18} />}
+                        {loading ? <Loader2 size={18} className="tf-animate-spin tf-spin" /> : <Download size={18} />}
                       </button>
                       <button
                         type="button"
                         onClick={handleClearPreview}
-                        className="tf-nav-btn"
+                        className="tf-icon-btn"
                         title="Clear Preview & Edit"
                         disabled={loading}
                       >
@@ -174,8 +164,8 @@ const DocForm = ({ toolConfig }) => {
                   </div>
 
                   {loading && (
-                    <div className="tf-preview-loader">
-                      <Loader2 size={32} className="tf-animate-spin" />
+                    <div className="tf-preview-loader" style={{ padding: '2rem', textAlign: 'center' }}>
+                      <Loader2 size={32} className="tf-animate-spin tf-spin" style={{ margin: '0 auto 1rem' }} />
                       <p>{isReviewing ? "Preparing download..." : "Generating preview..."}</p>
                     </div>
                   )}

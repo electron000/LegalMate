@@ -94,15 +94,15 @@ const Footer = () => {
                     <div className="contact-items">
                         <div className="contact-item">
                             <MapPin size={18} />
-                            <span>New Delhi, India</span>
+                            <span>Assam, India</span>
                         </div>
                         <div className="contact-item">
                             <Phone size={18} />
-                            <span>+91 98765 43210</span>
+                            <span>+91 600XX39926</span>
                         </div>
                         <div className="contact-item">
                             <Mail size={18} />
-                            <span>contact@ailegalmate.in</span>
+                            <span>legalmate.ai@gmail.com</span>
                         </div>
                     </div>
                 </div>
