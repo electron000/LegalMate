@@ -6,22 +6,12 @@
   /* Core Colors */
   --white: #ffffff;
   --black: #000000;
-  --primary-gold: #d4af37; /* Standard Gold */
-  --error-red: #dc2626;
-
   /* Text Colors */
   --text-primary: #1a1a1a;
   --text-secondary: #6b7280;
   --text-inverse: #ffffff;
   --text-placeholder: #888888;
   --text-muted: #666666;
-
-  /* Grays (Tailwind-scale approximation) */
-  --gray-100: #f3f4f6;
-  --gray-200: #e5e7eb;
-  --gray-700: #374151;
-  --gray-800: #1f2937;
-  --gray-900: #111827;
 
   /* Borders */
   --border-light: rgba(209, 213, 219, 0.4);

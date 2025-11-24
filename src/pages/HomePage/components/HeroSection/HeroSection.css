@@ -61,8 +61,6 @@
   /* Use 'clamp' for fluid typography */
   font-size: clamp(3rem, 5vw, 6rem); 
   font-weight: 1000;
-  
-  /* Variables applied */
   color: var(--white); 
   
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -89,7 +87,7 @@
 
 .hero-wave-separator .shape-fill {
   /* Variables applied */
-  fill: var(--white);
+  fill: var(--background);
 }
 
 /* =================================== */
