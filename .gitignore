@@ -1,0 +1,59 @@
+# ==========================
+# LOGS
+# ==========================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# ==========================
+# DEPENDENCIES
+# ==========================
+node_modules
+.pnp
+.pnp.js
+
+# ==========================
+# BUILD OUTPUT
+# ==========================
+dist
+dist-ssr
+*.local
+
+# ==========================
+# ENVIRONMENT VARIABLES
+# ==========================
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+**/.env*
+# Allow example files so devs know what vars they need
+!**/.env.example
+
+# ==========================
+# EDITOR & IDE
+# ==========================
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# User requested History folders (Corrected)
+.history/
+*.history
+
+# ==========================
+# OS GENERATED FILES
+# ==========================
+.DS_Store
+Thumbs.db
+ehthumbs.db

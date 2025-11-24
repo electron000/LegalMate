@@ -1,0 +1,37 @@
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+.navbar-brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    text-decoration: none;
+}
+
+.brand-logo {
+    height: 40px;
+    transition: filter 0.3s ease; 
+}
+
+.navbar.scrolled .brand-logo {
+    filter: invert(1);
+}
+
+.brand-text {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--nav-text-color); 
+    transition: color 0.3s ease;
+}
+
+@media (max-width: 768px) {
+    .brand-text {
+        font-size: 1.3rem;
+    }
+}

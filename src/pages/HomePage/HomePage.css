@@ -1,0 +1,85 @@
+:root {
+  /* =========================== */
+  /* GLOBAL COLORS & THEME VARS  */
+  /* =========================== */
+  
+  /* Core Colors */
+  --white: #ffffff;
+  --black: #000000;
+  --primary-gold: #d4af37; /* Standard Gold */
+  --error-red: #dc2626;
+
+  /* Text Colors */
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b7280;
+  --text-inverse: #ffffff;
+  --text-placeholder: #888888;
+  --text-muted: #666666;
+
+  /* Grays (Tailwind-scale approximation) */
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-700: #374151;
+  --gray-800: #1f2937;
+  --gray-900: #111827;
+
+  /* Borders */
+  --border-light: rgba(209, 213, 219, 0.4);
+  --border-medium: #e5e7eb;
+  --border-strong: #d1d5db;
+  --border-hover: rgba(156, 163, 175, 0.7);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+
+  /* Component Specific: Platform Highlights */
+  --glass-bg: rgba(255, 255, 255, 0.5);
+
+  /* Component Specific: Hero Section (Dark Mode) */
+  --hero-bg-gradient: linear-gradient(135deg, #000000 0%, #1a1a1a 40%, #2d2d2d 100%);
+  --hero-search-bg: #1e1e1e;
+  --hero-search-border: #505050;
+  --hero-search-bg-focus: #2a2a2a;
+  --hero-search-border-focus: #555555;
+  --hero-icon-color: #f8f8f8;
+  --hero-icon-hover-bg: rgba(255, 255, 255, 0.1);
+
+  /* Component Specific: Blogs */
+  --card-bg: #ffffff;
+  --card-content-bg: rgba(255, 255, 255, 0.1);
+}
+
+.homepage {
+  /* CHANGED: Set to white to match the 'fill="white"' of the AboutPage wave */
+  background-color: var(--white); 
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* ... keep the rest of your existing CSS ... */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+.blogs-loading-skeleton,
+.blogs-error-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.blogs-error-message {
+  color: var(--error-red);
+}
