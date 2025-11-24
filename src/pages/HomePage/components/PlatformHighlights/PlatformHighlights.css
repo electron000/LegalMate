@@ -12,7 +12,7 @@
 
 .combined-sections-main-title {
     position: relative;
-    font-size: clamp(2.5rem, 5vw, 2.5rem);
+    font-size: clamp(2rem, 5vw, 2.5rem);
     font-weight: 800;
     text-align: center;
     line-height: 4;
