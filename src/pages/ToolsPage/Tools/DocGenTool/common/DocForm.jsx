@@ -115,7 +115,7 @@ const DocForm = ({ toolConfig }) => {
                     type="submit"
                     disabled={!isValid || loading}
                     className="tf-nav-btn tf-generate"
-                    title={isReviewing ? 'Regenerate Preview' : 'Generate Preview'}
+                    title={isReviewing ? 'REGENERATE' : 'GENERATE'}
                   >
                     {loading && !isReviewing ? (
                       <Loader2 size={20} className="tf-animate-spin tf-spin" />
@@ -124,7 +124,7 @@ const DocForm = ({ toolConfig }) => {
                     ) : (
                       <Save size={20} />
                     )}
-                    {loading && !isReviewing ? 'Generating...' : (isReviewing ? 'Regenerate' : 'Generate')}
+                    {loading && !isReviewing ? 'Generating...' : (isReviewing ? 'REGENERATE' : 'GENERATE')}
                   </button>
                   {/* Close Button Removed */}
                 </div>

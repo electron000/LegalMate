@@ -6,7 +6,7 @@ const HeroSection = () => {
 
   const handleSearch = () => {
     if (inputValue.trim()) {
-      const targetUrl = `ai-legalmate.vercel.app/legalmate-ai/?query=${encodeURIComponent(inputValue)}`;
+      const targetUrl = `/legalmate-ai/?query=${encodeURIComponent(inputValue)}`;
       window.location.href = targetUrl;
     }
   };
