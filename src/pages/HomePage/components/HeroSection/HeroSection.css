@@ -1,11 +1,7 @@
-/* =================================== */
-/* HERO SECTION (TCS Style Dark Mode)  */
-/* =================================== */
-
 .hero-section {
   position: relative;
   width: 100%;
-  min-height: 85vh; /* Tall hero area */
+  min-height: 100vh; /* Tall hero area */
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -46,10 +42,20 @@
 }
 
 .hero-text {
+  /* padding-top: 4rem; */
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1.5rem; /* Consistent gap */
+}
+
+/* --- Added Logo Styles --- */
+.hero-logo {
+  width: 250px; 
+  height: auto;
+  object-fit: contain;
+  /* Optional: Adds a subtle drop shadow to pop against the dark background */
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)); 
 }
 
 .hero-text h1 {
@@ -196,6 +202,11 @@
   
   .hero-text {
     gap: 1rem; 
+  }
+
+  /* Make logo slightly smaller on mobile */
+  .hero-logo {
+    width: 120px;
   }
   
   .hero-title-main {

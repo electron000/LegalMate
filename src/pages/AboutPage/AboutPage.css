@@ -6,6 +6,7 @@
   background-color: var(--background); 
 }
 
+/* --- HERO SECTION --- */
 .about-hero-section {
   position: relative;
   width: 100%;
@@ -43,11 +44,12 @@
 }
 
 .hero-main-title {
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
   color: var(--text-inverse);
   letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 .hero-subtitle {
@@ -56,6 +58,9 @@
   line-height: 1.6;
   margin-bottom: 3rem;
   font-weight: 400;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .hero-section-header {
@@ -65,7 +70,7 @@
 }
 
 .hero-section-header h2 {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 1rem;
   color: var(--text-inverse);
@@ -75,6 +80,8 @@
   font-size: 1.1rem;
   line-height: 1.8;
   color: var(--gray-200);
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .hero-wave-shape {
@@ -108,8 +115,9 @@
   fill: var(--background);
 }
 
+/* --- MISSION & VISION --- */
 .mission-vision-section {
-  padding: 7rem 1rem;
+  padding: 6rem 1rem 4rem 1rem;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -121,9 +129,9 @@
   flex-direction: row;
   align-items: stretch;
   justify-content: center;
-  gap: 8rem;
+  gap: 6rem;
   width: 100%;
-  max-width: 1200px; 
+  max-width: 1100px; 
 }
 
 .mv-block {
@@ -137,14 +145,14 @@
 .mv-icon {
   width: 64px;
   height: 64px;
-  background: var(--surface-elevated); 
+  background: var(--primary-black); 
   box-shadow: var(--shadow-sm);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.5rem;
-  color: var(--primary-black);
+  color: var(--background);
 }
 
 .mv-block h3 {
@@ -152,12 +160,13 @@
   margin-bottom: 1rem;
   font-weight: 700;
   color: var(--text-primary);
+  font-size: 1.5rem;
 }
 
 .mv-block p {
   margin: 0;
   color: var(--text-secondary);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1.6;
   max-width: 400px;
 }
@@ -165,9 +174,110 @@
 .mv-separator {
   width: 1px;
   background-color: var(--border-medium); 
-  opacity: 1; 
+  opacity: 0.5; 
 }
 
+/* --- FEATURES GRID SECTION --- */
+.features-section {
+  padding: 2rem 2rem 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.section-title {
+  text-align: center;
+  font-size: 2.2rem;
+  margin-bottom: 3rem;
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.feature-card {
+  background: var(--surface-elevated);
+  padding: 2.5rem;
+  border-radius: 16px;
+  border: 1px solid var(--border-medium);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-md);
+}
+
+/* New: Group Icon and Title horizontally */
+.feature-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.feature-icon-wrapper {
+  background: var(--primary-black);
+  padding: 10px;
+  border-radius: 10px;
+  color: var(--background);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* margin-bottom removed as it is now handled by flex gap */
+}
+
+.feature-card h4 {
+  font-size: 1.4rem;
+  margin: 0; /* Remove margin to align with icon */
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.feature-card p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* --- ROOTS SECTION --- */
+.roots-section {
+  background-color: var(--surface-subtle);
+  padding: 4rem 2rem;
+  text-align: center;
+  margin-bottom: 4rem;
+  border-top: 1px solid var(--border-medium);
+  border-bottom: 1px solid var(--border-medium);
+}
+
+.roots-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.roots-content h3 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.roots-content p {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* --- CTA SECTION --- */
 .about-content-wrapper {
   padding: 0 2rem 6rem 2rem;
   width: 100%;
@@ -180,12 +290,12 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 3rem;
+  padding: 3.5rem;
   border-radius: 16px;
   border: 1px solid var(--border-medium);
   box-shadow: var(--shadow-md);
   width: 100%;
-  max-width: 800px;
+  max-width: 900px;
   background: var(--surface-elevated);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -204,16 +314,16 @@
 
 .about-cta-section h2 {
   margin-top: 0;
-  margin-bottom: 0.5rem;
-  font-size: 2rem;
-  font-weight: 600;
+  margin-bottom: 0.8rem;
+  font-size: 2.2rem;
+  font-weight: 700;
   color: var(--text-primary);
   line-height: 1.2;
 }
 
 .about-cta-section p {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: var(--text-secondary);
 }
 
@@ -230,15 +340,19 @@
   transform: scale(1.1);
 }
 
+/* --- RESPONSIVE --- */
 @media (max-width: 980px) {
   .hero-main-title {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
+  }
+  .features-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
   .hero-main-title {
-    font-size: 2rem;
+    font-size: 2.2rem;
   }
   .hero-section-header h2 {
     font-size: 1.8rem;
@@ -257,22 +371,32 @@
   }
   
   .mv-block p {
-    max-width: 80%;
+    max-width: 90%;
+  }
+
+  .features-section {
+    padding: 2rem 1rem;
   }
   
   .about-cta-section {
     padding: 2rem 1.5rem;
-    flex-direction: row; 
-    align-items: center;
-    gap: 1rem;
+    flex-direction: column; 
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+
+  .cta-text-content {
+    padding-right: 0;
+    text-align: left;
   }
 
   .about-cta-section h2 {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
   }
   
   .ts-go-to-icon {
     width: 48px;
     height: 48px;
+    align-self: flex-end;
   }
 }

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Loader2, AlertCircle } from 'lucide-react'; 
 import './HomePage.css';
 
 // Components
@@ -9,7 +8,7 @@ import PlatformHighlights from './components/PlatformHighlights/PlatformHighligh
 import AboutPage from '../AboutPage/AboutPage.jsx'; 
 
 // API Functions
-import { searchBlogsByTopic, fetchMoreBlogs } from '../../api/Blogs/BlogAPI.js';
+import { searchBlogsByTopic, fetchMoreBlogs } from '../../api';
 
 const HomePage = () => {
   const [trendingBlogs, setTrendingBlogs] = useState([]);

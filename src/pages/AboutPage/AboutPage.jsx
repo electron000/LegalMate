@@ -1,5 +1,5 @@
 import React from 'react';
-import { Scale, Zap } from 'lucide-react';
+import { Scale, Zap, Bot, FileText, Search, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import './AboutPage.css';
 
@@ -7,12 +7,13 @@ const AboutPage = () => {
   const navigate = useNavigate(); 
 
   const handleNavigate = () => {
-    navigate('/services');
+    navigate('/tools');
   };
 
   return (
     <div className="about-page-container">
       
+      {/* --- HERO SECTION --- */}
       <div className="about-hero-section">
         <div className="hero-overlay"></div>
         <div className="hero-wave-shape">
@@ -22,17 +23,17 @@ const AboutPage = () => {
         </div>
 
         <div className="hero-content-wrapper">
-          <h1 className="hero-main-title">Empowering India with Legal Intelligence</h1>
+          <h1 className="hero-main-title">Bridging the Gap Between Justice and People</h1>
           <p className="hero-subtitle">
-            Bridging the gap between complex legal systems and the people they serve through advanced AI technology.
+            We believe that understanding the law shouldn’t be a privilege—it should be a fundamental right.
           </p>
           <div className="hero-section-header">
             <h2>Who We Are</h2>
             <p>
-              AI LegalMate is a cutting-edge legal technology platform designed to democratize legal access in India. 
-              We believe that understanding the law shouldn't require a law degree. Our platform combines the power of 
-              Large Language Models (LLMs) with Indian legal databases to provide accurate, accessible, and instant 
-              legal assistance.
+              LegalMate is India's first comprehensive AI-powered legal ecosystem. We combine advanced 
+              Large Language Models (LLMs) with deep legal expertise to serve as your digital ally. 
+              Whether you are a citizen needing to draft a will or a lawyer researching case law, 
+              we provide the tools to do it efficiently.
             </p>
           </div>
         </div>
@@ -44,6 +45,7 @@ const AboutPage = () => {
         </div>
       </div>
 
+      {/* --- MISSION & VISION --- */}
       <section className="mission-vision-section">
         <div className="mission-vision-row">
           <div className="mv-block">
@@ -52,8 +54,8 @@ const AboutPage = () => {
             </div>
             <h3>Our Mission</h3>
             <p>
-              To simplify the Indian legal landscape by making legal knowledge and documentation accessible, 
-              affordable, and understandable for everyone.
+              To solve the "access to justice" problem by replacing complex jargon with plain English 
+              and expensive processes with instant AI automation.
             </p>
           </div>
 
@@ -65,18 +67,83 @@ const AboutPage = () => {
             </div>
             <h3>Our Vision</h3>
             <p>
-              A future where legal assistance is instant and error-free, empowering citizens to navigate 
-              legal challenges with confidence and clarity.
+              A future where legal assistance is affordable and error-free, empowering every Indian citizen 
+              to navigate the legal system with confidence.
             </p>
           </div>
         </div>
       </section>
 
+      {/* --- WHAT WE DO --- */}
+      <section className="features-section">
+        <h2 className="section-title">What We Do</h2>
+        <div className="features-grid">
+          
+          <div className="feature-card">
+            <div className="feature-header">
+              <div className="feature-icon-wrapper"><Bot size={24} /></div>
+              <h4>Dual AI System</h4>
+            </div>
+            <p>
+              Two distinct AI brains: A <strong>Legal Companion</strong> for citizens to explain rights simply, 
+              and a <strong>Research Engine</strong> for practitioners to cite case laws and statutes.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-header">
+              <div className="feature-icon-wrapper"><FileText size={24} /></div>
+              <h4>Smart Drafting</h4>
+            </div>
+            <p>
+              Forget expensive draftsmen. Generate 15+ essential legal documents—from Wills to Rental Agreements—in 
+              just two steps, ready for download.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-header">
+              <div className="feature-icon-wrapper"><Search size={24} /></div>
+              <h4>Intelligent Analysis</h4>
+            </div>
+            <p>
+              Upload complex contracts to our <strong>Document Analyzer</strong>. It summarizes fine print 
+              and highlights potential risks or key clauses instantly.
+            </p>
+          </div>
+
+          <div className="feature-card">
+            <div className="feature-header">
+              <div className="feature-icon-wrapper"><BookOpen size={24} /></div>
+              <h4>Knowledge Hub</h4>
+            </div>
+            <p>
+              Stay informed with our AI-powered blog feed that curates legal news and Supreme Court rulings, 
+              ensuring you never miss an update.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      {/* --- ROOTS / ORIGIN --- */}
+      <section className="roots-section">
+        <div className="roots-content">
+          <h3>Our Roots</h3>
+          <p>
+            AI LegalMate is a product of innovation from <strong>Dhemaji Engineering College</strong>. 
+            Built by a dedicated team of Computer Science engineers, we are committed to building a future 
+            where law is not a barrier, but a bridge to a better society.
+          </p>
+        </div>
+      </section>
+
+      {/* --- CTA SECTION --- */}
       <div className="about-content-wrapper">
         <div className="about-cta-section" onClick={handleNavigate}>
           
           <div className="cta-text-content">
-            <h2>Ready to explore?</h2>
+            <h2>Ready to Explore Our Platform?</h2>
             <p>Experience the future of legal tech today.</p>
           </div>
 

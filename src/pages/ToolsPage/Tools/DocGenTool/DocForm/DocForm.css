@@ -36,7 +36,7 @@
   border-right: 1px solid var(--border-light);
   display: flex;
   flex-direction: column;
-  background: var(--surface);
+  background: var(--background);
 }
 
 .tf-header {
@@ -76,7 +76,7 @@
   text-align: left;
   cursor: pointer;
   transition: all 0.2s ease;
-  display: flex; /* Ensure icon/text alignment in tabs */
+  display: flex;
   align-items: center;
   gap: 0.75rem;
 }
@@ -188,18 +188,23 @@
   margin: 0;
 }
 
+.tf-header-actions {
+    display: flex;
+    align-items: center;
+}
+
 /* Action Buttons (Generate/Regenerate) */
 .tf-nav-btn {
   background: var(--surface-elevated);
   color: var(--text-primary);
-  padding: 0.6rem 1.25rem; /* Increased padding */
+  padding: 0.6rem 1.25rem;
   border-radius: 1000px;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem; /* Added gap between Icon and Text */
+  gap: 0.75rem;
   transition: all 0.2s;
   border: 1px solid var(--border-medium);
   font-size: 0.95rem;
@@ -218,7 +223,6 @@
   color: var(--text-secondary);
 }
 
-/* Primary Action Button (Generate) */
 .tf-nav-btn.tf-generate {
   background-color: var(--primary-black);
   color: var(--text-inverse);
@@ -226,7 +230,7 @@
 }
 
 .tf-nav-btn.tf-generate:hover:not(:disabled) {
-  background-color: var(--text-primary); /* Slightly lighter black/grey */
+  background-color: var(--text-primary);
   box-shadow: var(--shadow-sm);
 }
 
@@ -272,6 +276,8 @@
 .tf-form-group {
   margin-bottom: 1rem;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .tf-form-group label {
@@ -299,6 +305,16 @@ select.tf-form-input {
   font-size: 0.95rem;
   transition: all 0.2s ease;
   box-sizing: border-box;
+  appearance: none; /* Helps standardise select dropdowns */
+}
+
+/* Custom Arrow for Select Inputs */
+select.tf-form-input {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1em;
+  padding-right: 2.5rem;
 }
 
 .tf-form-input:focus,
@@ -329,6 +345,63 @@ textarea.tf-form-input {
   grid-template-columns: 1fr 1fr 1fr;
 }
 
+/* === DYNAMIC LISTS === */
+.tf-dynamic-list-item {
+    position: relative;
+    padding: 1.5rem;
+    border: 1px solid var(--border-medium);
+    border-radius: 0.75rem;
+    margin-bottom: 1rem;
+    background: var(--surface-elevated);
+}
+
+.tf-dynamic-list-fields {
+    display: grid;
+    gap: 1rem;
+}
+
+.tf-remove-btn {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--error);
+    cursor: pointer;
+    padding: 0.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s;
+}
+
+.tf-remove-btn:hover {
+    background: rgba(255, 0, 0, 0.1);
+}
+
+.tf-btn-add {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1rem;
+    background: transparent;
+    border: 1px dashed var(--border-medium);
+    border-radius: 0.5rem;
+    color: var(--primary-gold);
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.tf-btn-add:hover {
+    background: var(--surface-elevated);
+    border-color: var(--primary-gold);
+}
+
+
 /* === PREVIEW COLUMN & HEADER === */
 .tf-preview-column {
   flex: 3;
@@ -345,8 +418,8 @@ textarea.tf-form-input {
 .tf-preview-header {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* Vertically align Text/Icon with Buttons */
-  padding: 0.75rem 1.5rem; /* Adjusted padding */
+  align-items: center;
+  padding: 0.75rem 1.5rem;
   border-bottom: 1px solid var(--border-medium);
   background: var(--surface-elevated);
   flex-shrink: 0;
@@ -356,7 +429,7 @@ textarea.tf-form-input {
 .tf-preview-title {
   display: flex;
   align-items: center;
-  gap: 0.75rem; /* Gap between Icon and Text */
+  gap: 0.75rem;
   font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
@@ -380,7 +453,7 @@ textarea.tf-form-input {
   justify-content: center;
   width: 36px;
   height: 36px;
-  border-radius: 50%; /* Perfect Circle */
+  border-radius: 50%;
   border: 1px solid var(--border-medium);
   background: var(--surface);
   color: var(--text-secondary);
@@ -417,12 +490,19 @@ textarea.tf-form-input {
   color: var(--text-secondary);
 }
 
+.tf-error-message {
+    padding: 1rem;
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--error);
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
 
-  .tf-nav-controls {
-    /* Base style for nav controls */
+.tf-nav-controls {
     display: flex;
     gap: 1rem;
-  }
+}
 
 /* =================================== */
 /* RESPONSIVE BREAKPOINTS              */
@@ -516,7 +596,7 @@ textarea.tf-form-input {
   /* Mobile Section Tabs - Stacked Buttons */
   .tf-tab-navigation {
     display: flex;
-    flex-direction: column; /* One section per row */
+    flex-direction: column;
     margin-top: 1.5rem;
     gap: 0.75rem;
   }
@@ -551,26 +631,24 @@ textarea.tf-form-input {
     display: none;
   }
 
-  /* Header Actions - FIXED for Title Left / Button Right */
+  /* Header Actions */
   .tf-form-header {
-    flex-direction: row; /* Keep it in a row, NOT column */
+    flex-direction: row; 
     align-items: center;
-    gap: 0.5rem; /* Reduce gap slightly */
+    gap: 0.5rem; 
   }
 
   .tf-form-title {
-      font-size: 1.25rem; /* Reduce title size slightly to fit */
-      flex: 1; /* Allow title to take available space */
+      font-size: 1.25rem; 
+      flex: 1; 
   }
 
   .tf-nav-controls {
-    /* Removed the grid layout */
     display: flex; 
     width: auto;
   }
   
   .tf-nav-btn {
-    /* Ensure button is reasonably sized but not full width */
     width: auto;
     padding: 0.6rem 1rem;
     font-size: 0.9rem;
@@ -583,6 +661,10 @@ textarea.tf-form-input {
   }
 
   .tf-form-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  .tf-form-row[data-span="third"] {
     grid-template-columns: 1fr !important;
   }
 

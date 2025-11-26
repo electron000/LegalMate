@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import './HeroSection.css';
+// Import the logo from the assets folder. 
+// Adjust the path ('../../assets/') based on your actual folder structure.
+import legalLogo from '../../../../assets/legal-logo.png'; 
 
 const HeroSection = () => {
   const [inputValue, setInputValue] = useState('');
@@ -23,6 +26,9 @@ const HeroSection = () => {
 
       <div className="hero-content-container">
         <div className="hero-text">
+          {/* Added Logo Here */}
+          <img src={legalLogo} alt="LegalMate Logo" className="hero-logo" />
+          
           <h1>
             <span className="hero-title-main">Navigate Law with AI</span>
           </h1>

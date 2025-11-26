@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import ToolForm from './common/DocForm';
+import ToolForm from './DocForm/DocForm';
 import { ToolRegistry } from './configs/ToolRegistry';
 
 const DocGenTool = () => {

@@ -15,7 +15,7 @@ import { saConfig } from './saConfig';
 
 // 3. Personal & Legal
 import { poaConfig } from './poaConfig';
-import { rraConfig } from './rraConfig';
+import { rentalConfig } from './rentalConfig'; // Keep this one
 import { aConfig } from './aConfig';
 import { ncaConfig } from './ncaConfig';
 
@@ -26,6 +26,7 @@ import { legalNoticeDuesConfig } from './lndConfig';
 export const ToolRegistry = {
   // Existing
   [craConfig.id]: craConfig,
+  // [rentalConfig.id]: rentalConfig, <--- REMOVED DUPLICATE FROM HERE
   [willConfig.id]: willConfig,
   [mfaConfig.id]: mfaConfig,
   [sdConfig.id]: sdConfig,
@@ -39,7 +40,7 @@ export const ToolRegistry = {
 
   // New Personal
   [poaConfig.id]: poaConfig,
-  [rraConfig.id]: rraConfig,
+  [rentalConfig.id]: rentalConfig, // Kept this one
   [aConfig.id]: aConfig,
   [ncaConfig.id]: ncaConfig,
 
