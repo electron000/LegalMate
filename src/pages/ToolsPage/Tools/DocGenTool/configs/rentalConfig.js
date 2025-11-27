@@ -1,7 +1,7 @@
 export const rentalConfig = {
   id: 'rental',
   title: 'Residential Rental Agreement',
-  subtitle: 'Draft a standard residential rent agreement for your house or flat.',
+  subtitle: 'standard residential rent agreement',
   // Phase 1: Generate Text (Using Jinja2 Template)
   apiEndpoint: '/docs/rental_generator',      
   // Phase 2: Download DOCX

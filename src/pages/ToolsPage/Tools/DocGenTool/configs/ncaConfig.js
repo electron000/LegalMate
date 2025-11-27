@@ -2,19 +2,33 @@ export const ncaConfig = {
   id: 'name_change',
   title: 'Affidavit for Name Change',
   subtitle: 'Prepare for gazette publication and notarization.',
-  apiEndpoint: '/docs/name_change_generator',
-  downloadEndpoint: '/docs/name_change_download',
-  initialState: { old_name: '', new_name: '', reason: '' },
+  apiEndpoint: '/docs/namechange_generator',
+  downloadEndpoint: '/docs/namechange_download',
+  initialState: {
+    place_of_execution: '',
+    verification_date: '',
+    deponent_old_name: '',
+    deponent_new_name: '',
+    deponent_father_name: '',
+    deponent_age: '',
+    deponent_address: '',
+    reason_for_change: ''
+  },
   tabs: [{ id: 'main', label: 'Details' }],
   sections: {
-    main: {
+    details: {
       tab: 'main',
-      title: 'Name Change Details',
+      title: 'Personal Details',
       type: 'form',
       fields: [
-        { name: 'old_name', label: 'Old Name', required: true, span: 'half' },
-        { name: 'new_name', label: 'New Name', required: true, span: 'half' },
-        { name: 'reason', label: 'Reason for Change', type: 'textarea', required: true },
+        { name: 'deponent_old_name', label: 'Old Name', required: true, span: 'half' },
+        { name: 'deponent_new_name', label: 'New Name', required: true, span: 'half' },
+        { name: 'deponent_father_name', label: "Father's Name", required: true, span: 'half' },
+        { name: 'deponent_age', label: 'Age', type: 'number', required: true, span: 'half' },
+        { name: 'deponent_address', label: 'Address', required: true, span: 'full' },
+        { name: 'reason_for_change', label: 'Reason for Change', type: 'textarea', required: true },
+        { name: 'place_of_execution', label: 'Place of Execution', required: true, span: 'half' },
+        { name: 'verification_date', label: 'Verification Date', type: 'date', required: true, span: 'half' },
       ]
     }
   }
