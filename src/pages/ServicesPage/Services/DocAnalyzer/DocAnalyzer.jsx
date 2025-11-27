@@ -2,11 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { 
   Send, Loader, Menu, Plus, 
-  Trash2, MessageSquare, ShieldX, SquarePen, AlertTriangle 
+  Trash2, MessageSquare, ShieldX, SquarePen, AlertTriangle, FileText, UploadCloud 
 } from 'lucide-react';
 import '../shared/ChatInterface.css';
 import legalLogo from '../../../../assets/legal-logo.png'; 
+import DocAnalyzerModal from './DocAnalyzerModal'; 
+import { DocAnalyzerAPI } from '../../../../api';
 
+// --- Message Renderer Component (No Changes) ---
 const DocMessageRenderer = ({ message }) => {
   if (message.role === 'user') {
     return <p>{message.content}</p>;
@@ -55,6 +58,7 @@ const DocMessageRenderer = ({ message }) => {
   return null;
 };
 
+// --- Sidebar Component (No Changes) ---
 const DocSideBar = ({
   sessions,
   activeSessionId,
@@ -139,7 +143,12 @@ const DocSideBar = ({
   );
 };
 
+// --- MAIN COMPONENT ---
 const DocAnalyzer = () => {
+  const [isSessionReady, setIsSessionReady] = useState(false);
+  const [showModal, setShowModal] = useState(true); 
+  
+  const [currentDocName, setCurrentDocName] = useState('');
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -151,6 +160,42 @@ const DocAnalyzer = () => {
   const fileInputRef = useRef(null);
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
+
+  // --- MODAL INTEGRATION HANDLERS ---
+  
+  const handleAnalysisComplete = ({ fileName, summary }) => {
+    setShowModal(false);
+    setIsSessionReady(true);
+    setCurrentDocName(fileName);
+
+    const newId = Date.now().toString();
+    setActiveSessionId(newId);
+
+    // Initial message with summary from backend
+    const initialMessages = [
+        { 
+            role: 'ai', 
+            content: { 
+                type: 'structured', 
+                explanation: `## Analysis Ready for: ${fileName}\n\nI have successfully processed your document. Here is the summary:\n\n${summary}\n\n**You may now ask specific questions regarding this document.**` 
+            } 
+        }
+    ];
+    setMessages(initialMessages);
+  };
+
+  const handleModalClose = () => {
+    setShowModal(false);
+  };
+
+  const openNewAnalysis = () => {
+      setMessages([]);
+      setIsSessionReady(false);
+      setShowModal(true);
+      closeSidebarOnMobile();
+  };
+
+  // --- EXISTING HANDLERS ---
 
   const toggleSidebar = () => {
     setIsSidebarExpanded(prev => !prev);
@@ -165,10 +210,11 @@ const DocAnalyzer = () => {
   const processUserMessage = async (text) => {
     if (!text || !text.trim()) return;
 
+    // 1. Add User Message
     const userMessage = { role: 'user', content: text };
-
     setMessages(prev => [...prev, userMessage]);
 
+    // Update session title if new
     setSessions(prev => {
         if (!prev.find(s => s.id === activeSessionId)) {
             return [{ id: activeSessionId, title: text.slice(0, 30) + '...' }, ...prev];
@@ -178,17 +224,31 @@ const DocAnalyzer = () => {
 
     setIsLoading(true);
 
-    setTimeout(() => {
-        const mockResponse = {
+    try {
+        // 2. ACTUAL API CALL TO QnA ENDPOINT
+        const data = await DocAnalyzerAPI.askQuestion(text);
+        
+        const aiResponse = {
             role: 'ai',
             content: {
                 type: 'structured',
-                explanation: `**Analysis Simulation**\n\nI have received your query: *" ${text} "*.\n\nSince I am currently in **Static Mode**, I cannot analyze real documents or legal queries. \n\n### What I can do:\n* Display this beautiful UI.\n* Show you how the upload button works.\n* Simulate a structured markdown response.\n\n_Please connect the API to get real legal insights._`
+                explanation: data.answer // Backend returns { answer: "..." }
             }
         };
-        setMessages(prev => [...prev, mockResponse]);
+        setMessages(prev => [...prev, aiResponse]);
+
+    } catch (error) {
+        console.error("QnA Error:", error);
+        const errorResponse = {
+            role: 'error',
+            content: {
+                message: "I encountered an error retrieving the answer. Please ensure the document context is loaded."
+            }
+        };
+        setMessages(prev => [...prev, errorResponse]);
+    } finally {
         setIsLoading(false);
-    }, 1500);
+    }
   };
 
   useEffect(() => {
@@ -212,41 +272,16 @@ const DocAnalyzer = () => {
     }
   };
 
-  const handleFileUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setUserInput(prev => {
-          const prefix = prev ? prev + " " : "";
-          return prefix + `[Attached: ${file.name}]`;
-      });
-      
-      if (textareaRef.current) {
-         setTimeout(() => {
-             textareaRef.current.style.height = 'auto'; 
-             textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-         }, 0);
-      }
-    }
-    e.target.value = null;
-  };
-  
-  const createNewSession = () => {
-    const newId = Date.now().toString();
-    setActiveSessionId(newId);
-    setMessages([]);
-    closeSidebarOnMobile();
-  };
-
   const handleDelete = () => {
     const { type, id } = showDeleteModal;
     if (type === 'single') {
         setSessions(prev => prev.filter(s => s.id !== id));
         if (id === activeSessionId) {
-            createNewSession();
+            openNewAnalysis();
         }
     } else if (type === 'all') {
         setSessions([]);
-        createNewSession();
+        openNewAnalysis();
     }
     setShowDeleteModal({ visible: false, type: null, id: null });
   };
@@ -261,8 +296,8 @@ const DocAnalyzer = () => {
           <h3>{isSingle ? 'Delete Analysis?' : 'Clear All History?'}</h3>
           <p>
             {isSingle 
-              ? 'This will permanently delete this analysis session. This action cannot be undone.' 
-              : 'This will permanently delete ALL your analysis sessions. This action cannot be undone.'}
+              ? 'This will permanently delete this analysis session.' 
+              : 'This will permanently delete ALL your analysis sessions.'}
           </p>
           <div className="modal-buttons">
             <button 
@@ -282,22 +317,31 @@ const DocAnalyzer = () => {
   
   return (
     <div className={`chatbot-page ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
+      
       <div className="chat-background-wave">
           <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
               <path fill="#ffffff" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
           </svg>
       </div>
 
+      <DocAnalyzerModal 
+        isOpen={showModal} 
+        onClose={handleModalClose} 
+        onAnalysisComplete={handleAnalysisComplete}
+      />
+
       <DocSideBar
         sessions={sessions}
         activeSessionId={activeSessionId}
         onSelectSession={(id) => {
             setActiveSessionId(id);
+            setShowModal(false);
+            setIsSessionReady(true);
             closeSidebarOnMobile(); 
         }}
         onDeleteSession={(id) => setShowDeleteModal({ visible: true, type: 'single', id })}
         onClearAllSessions={() => setShowDeleteModal({ visible: true, type: 'all', id: null })}
-        createNewSession={createNewSession}
+        createNewSession={openNewAnalysis}
         isExpanded={isSidebarExpanded}
         toggleSidebar={toggleSidebar} 
       />
@@ -315,70 +359,93 @@ const DocAnalyzer = () => {
             <div className="model-selector">
                 <img src={legalLogo} alt="DocAnalyzer" className="header-logo" onError={(e) => e.target.style.display='none'} />
                 <span>Doc Analyzer</span>
+                {currentDocName && <span className="text-xs ml-2 text-gray-500 font-normal border-l pl-2 border-gray-300">{currentDocName}</span>}
             </div>
         </div>
 
-        <div className="chat-messages">
-          {messages.length === 0 && !isLoading ? (
-            <div className="welcome-message">
-              <h1>
-                <img src={legalLogo} alt="DocAnalyzer" className="welcome-logo" onError={(e) => e.target.style.display='none'} />
-                Doc Analyzer
-              </h1>
-              <p>Your intelligent assistant for legal document analysis.</p>
+        {!isSessionReady ? (
+            <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-60">
+                <FileText size={64} className="mb-4 text-gray-300" />
+                <h2 className="text-xl font-semibold text-gray-700 mb-2">No Document Loaded</h2>
+                <p className="max-w-md text-gray-500 mb-6">
+                    Please upload a legal document (Contract, Agreement, Judgment) to start the analysis session.
+                </p>
+                <button 
+                    onClick={() => setShowModal(true)} 
+                    className="px-6 py-3 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-all flex items-center gap-2"
+                >
+                    <UploadCloud size={20} />
+                    Upload Document
+                </button>
             </div>
-          ) : (
-            messages.map((message, index) => (
-              <div key={index} className={`message ${message.role}`}>
-                <DocMessageRenderer message={message} />
-              </div>
-            ))
-          )}
-          {isLoading && (
-            <div className="message ai">
-              <div className="loading-indicator">
-                <Loader size={16} className="spinner" /> Analyzing your document...
-              </div>
-            </div>
-          )}
-          <div ref={chatEndRef} />
-        </div>
+        ) : (
+            <>
+                <div className="chat-messages">
+                    {messages.length === 0 && !isLoading ? (
+                    <div className="welcome-message">
+                        <h1>
+                        <img src={legalLogo} alt="DocAnalyzer" className="welcome-logo" onError={(e) => e.target.style.display='none'} />
+                        Doc Analyzer
+                        </h1>
+                        <p>Your intelligent assistant for legal document analysis.</p>
+                    </div>
+                    ) : (
+                    messages.map((message, index) => (
+                        <div key={index} className={`message ${message.role}`}>
+                        <DocMessageRenderer message={message} />
+                        </div>
+                    ))
+                    )}
+                    {isLoading && (
+                    <div className="message ai">
+                        <div className="loading-indicator">
+                        <Loader size={16} className="spinner" /> Analyzing your document...
+                        </div>
+                    </div>
+                    )}
+                    <div ref={chatEndRef} />
+                </div>
 
-        <div className="input-area">
-          <form className="input-form" onSubmit={handleSendMessage}>
-            <div className="input-container">
-              <input 
-                type="file" 
-                accept=".pdf,.docx,.txt" 
-                ref={fileInputRef}
-                onChange={handleFileUpload}
-                style={{ display: 'none' }} 
-              />
-              <button 
-                type="button" 
-                className="upload-button"
-                onClick={() => fileInputRef.current?.click()}
-                title="Upload legal document (.pdf, .docx, .txt)"
-              >
-                <Plus size={20} />
-              </button>
+                <div className="input-area">
+                    <form className="input-form" onSubmit={handleSendMessage}>
+                    <div className="input-container">
+                        <input 
+                        type="file" 
+                        accept=".pdf,.docx,.txt" 
+                        ref={fileInputRef}
+                        onChange={(e) => {
+                             const file = e.target.files[0];
+                             if(file) setUserInput(prev => (prev ? prev + " " : "") + `[Attached: ${file.name}]`);
+                        }}
+                        style={{ display: 'none' }} 
+                        />
+                        <button 
+                        type="button" 
+                        className="upload-button"
+                        onClick={() => fileInputRef.current?.click()}
+                        title="Upload additional reference"
+                        >
+                        <Plus size={20} />
+                        </button>
 
-              <textarea
-                ref={textareaRef} 
-                className="message-input"
-                value={userInput}
-                onChange={handleInputChange} 
-                placeholder="Ask about your documents..."
-                disabled={isLoading}
-                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); }}}
-                rows={1}
-              />
-              <button type="submit" className="send-button" disabled={isLoading || !userInput.trim()}>
-                {isLoading ? <Loader size={16} /> : <Send size={16} />}
-              </button>
-            </div>
-          </form>
-        </div>
+                        <textarea
+                        ref={textareaRef} 
+                        className="message-input"
+                        value={userInput}
+                        onChange={handleInputChange} 
+                        placeholder="Ask about your documents..."
+                        disabled={isLoading}
+                        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); }}}
+                        rows={1}
+                        />
+                        <button type="submit" className="send-button" disabled={isLoading || !userInput.trim()}>
+                        {isLoading ? <Loader size={16} /> : <Send size={16} />}
+                        </button>
+                    </div>
+                    </form>
+                </div>
+            </>
+        )}
       </main>
       
       <DeleteModal />

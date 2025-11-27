@@ -7,12 +7,11 @@ export * from './config';
 export * from './LegalMate/LegalMateAPI';
 export * from './LegalMate/sessionmanager';
 
-// 3. Export Legal Research APIs 
-// export * from './LegalResearch/LegalResearchAPI';
-
-// 4. Export DocGen Service & Utilities
-// This will export 'DocGenService' and 'downloadBlob' from the file above
+// 3. Export DocGen Service & Utilities
 export * from './DocGen/DocGenAPI'; 
 
-// 5. Export Blog APIs 
+// 4. Export Blog APIs 
 export * from './Blogs/BlogAPI';
+
+// 5. Export DocAnalyzer APIs
+export * from './DocAnalyzer/DocAnalyzerAPI';

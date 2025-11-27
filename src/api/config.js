@@ -4,6 +4,7 @@ import axios from 'axios';
 export const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL || 'http://localhost:8000';
 export const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:8001';
 export const DOCGEN_API_URL = import.meta.env.VITE_DOCGEN_API_URL || 'http://localhost:8002';
+export const DOC_ANALYZER_API_URL = import.meta.env.VITE_DOC_ANALYZER_API_URL || 'http://localhost:8003';
 
 // 1. LegalMate & Research Client
 export const chatbotClient = axios.create({
@@ -29,6 +30,12 @@ export const blogClient = axios.create({
   },
 });
 
+// 4. Doc Analyzer Client (Port 8003)
+export const docAnalyzerClient = axios.create({
+  baseURL: DOC_ANALYZER_API_URL,
+  // Note: Content-Type is set dynamically for uploads
+});
+
 // Helper to standardize error handling across all clients
 const handleAxiosError = (error) => {
   if (error.response) {
@@ -36,18 +43,16 @@ const handleAxiosError = (error) => {
     console.error("API Error Response:", error.response.data);
     throw new Error(message);
   } else if (error.request) {
-    // The request was made but no response was received
     console.error("API No Response:", error.request);
     throw new Error('No response received from server. Please check your connection.');
   } else {
-    // Something happened in setting up the request that triggered an Error
     console.error("API Request Error:", error.message);
     throw new Error(error.message);
   }
 };
 
-// Apply interceptors to handle errors globally (optional but recommended)
-[chatbotClient, docGenClient, blogClient].forEach(client => {
+// Apply interceptors
+[chatbotClient, docGenClient, blogClient, docAnalyzerClient].forEach(client => {
   client.interceptors.response.use(
     (response) => response,
     (error) => handleAxiosError(error)
