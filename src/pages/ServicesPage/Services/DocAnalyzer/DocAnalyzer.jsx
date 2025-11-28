@@ -1,8 +1,10 @@
+// src/pages/DocAnalyzer/DocAnalyzer.jsx
+
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { 
   Send, Loader, Menu, Plus, 
-  Trash2, MessageSquare, ShieldX, SquarePen, AlertTriangle, FileText, UploadCloud 
+  Trash2, MessageSquare, ShieldX, AlertTriangle, FileText
 } from 'lucide-react';
 import '../shared/ChatInterface.css';
 import legalLogo from '../../../../assets/legal-logo.png'; 
@@ -80,10 +82,10 @@ const DocSideBar = ({
             <button 
               className="sidebar-icon-btn new-chat-mini-btn" 
               onClick={createNewSession} 
-              aria-label="New Chat"
-              title="New Chat"
+              aria-label="New Analysis"
+              title="New Analysis"
             >
-              <SquarePen size={20} />
+              <FileText size={20} />
             </button>
           </div>
         </div>
@@ -97,7 +99,7 @@ const DocSideBar = ({
           
           <div className="new-chat-container">
             <button className="new-chat-btn" onClick={createNewSession}>
-              <SquarePen size={18} className="plus-icon"/>
+              <FileText size={18} className="plus-icon"/>
               <span>New analysis</span>
             </button>
           </div>
@@ -157,12 +159,31 @@ const DocAnalyzer = () => {
   const [activeSessionId, setActiveSessionId] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState({ visible: false, type: null, id: null });
   
-  const fileInputRef = useRef(null);
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // --- MODAL INTEGRATION HANDLERS ---
+  // --- HANDLERS ---
   
+  const toggleSidebar = () => {
+    setIsSidebarExpanded(prev => !prev);
+  };
+
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth <= 768) {
+      setIsSidebarExpanded(false);
+    }
+  };
+
+  // Helper to reset the main view without necessarily clearing history
+  const resetSessionView = () => {
+    setMessages([]);
+    setIsSessionReady(false);
+    setShowModal(true);
+    setActiveSessionId('');
+    setCurrentDocName(''); // <--- CLEARED HERE
+    closeSidebarOnMobile();
+  };
+
   const handleAnalysisComplete = ({ fileName, summary }) => {
     setShowModal(false);
     setIsSessionReady(true);
@@ -171,13 +192,12 @@ const DocAnalyzer = () => {
     const newId = Date.now().toString();
     setActiveSessionId(newId);
 
-    // Initial message with summary from backend
     const initialMessages = [
         { 
             role: 'ai', 
             content: { 
                 type: 'structured', 
-                explanation: `## Analysis Ready for: ${fileName}\n\nI have successfully processed your document. Here is the summary:\n\n${summary}\n\n**You may now ask specific questions regarding this document.**` 
+                explanation: summary
             } 
         }
     ];
@@ -188,23 +208,10 @@ const DocAnalyzer = () => {
     setShowModal(false);
   };
 
+  // Called when "New Analysis" is clicked - Clears Sidebar History & Doc Name
   const openNewAnalysis = () => {
-      setMessages([]);
-      setIsSessionReady(false);
-      setShowModal(true);
-      closeSidebarOnMobile();
-  };
-
-  // --- EXISTING HANDLERS ---
-
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(prev => !prev);
-  };
-
-  const closeSidebarOnMobile = () => {
-    if (window.innerWidth <= 768) {
-      setIsSidebarExpanded(false);
-    }
+      setSessions([]); // Clears sidebar history
+      resetSessionView(); // Clears current view and doc name
   };
 
   const processUserMessage = async (text) => {
@@ -277,11 +284,11 @@ const DocAnalyzer = () => {
     if (type === 'single') {
         setSessions(prev => prev.filter(s => s.id !== id));
         if (id === activeSessionId) {
-            openNewAnalysis();
+            resetSessionView(); // Just reset view, preserve other sessions
         }
     } else if (type === 'all') {
         setSessions([]);
-        openNewAnalysis();
+        resetSessionView();
     }
     setShowDeleteModal({ visible: false, type: null, id: null });
   };
@@ -363,89 +370,70 @@ const DocAnalyzer = () => {
             </div>
         </div>
 
-        {!isSessionReady ? (
-            <div className="flex flex-col items-center justify-center h-full text-center p-8 opacity-60">
-                <FileText size={64} className="mb-4 text-gray-300" />
-                <h2 className="text-xl font-semibold text-gray-700 mb-2">No Document Loaded</h2>
-                <p className="max-w-md text-gray-500 mb-6">
-                    Please upload a legal document (Contract, Agreement, Judgment) to start the analysis session.
-                </p>
+        <div className="chat-messages-container" style={{ flex: 1, overflowY: 'auto' }}>
+            <div className="chat-messages">
+                {messages.length === 0 && !isLoading ? (
+                <div className="welcome-message">
+                    <h1>
+                    <img src={legalLogo} alt="DocAnalyzer" className="welcome-logo" onError={(e) => e.target.style.display='none'} />
+                    Doc Analyzer
+                    </h1>
+                    <p>Your intelligent assistant for legal document analysis.</p>
+                </div>
+                ) : (
+                messages.map((message, index) => (
+                    <div key={index} className={`message ${message.role}`}>
+                    <DocMessageRenderer message={message} />
+                    </div>
+                ))
+                )}
+                {isLoading && (
+                <div className="message ai">
+                    <div className="loading-indicator">
+                    <Loader size={16} className="spinner" /> Analyzing your document...
+                    </div>
+                </div>
+                )}
+                <div ref={chatEndRef} />
+            </div>
+        </div>
+
+        {/* Input Area - Now always visible */}
+        <div className="input-area">
+            <form className="input-form" onSubmit={handleSendMessage}>
+            <div className="input-container">
+    {/* Only show Upload button if session is NOT ready */}
+    {!isSessionReady && (
+      <button 
+        type="button" 
+        className="upload-button"
+        onClick={() => setShowModal(true)}
+        title="Upload Document"
+      >
+        <Plus size={20} />
+      </button>
+    )}
+
+    <textarea
+      ref={textareaRef} 
+      className="message-input"
+      value={userInput}
+                onChange={handleInputChange} 
+                placeholder={!isSessionReady ? "Upload a document to start..." : "Ask about your documents..."}
+                disabled={isLoading || !isSessionReady}
+                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); }}}
+                rows={1}
+                />
                 <button 
-                    onClick={() => setShowModal(true)} 
-                    className="px-6 py-3 bg-gray-900 text-white rounded-lg shadow-lg hover:bg-gray-800 transition-all flex items-center gap-2"
+                  type="submit" 
+                  className="send-button" 
+                  disabled={isLoading || !userInput.trim() || !isSessionReady}
                 >
-                    <UploadCloud size={20} />
-                    Upload Document
+                {isLoading ? <Loader size={16} /> : <Send size={16} />}
                 </button>
             </div>
-        ) : (
-            <>
-                <div className="chat-messages">
-                    {messages.length === 0 && !isLoading ? (
-                    <div className="welcome-message">
-                        <h1>
-                        <img src={legalLogo} alt="DocAnalyzer" className="welcome-logo" onError={(e) => e.target.style.display='none'} />
-                        Doc Analyzer
-                        </h1>
-                        <p>Your intelligent assistant for legal document analysis.</p>
-                    </div>
-                    ) : (
-                    messages.map((message, index) => (
-                        <div key={index} className={`message ${message.role}`}>
-                        <DocMessageRenderer message={message} />
-                        </div>
-                    ))
-                    )}
-                    {isLoading && (
-                    <div className="message ai">
-                        <div className="loading-indicator">
-                        <Loader size={16} className="spinner" /> Analyzing your document...
-                        </div>
-                    </div>
-                    )}
-                    <div ref={chatEndRef} />
-                </div>
-
-                <div className="input-area">
-                    <form className="input-form" onSubmit={handleSendMessage}>
-                    <div className="input-container">
-                        <input 
-                        type="file" 
-                        accept=".pdf,.docx,.txt" 
-                        ref={fileInputRef}
-                        onChange={(e) => {
-                             const file = e.target.files[0];
-                             if(file) setUserInput(prev => (prev ? prev + " " : "") + `[Attached: ${file.name}]`);
-                        }}
-                        style={{ display: 'none' }} 
-                        />
-                        <button 
-                        type="button" 
-                        className="upload-button"
-                        onClick={() => fileInputRef.current?.click()}
-                        title="Upload additional reference"
-                        >
-                        <Plus size={20} />
-                        </button>
-
-                        <textarea
-                        ref={textareaRef} 
-                        className="message-input"
-                        value={userInput}
-                        onChange={handleInputChange} 
-                        placeholder="Ask about your documents..."
-                        disabled={isLoading}
-                        onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); }}}
-                        rows={1}
-                        />
-                        <button type="submit" className="send-button" disabled={isLoading || !userInput.trim()}>
-                        {isLoading ? <Loader size={16} /> : <Send size={16} />}
-                        </button>
-                    </div>
-                    </form>
-                </div>
-            </>
-        )}
+            </form>
+        </div>
       </main>
       
       <DeleteModal />

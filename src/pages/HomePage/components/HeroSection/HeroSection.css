@@ -1,3 +1,5 @@
+/* HeroSection.css */
+
 .hero-section {
   position: relative;
   width: 100%;
@@ -7,7 +9,7 @@
   justify-content: center;
   align-items: center;
   
-  /* Variables applied */
+  /* Mapped to primary dark brand color */
   background: var(--hero-bg-gradient);
   
   overflow: hidden;
@@ -67,7 +69,9 @@
   /* Use 'clamp' for fluid typography */
   font-size: clamp(3rem, 5vw, 6rem); 
   font-weight: 1000;
-  color: var(--white); 
+  
+  /* Replaced --white with --text-inverse (light gray/white) */
+  color: var(--text-inverse); 
   
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
@@ -92,7 +96,7 @@
 }
 
 .hero-wave-separator .shape-fill {
-  /* Variables applied */
+  /* Matches the main page background (white) */
   fill: var(--background);
 }
 
@@ -113,9 +117,9 @@
   max-width: 600px; /* Max width like Gemini */
   height: 56px;
   
-  /* Variables applied */
-  background-color: var(--hero-search-bg);
-  border: 1px solid var(--hero-search-border);
+  /* Using standard grays for dark mode input */
+  background-color: var(--gray-800);
+  border: 1px solid var(--gray-600);
   
   border-radius: 28px; /* Fully rounded pill shape */
   display: flex;
@@ -126,9 +130,9 @@
 }
 
 .hero-search-box:focus-within {
-  /* Variables applied */
-  background-color: var(--hero-search-bg-focus);
-  border-color: var(--hero-search-border-focus);
+  /* Lighter background on focus */
+  background-color: var(--primary-black-active);
+  border-color: var(--gray-400);
   
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
@@ -138,16 +142,16 @@
   background: transparent;
   border: none;
   
-  /* Variables applied */
-  color: var(--white);
+  /* Replaced --white with --text-inverse */
+  color: var(--text-inverse);
   
   font-size: 1.1rem;
   outline: none;
 }
 
 .hero-search-input::placeholder {
-  /* Variables applied */
-  color: var(--text-placeholder);
+  /* Replaced --text-placeholder with --text-secondary */
+  color: var(--text-secondary);
   font-weight: 400;
 }
 
@@ -161,15 +165,15 @@
   padding: 8px;
   border-radius: 50%;
   
-  /* Variables applied */
-  color: var(--hero-icon-color);
+  /* Replaced --hero-icon-color with --text-inverse */
+  color: var(--text-inverse);
   
   transition: background 0.2s;
 }
 
 .hero-search-btn:hover {
-  /* Variables applied */
-  background-color: var(--hero-icon-hover-bg);
+  /* Using sidebar button hover for consistent interaction state */
+  background-color: var(--sidebar-btn-hover);
 }
 
 .hero-search-btn svg {
@@ -191,7 +195,7 @@
 @media (max-width: 768px) {
   
   .hero-section {
-    min-height: 60vh; 
+    min-height: 80vh; 
     padding-top: 50px; 
   }
   

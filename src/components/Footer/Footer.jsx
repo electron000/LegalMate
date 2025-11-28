@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
     Facebook,
     Twitter,
@@ -12,8 +12,9 @@ import {
 } from 'lucide-react';
 import './Footer.css';
 
-const Footer = () => {
+    const Footer = ({ onContactClick }) => { 
     const currentYear = new Date().getFullYear();
+    const location = useLocation();
 
     const footerLinks = [
         { name: 'AI Research', path: '/legal-research' },
@@ -22,8 +23,8 @@ const Footer = () => {
         { name: 'About Us', path: '/about' },
         { name: 'Pricing', path: '/pricing' },
         { name: 'Contact', path: '/contact' },
-        { name: 'Privacy Policy', path: '/privacy' },
-        { name: 'Terms of Service', path: '/terms' }
+        { name: 'Privacy Policy', path: '#' },
+        { name: 'Terms of Service', path: '#' }
     ];
 
     const socialLinks = [
@@ -34,6 +35,12 @@ const Footer = () => {
     ];
 
     const handleLinkClick = (e, path) => {
+        if (path === '/contact') {
+            e.preventDefault(); // Stop navigation
+            if (onContactClick) onContactClick(); // Open Modal
+            return;
+        }
+
         if (path === '/about' && location.pathname === '/') {
             e.preventDefault();
             const element = document.getElementById('about-section');
@@ -74,20 +81,21 @@ const Footer = () => {
                 </div>
 
                 <div className="footer-section">
-                    <h4>Quick Links</h4>
-                    <ul className="footer-links">
-                        {footerLinks.map((link, index) => (
-                            <li key={index}>
-                                <Link 
-                                    to={link.path}
-                                    onClick={(e) => handleLinkClick(e, link.path)}
-                                >
-                                    {link.name}
-                                </Link>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
+                <h4>Quick Links</h4>
+                <ul className="footer-links">
+                    {footerLinks.map((link, index) => (
+                        <li key={index}>
+                            {/* 3. Ensure onClick is attached */}
+                            <Link 
+                                to={link.path}
+                                onClick={(e) => handleLinkClick(e, link.path)}
+                            >
+                                {link.name}
+                            </Link>
+                        </li>
+                    ))}
+                </ul>
+            </div>
 
                 <div className="contact-info">
                     <h4>Contact Us</h4>
@@ -122,5 +130,4 @@ const Footer = () => {
         </footer>
     );
 };
-
 export default Footer;

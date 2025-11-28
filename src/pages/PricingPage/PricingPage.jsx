@@ -1,11 +1,6 @@
 import React from 'react';
+import { Check } from 'lucide-react';
 import './PricingPage.css';
-
-const CheckIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M20 6L9 17L4 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 
 const PricingPage = () => {
   const plans = [
@@ -56,6 +51,7 @@ const PricingPage = () => {
         <h1>Find the Right Plan for Your Needs</h1>
         <p>Start with a free trial. No credit card required.</p>
       </div>
+      
       <div className="pricing-grid">
         {plans.map((plan, index) => (
           <div key={index} className={`pricing-card ${plan.featured ? 'featured' : ''}`}>
@@ -66,14 +62,16 @@ const PricingPage = () => {
                 ${plan.price}<span className="period">{plan.period}</span>
               </div>
             </div>
+            
             <ul className="feature-list">
               {plan.features.map((feature, fIndex) => (
                 <li key={fIndex}>
-                  <CheckIcon />
+                  <Check size={20} />
                   {feature}
                 </li>
               ))}
             </ul>
+            
             <button className="cta-button">Choose Plan</button>
           </div>
         ))}

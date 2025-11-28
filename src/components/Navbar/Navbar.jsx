@@ -1,13 +1,11 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useSearch } from '../../contexts/SearchContext.jsx'; 
-import { X, Search } from 'lucide-react';
-import NavbarLeft from './NavLeft/NavbarLeft.jsx';
-import NavbarCenter from './NavCenter/NavbarCenter.jsx';
-import NavbarRight from './NavRight/NavbarRight.jsx';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useSearch } from '../../contexts/SearchContext';
+import { Search } from 'lucide-react'; // Removed Menu, X
+import logo from '../../assets/legal-logo.png';
 import './Navbar.css';
 
-const navLinks = [ 
+const NAV_LINKS = [
     { label: 'Home', url: '/' },
     { label: 'Tools', url: '/tools' },
     { label: 'Services', url: '/services' },
@@ -15,152 +13,141 @@ const navLinks = [
 ];
 
 const Navbar = () => {
-    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
-    const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
-    const [isScrolled, setIsScrolled] = useState(false);
+    const [state, setState] = useState({
+        searchOpen: false,
+        scrolled: false
+    });
 
-    const searchContainerRef = useRef(null);
-    const searchInputRef = useRef(null); 
+    const searchRef = useRef(null);
+    const inputRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
     const { searchQuery, setSearchQuery } = useSearch();
 
-    const showSearch = ['/tools', '/services', '/blogs'].some(path => 
-        location.pathname.startsWith(path)
-    );
+    // -- Derived State --
+    const showSearch = ['/tools', '/services', '/blogs'].some(path => location.pathname.startsWith(path));
+    const isHomePage = location.pathname === '/';
+    // Navbar is "active" (dark text/white bg) if not home OR if scrolled
+    const isNavbarActive = !isHomePage || state.scrolled;
 
-    const getSearchPlaceholder = useCallback(() => {
+    // -- Helpers --
+    const updateState = (updates) => setState(prev => ({ ...prev, ...updates }));
+    
+    const getPlaceholder = useCallback(() => {
         if (location.pathname.startsWith('/tools')) return 'Search tools...';
         if (location.pathname.startsWith('/services')) return 'Search services...';
         return 'Search blogs...';
     }, [location.pathname]);
 
+    // -- Effects --
     useEffect(() => {
         const handleScroll = () => {
-            const heroHeightThreshold = window.innerHeight * 0.7; 
-            setIsScrolled(window.scrollY > heroHeightThreshold);
+            const threshold = window.innerHeight * 0.7;
+            updateState({ scrolled: window.scrollY > threshold });
         };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    useEffect(() => {
-        const handleKeyDown = (e) => { if (e.key === 'Escape') setMobileMenuOpen(false); };
-        if (mobileMenuOpen) document.body.classList.add('mobile-menu-open');
-        else document.body.classList.remove('mobile-menu-open');
-        if (mobileMenuOpen) document.addEventListener('keydown', handleKeyDown);
-        return () => { document.removeEventListener('keydown', handleKeyDown); document.body.classList.remove('mobile-menu-open'); };
-    }, [mobileMenuOpen]);
-
-    useEffect(() => {
-        const handleKeyDown = (e) => { if (e.key === 'Escape') setMobileSearchOpen(false); };
-        if (mobileSearchOpen) document.body.classList.add('mobile-search-open');
-        else document.body.classList.remove('mobile-search-open');
-        if (mobileSearchOpen) document.addEventListener('keydown', handleKeyDown);
-        return () => { document.removeEventListener('keydown', handleKeyDown); document.body.classList.remove('mobile-search-open'); };
-    }, [mobileSearchOpen]);
-
-    useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
-                setIsSearchOpen(false);
+        
+        const handleClickOutside = (e) => {
+            if (searchRef.current && !searchRef.current.contains(e.target)) {
+                updateState({ searchOpen: false });
             }
         };
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => { document.removeEventListener("mousedown", handleClickOutside); };
+
+        const handleKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                updateState({ searchOpen: false });
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        document.addEventListener('mousedown', handleClickOutside);
+        document.addEventListener('keydown', handleKeyDown);
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+            document.removeEventListener('mousedown', handleClickOutside);
+            document.removeEventListener('keydown', handleKeyDown);
+        };
     }, []);
-    
+
+    // Reset search on navigation/visibility change
     useEffect(() => {
         if (!showSearch) setSearchQuery('');
     }, [showSearch, setSearchQuery]);
 
-    const handleMobileSearchEnter = (e) => { if (e.key === 'Enter') { e.preventDefault(); handleMobileSearchSubmit(); } };
-    
-    const handleMobileSearchSubmit = () => {
-        if (searchQuery.trim()) {
-            if (location.pathname.startsWith('/tools') || location.pathname.startsWith('/services')) {
-              setMobileSearchOpen(false);
-            } else {
-              navigate(`/blogs?q=${encodeURIComponent(searchQuery)}`);
-              setMobileSearchOpen(false);
-            }
-        } else setMobileSearchOpen(false);
-    };
+    // Auto-focus search input when opened
+    useEffect(() => {
+        if (state.searchOpen) {
+            setTimeout(() => inputRef.current?.focus(), 100);
+        }
+    }, [state.searchOpen]);
 
-    const toggleMobileSearch = () => {
-        const isOpening = !mobileSearchOpen;
-        setMobileMenuOpen(false);
-        setMobileSearchOpen(isOpening);
-        if (isOpening) setTimeout(() => searchInputRef.current?.focus(), 300);
-    };
+    // -- Handlers --
+    const handleSearchSubmit = (e) => {
+        if ((e.type === 'keydown' && e.key !== 'Enter') || !searchQuery.trim()) return;
+        e.preventDefault();
 
-    const closeMobileSearch = () => setMobileSearchOpen(false);
-    
-    const handleMobileNavClick = (url) => { 
-        setMobileMenuOpen(false); navigate(url); 
+        const isLocalSearch = ['/tools', '/services'].some(p => location.pathname.startsWith(p));
+        
+        if (!isLocalSearch) {
+            navigate(`/blogs?q=${encodeURIComponent(searchQuery)}`);
+        }
+        
+        updateState({ searchOpen: false });
+        inputRef.current?.blur();
     };
-    
-    const toggleMobileMenu = () => { setMobileSearchOpen(false); setMobileMenuOpen(!mobileMenuOpen); };
-    const closeMobileMenu = () => setMobileMenuOpen(false);
-
-    const isHomePage = location.pathname === '/';
-    const isNavbarActive = !isHomePage || isScrolled;
 
     return (
-        <> 
+        <div className="desktop-navbar-wrapper">
+            {/* 1. Main Navbar (Logo + Right Actions) */}
             <nav className={`navbar ${isNavbarActive ? 'scrolled' : ''}`}>
-                <NavbarLeft />
-                
-                <NavbarRight 
-                    isSearchOpen={isSearchOpen}
-                    setIsSearchOpen={setIsSearchOpen}
-                    searchContainerRef={searchContainerRef}
-                    searchInputRef={searchInputRef}
-                    toggleMobileSearch={toggleMobileSearch}
-                    toggleMobileMenu={toggleMobileMenu}
-                    mobileMenuOpen={mobileMenuOpen}
-                    getPlaceholder={getSearchPlaceholder} 
-                    showSearch={showSearch}
-                />
+                {/* Brand */}
+                <Link to="/" className="navbar-brand">
+                    <img src={logo} alt="LegalMate" className="brand-logo" />
+                    <span className="brand-text">LEGALMATE</span>
+                </Link>
+
+                {/* Right Actions */}
+                <div className="navbar-right">
+                    {/* Desktop Search */}
+                    {showSearch && (
+                        <div className={`desktop-search ${state.searchOpen ? 'active' : ''}`} ref={searchRef}>
+                            <button 
+                                className="icon-btn" 
+                                onClick={() => updateState({ searchOpen: !state.searchOpen })}
+                                aria-label="Search"
+                            >
+                                <Search size={22} />
+                            </button>
+                            <input
+                                ref={state.searchOpen ? inputRef : null}
+                                type="text"
+                                className="search-input-desktop"
+                                placeholder={getPlaceholder()}
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyDown={handleSearchSubmit}
+                            />
+                        </div>
+                    )}
+                </div>
             </nav>
 
-            <NavbarCenter 
-                isNavbarActive={isNavbarActive} 
-                navLinks={navLinks} 
-            />
-
-            {mobileMenuOpen && <div className="mobile-overlay active" onClick={closeMobileMenu}></div>}
-            <div className={`mobile-menu ${mobileMenuOpen ? 'active' : ''}`}>
-                <button className="mobile-menu-close-btn" onClick={closeMobileMenu} aria-label="Close menu">
-                    <X size={24} />
-                </button>
-                <div className="mobile-nav-links">
-                    {navLinks.map(link => (
-                        <button key={link.label} onClick={() => handleMobileNavClick(link.url)} className="mobile-nav-link">
-                            {link.label}
-                        </button>
-                    ))}
+            {/* 2. Floating Desktop Navigation (The Pill) */}
+            <div className={`desktop-nav-pill-container ${isNavbarActive ? 'scrolled' : ''}`}>
+                <div className="nav-pill">
+                    {NAV_LINKS.map(link => {
+                        const isActive = link.url === '/' 
+                            ? location.pathname === '/' 
+                            : location.pathname.startsWith(link.url);
+                        return (
+                            <Link key={link.url} to={link.url} className={`pill-link ${isActive ? 'active' : ''}`}>
+                                {link.label}
+                            </Link>
+                        );
+                    })}
                 </div>
             </div>
-
-            <div className={`mobile-search-overlay ${mobileSearchOpen ? 'active' : ''}`} onClick={closeMobileSearch}>
-                <div className="mobile-search-panel" onClick={(e) => e.stopPropagation()}>
-                    <input
-                        ref={mobileSearchOpen ? searchInputRef : null} 
-                        type="text"
-                        placeholder={getSearchPlaceholder()}
-                        className="mobile-search-input"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        onKeyDown={handleMobileSearchEnter}
-                    />
-                    <button className="mobile-search-submit-btn" onClick={handleMobileSearchSubmit} aria-label="Submit search">
-                        <Search size={22} />
-                    </button>
-                </div>
-            </div>
-        </>
+        </div>
     );
 };
 

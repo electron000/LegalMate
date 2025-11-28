@@ -30,10 +30,10 @@ const ToolsPage = () => {
   const filteredTools = useMemo(() => {
     if (!searchQuery) return toolsList;
     const query = searchQuery.toLowerCase();
-    return toolsList.filter(tool => {
-      return tool.name.toLowerCase().includes(query) || 
-             tool.skills.some(skill => skill.toLowerCase().includes(query));
-    });
+    return toolsList.filter(tool => 
+      tool.name.toLowerCase().includes(query) || 
+      tool.skills.some(skill => skill.toLowerCase().includes(query))
+    );
   }, [searchQuery, toolsList]);
 
   const handleUseTool = (tool) => {

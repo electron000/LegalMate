@@ -97,7 +97,7 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
              {/* Title Scrolled inside body */}
             <div className="dam-scroll-title">
                 <ShieldCheck size={28} className="text-gray-800" />
-                Legal Doc Analyzer
+                Doc Analyzer
             </div>
             <p className="dam-scroll-subtitle">
                 Upload your contract, agreement, or court judgment to get an instant AI-powered summary and legal risk analysis.
@@ -114,7 +114,7 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
                 <input 
                     type="file" 
                     className="hidden" 
-                    accept=".pdf,.docx,.txt"
+                    accept=".pdf" 
                     onChange={handleFileUpload}
                 />
                 <div className="flex justify-center mb-6">
@@ -126,7 +126,7 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
                     Click to upload your document
                 </h3>
                 <p className="text-gray-400 text-sm">
-                    PDF, DOCX, or TXT (Max 10MB)
+                    PDF only (Max 10MB)
                 </p>
                 </label>
             </div>

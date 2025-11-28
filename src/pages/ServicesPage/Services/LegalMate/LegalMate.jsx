@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import { 
   Send, Loader, Menu, AlertTriangle, 
-  Trash2, MessageSquare, ShieldX, SquarePen 
+  Trash2, MessageSquare, ShieldX, Scale 
 } from 'lucide-react';
 
 import { 
@@ -95,7 +95,7 @@ const SideBar = ({
               aria-label="New Chat"
               title="New Chat"
             >
-              <SquarePen size={20} />
+              <Scale size={20} />
             </button>
           </div>
         </div>
@@ -113,7 +113,7 @@ const SideBar = ({
           {/* New Chat */}
           <div className="new-chat-container">
             <button className="new-chat-btn" onClick={createNewSession}>
-              <SquarePen size={18} className="plus-icon"/>
+              <Scale size={18} className="plus-icon"/>
               <span>New chat</span>
             </button>
           </div>

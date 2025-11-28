@@ -299,7 +299,7 @@ const LegalResearch = () => {
             <div className="welcome-message">
               <h1>
                 <img src={legalLogo} alt="Legal Research" className="welcome-logo" />
-                Legal Research Assistant
+                Legal Research
               </h1>
               <p>Deep dive into case laws, statutes, and legal precedents.</p>
             </div>

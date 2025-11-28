@@ -15,21 +15,21 @@ const legalServices = [
     category: 'AI Solutions',
   },
   {
-    id: 2,
-    name: 'Legal Doc Analyzer',
-    skills: ['Clause Extraction', 'Risk Assessment'],
-    status: 'Active',
-    path: '/doc-analyzer',
-    icon: FileText,
-    category: 'AI Solutions',
-  },
-  {
     id: 1,
     name: 'Legal Research',
     skills: ['Case Law Search', 'Statutes & Acts'],
     status: 'Active',
     path: '/legal-research',
     icon: BookOpen,
+    category: 'AI Solutions',
+  },
+  {
+    id: 2,
+    name: 'Doc Analyzer',
+    skills: ['Clause Extraction', 'Risk Assessment'],
+    status: 'Active',
+    path: '/doc-analyzer',
+    icon: FileText,
     category: 'AI Solutions',
   },
   {
@@ -54,11 +54,12 @@ const ServicesPage = () => {
   }, [setSearchQuery]);
 
   const filteredServices = useMemo(() => {
-    return legalServices.filter(service => {
-      const query = searchQuery.toLowerCase();
-      return service.name.toLowerCase().includes(query) || 
-             service.skills.some(skill => skill.toLowerCase().includes(query));
-    });
+    if (!searchQuery) return legalServices;
+    const query = searchQuery.toLowerCase();
+    return legalServices.filter(service => 
+      service.name.toLowerCase().includes(query) || 
+      service.skills.some(skill => skill.toLowerCase().includes(query))
+    );
   }, [searchQuery]);
 
   const handleUseService = (service) => {

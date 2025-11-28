@@ -1,229 +1,204 @@
-.navbar {
-    --nav-text-color: var(--text-inverse) !important; 
-    --nav-icon-color: var(--text-inverse) !important; 
-    --nav-bg: transparent !important; 
-    --nav-input-border: var(--nav-input-border-light);
-    --nav-input-bg: var(--nav-input-bg-light);
-    --pill-bg: var(--nav-pill-bg-default);
-    --pill-link-active-bg: var(--primary-black);
-    --pill-link-active-text: var(--text-inverse);
-    --pill-link-inactive-text: var(--gray-600);
+/* Navbar.css */
 
+/* --- Global Navbar Variables --- */
+:root {
+    --nav-z-index: 1000;
+    --nav-height: 4.5rem; 
+}
+
+/* =========================================
+   1. MAIN TOP NAVBAR (Logo & Icons)
+   ========================================= */
+.navbar {
+    /* Default: Transparent/Dark Theme (Hero) */
+    --nav-text: var(--text-inverse);
+    --nav-logo-filter: none;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--nav-height);
     display: flex;
     align-items: center;
-    gap: 1rem;
-    padding: 0 1rem;
-    height: var(--navbar-height);
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background: var(--nav-bg);
-    box-shadow: none;
-    border-bottom: none;
-    z-index: 1010; 
+    justify-content: space-between;
+    padding: 0 2rem;
+    z-index: var(--nav-z-index);
     transition: all 0.3s ease;
-    pointer-events: none;
+    pointer-events: none; /* Pass clicks through to hero */
 }
 
-.navbar > * {
-    pointer-events: auto;
-}
+.navbar > * { pointer-events: auto; }
 
+/* Scrolled State for Top Navbar */
 .navbar.scrolled {
-    --nav-text-color: var(--primary-black-dark) !important;
-    --nav-icon-color: var(--primary-black-dark) !important;
-    --nav-bg: transparent !important;
-    --nav-input-border: var(--nav-input-border-dark);
-    --nav-input-bg: var(--nav-input-bg-dark);
-    --pill-bg: var(--nav-pill-bg-scrolled);
-    --pill-link-active-bg: var(--text-inverse);
-    --pill-link-active-text: var(--primary-black);
-    --pill-link-inactive-text: var(--text-inverse);
-    box-shadow: none;
+    --nav-text: var(--primary-black);
+    --nav-logo-filter: invert(1);
 }
 
-.mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: var(--mobile-overlay-bg);
-    z-index: 1011;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-}
-
-.mobile-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.mobile-menu {
-    position: fixed;
-    top: 0;
-    right: -300px;
-    width: 300px;
-    height: 100vh;
-    background: var(--surface-elevated);
-    border-left: 1px solid var(--border-medium);
-    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-    z-index: 1012;
-    padding: 1rem;
-    padding-top: calc(var(--navbar-height) + 1rem);
-    transition: right 0.3s ease;
+/* --- Brand --- */
+.navbar-brand {
     display: flex;
-    flex-direction: column;
-    pointer-events: auto; 
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    z-index: 1002;
 }
 
-.mobile-menu.active {
-    right: 0;
+.brand-logo {
+    height: 40px;
+    width: auto;
+    transition: filter 0.3s ease;
+    filter: var(--nav-logo-filter);
 }
 
-.mobile-nav-links {
+.brand-text {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--nav-text);
+    transition: color 0.3s ease;
+}
+
+/* --- Right Actions --- */
+.navbar-right {
     display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-    flex: 1;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 1002;
 }
 
-.mobile-nav-link {
-    width: 100%;
-    padding: 0.75rem 1rem;
-    background: none;
-    border: none;
-    text-align: left;
-    color: var(--primary-black);
-    font-weight: 500;
-    font-size: 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.mobile-nav-link:hover {
-    background: var(--gray-100);
-}
-
-.mobile-menu-close-btn {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
+.icon-btn {
     background: transparent;
     border: none;
-    color: var(--primary-black);
-    cursor: pointer;
+    color: var(--nav-text);
     padding: 0.5rem;
     border-radius: 50%;
+    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease;
+    transition: background 0.2s, color 0.3s;
 }
 
-.mobile-menu-close-btn:hover {
-    background-color: var(--gray-100);
+.icon-btn:hover { background: rgba(128, 128, 128, 0.15); }
+
+/* --- Desktop Search Input --- */
+.desktop-search {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 }
 
-body.mobile-menu-open {
-    overflow: hidden;
+.search-input-desktop {
+    position: absolute;
+    right: 0;
+    width: 0;
+    opacity: 0;
+    padding: 0.5rem;
+    border: 1px solid var(--border-medium);
+    border-radius: 20px;
+    background: var(--surface-elevated);
+    color: var(--text-primary);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
 }
 
-.mobile-search-overlay {
+.desktop-search.active .search-input-desktop {
+    width: 280px;
+    opacity: 1;
+    padding-left: 1rem;
+    padding-right: 2.5rem;
+    pointer-events: auto;
+    box-shadow: var(--shadow-sm);
+}
+
+.desktop-search.active .icon-btn {
+    position: absolute;
+    right: 0;
+    z-index: 2;
+    color: var(--primary-black); /* Icon always dark inside white input */
+}
+
+
+/* =========================================
+   2. FLOATING DESKTOP PILL (The Center Nav)
+   ========================================= */
+.desktop-nav-pill-container {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: var(--mobile-search-bg);
-    z-index: 1009;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    pointer-events: none;
-    display: flex;
-    justify-content: center;
-    padding: 0 1rem;
-    box-sizing: border-box;
-}
-
-.mobile-search-overlay.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.mobile-search-panel {
     width: 100%;
-    max-width: 500px;
-    margin-top: calc(var(--navbar-height) + 1rem);
-    padding: 1rem;
-    height: min-content;
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: var(--shadow-md);
+    height: var(--nav-height);
     display: flex;
-    gap: 0.75rem;
-    align-items: center;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
-    pointer-events: auto;
-}
-
-.mobile-search-overlay.active .mobile-search-panel {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.mobile-search-input {
-    flex-grow: 1;
-    border: 1px solid var(--border-medium);
-    background: var(--surface-elevated);
-    padding: 0.75rem 1rem;
-    border-radius: 8px;
-    font-size: 1rem;
-    color: var(--secondary-black);
-}
-
-.mobile-search-input:focus {
-    outline: none;
-    border-color: var(--primary-black);
-    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
-}
-
-.mobile-search-submit-btn {
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
     justify-content: center;
-    width: 46px;
-    height: 46px;
-    background: var(--primary-black);
-    color: var(--text-inverse);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
+    align-items: center;
+    z-index: 1001;
+    pointer-events: none;
+
+    /* --- Default State (Pill is White/Elevated) --- */
+    --nav-pill-bg: var(--surface-elevated);
+    --nav-pill-text: var(--text-secondary);
+    --nav-pill-active-bg: var(--primary-black);
+    --nav-pill-active-text: var(--text-inverse);
+    --nav-pill-shadow: 0 4px 15px rgba(0, 0, 0, 0.09);
+    --nav-pill-hover-bg: var(--surface-hover);
+    --nav-pill-hover-text: var(--primary-black);
 }
 
-.mobile-search-submit-btn:hover {
-    background: var(--secondary-black);
+.desktop-nav-pill-container.scrolled {
+    /* --- Scrolled State (Pill is Dark) --- */
+    --nav-pill-bg: var(--primary-black);
+    --nav-pill-text: var(--text-inverse);
+    --nav-pill-active-bg: var(--text-inverse);
+    --nav-pill-active-text: var(--primary-black);
+    --nav-pill-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+    --nav-pill-hover-bg: rgba(255, 255, 255, 0.15);
+    --nav-pill-hover-text: var(--text-inverse);
 }
 
-@media (max-width: 768px) {
-    .navbar {
-        padding: 0 1rem;
-        position: absolute;
-    }
-    .mobile-menu {
-        width: 280px;
-        right: -280px;
-    }
-    .mobile-menu.active {
-        right: 0;
+.nav-pill {
+    pointer-events: auto;
+    background-color: var(--nav-pill-bg);
+    padding: 6px;
+    border-radius: 50px;
+    box-shadow: var(--nav-pill-shadow);
+    display: flex;
+    gap: 50px;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pill-link {
+    text-decoration: none;
+    color: var(--nav-pill-text);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 7px 17px;
+    border-radius: 40px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+}
+
+.pill-link:hover {
+    background-color: var(--nav-pill-hover-bg);
+    color: var(--nav-pill-hover-text);
+}
+
+.pill-link.active {
+    background-color: var(--nav-pill-active-bg);
+    color: var(--nav-pill-active-text);
+    box-shadow: var(--shadow-sm);
+}
+
+/* =========================================
+   3. RESPONSIVE UTILITIES (UPDATED)
+   ========================================= */
+
+/* Hide Desktop Navbar on screens 767px and below (Mobile) */
+@media (max-width: 767px) {
+    .desktop-navbar-wrapper,
+    .navbar,
+    .desktop-nav-pill-container {
+        display: none !important;
     }
 }

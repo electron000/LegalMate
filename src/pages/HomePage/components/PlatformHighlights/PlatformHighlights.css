@@ -1,4 +1,10 @@
+/* CombinedSections.css */
+
 .combined-sections-wrapper {
+    /* Local variable for glass effect to match TSPage style */
+    --glass-bg: rgba(255, 255, 255, 0.8);
+    --border-hover-color: var(--gray-400);
+
     position: relative;
     width: 100%;
     max-width: 1200px;
@@ -48,7 +54,8 @@
 .feature-list-item:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
-    border-color: var(--border-hover);
+    /* Updated to use gray-400 or border-medium */
+    border-color: var(--border-hover-color);
 }
 
 .feature-list-item:nth-child(odd) { justify-self: start; }
@@ -59,8 +66,8 @@
     display: flex; align-items: center; justify-content: center;
     border-radius: clamp(0.375rem, 1vw, 0.5rem); 
     
-    /* Variables applied */
-    background: var(--gray-900);
+    /* Updated to Brand Black */
+    background: var(--primary-black);
     color: var(--text-inverse); 
     
     flex-shrink: 0;
@@ -74,32 +81,38 @@
     margin: 0 0 clamp(0.2rem, 0.5vw, 0.25rem) 0;
     font-size: clamp(1rem, 2vw, 1.2rem);
     font-weight: 700; line-height: 1.3;
-    color: var(--gray-900);
+    /* Updated to Text Primary */
+    color: var(--text-primary);
 }
 
 .feature-text-content p {
     margin: 0; font-size: clamp(0.7rem, 1.8vw, 0.8rem);
     line-height: 1.5; 
-    color: var(--gray-700);
+    /* Updated to Text Secondary */
+    color: var(--text-secondary);
 }
+
 .ts-go-to-icon {
     width: clamp(28px, 6vw, 36px); 
     height: clamp(28px, 6vw, 36px);
-    fill: var(--gray-800);
+    /* Updated to Brand Black */
+    fill: var(--primary-black);
     flex-shrink: 0;
     display: block;
     transition: transform 0.3s ease, fill 0.2s ease;
 }
 
 .feature-list-item:hover .ts-go-to-icon {
-    fill: var(--gray-700);
+    /* Slightly lighter on hover or kept black */
+    fill: var(--primary-black-hover);
     transform: scale(1.1);
 }
 
 
 .feature-list-item:hover .feature-icon-wrapper {
-    background: var(--gray-700); 
-    color: var(--white);
+    /* Updated to Hover Black */
+    background: var(--primary-black-hover); 
+    color: var(--text-inverse);
 }
 
 @media (max-width: 960px) {

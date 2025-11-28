@@ -1,0 +1,174 @@
+/* MobileNavbar.css */
+
+:root {
+    --mn-height: 60px;
+    --mn-bg: #ffffff;
+    --mn-text: #1a1a1a;
+    --mn-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    --mn-radius: 999px;
+    --popup-width: 200px;
+}
+
+/* =========================================
+   1. The Floating Pill Container
+   ========================================= */
+.mobile-nav-pill {
+    position: fixed;
+    top: 1rem;
+    left: 1rem;
+    right: 1rem;
+    height: var(--mn-height);
+    background: var(--mn-bg);
+    border-radius: 10px;
+    box-shadow: var(--mn-shadow);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1rem 0 1rem;
+    z-index: 2000; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.mobile-nav-pill.scrolled {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Brand --- */
+.mobile-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--mn-text);
+}
+
+.mobile-logo-img {
+    filter: invert(1);
+    height: 40px;
+    width: auto;
+}
+
+.mobile-logo-text {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--mn-text);
+}
+
+/* --- Right Actions Group --- */
+.mobile-actions-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn-contact-pill {
+    background-color: #111111;
+    color: #ffffff;
+    border: none;
+    border-radius: 10px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.2s ease, opacity 0.2s;
+}
+
+.btn-contact-pill:active {
+    transform: scale(0.95);
+    opacity: 0.9;
+}
+
+.btn-menu-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: none;
+    background-color: #f3f4f6;
+    color: #111;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-menu-circle.active {
+    background-color: #e5e7eb;
+    transform: rotate(90deg); /* Nice rotation effect for X */
+}
+
+/* =========================================
+   2. Pop-up Menu (Floating Card)
+   ========================================= */
+.mobile-popup-menu {
+    position: fixed;
+    top: calc(1rem + var(--mn-height) + 0.5rem); /* Just below the navbar */
+    right: 1.5rem; /* Aligned with the menu button area */
+    width: var(--popup-width);
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    padding: 0.5rem;
+    z-index: 1999;
+    
+    /* Animation: Scale & Fade */
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(0.95) translateY(-10px);
+    transform-origin: top right;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mobile-popup-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1) translateY(0);
+}
+
+/* --- Links List --- */
+.menu-links-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-link-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.menu-link-item:hover {
+    background-color: #f8f9fa;
+}
+
+.link-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #111;
+}
+
+.link-arrow {
+    color: #ccc;
+    transition: transform 0.2s;
+}
+
+.menu-link-item:hover .link-arrow {
+    color: #111;
+    transform: translateX(4px);
+}
+
+/* =========================================
+   3. Visibility Control (Up to 767px)
+   ========================================= */
+@media (min-width: 768px) {
+    .mobile-nav-pill,
+    .mobile-popup-menu {
+        display: none !important;
+    }
+}

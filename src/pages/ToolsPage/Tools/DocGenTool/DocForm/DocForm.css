@@ -1,684 +1,342 @@
+/* src/pages/DocForm/DocForm.css */
+
 /* =================================== */
 /* DOCUMENT FORM TOOL STYLES           */
 /* =================================== */
 
 .tf-tool-form-page {
-  position: relative;
-  width: 100%;
-  min-height: 100vh;
-  background: var(--background); 
-  color: var(--text-primary);
+  width: 100%; min-height: 100vh;
+  background: var(--background); color: var(--text-primary);
   padding-top: 1rem;
 }
 
+/* --- SHARED UTILITIES --- */
+.tf-flex-center { display: flex; align-items: center; justify-content: center; }
+.tf-flex-between { display: flex; align-items: center; justify-content: space-between; }
+.tf-spin { animation: spin 1s linear infinite; display: inline-block; }
+
+/* --- LAYOUT STRUCTURE --- */
 .tf-layout-container {
-  display: flex;
-  width: 100%;
-  background: var(--background);
-  border-radius: 1.5rem;
+  display: flex; width: 100%;
+  background: var(--background); border-radius: var(--radius-lg);
 }
 
-/* === LOADING SPINNER === */
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
+.tf-left-column, .tf-right-column { display: flex; flex-direction: column; }
 
-.tf-spin {
-  animation: spin 1s linear infinite;
-  display: inline-block;
-}
-
-/* === LEFT SIDEBAR / NAVIGATION === */
 .tf-left-column {
-  flex: 0 0 320px;
-  padding: 2rem;
+  flex: 0 0 320px; padding: 2rem;
   border-right: 1px solid var(--border-light);
-  display: flex;
-  flex-direction: column;
-  background: var(--background);
 }
 
-.tf-header {
-  margin-bottom: 0.5rem;
-}
+.tf-right-column { flex: 1; min-width: 0; height: 100%; }
+.tf-content-container { padding: 2rem; display: flex; flex-direction: column; height: 100%; }
 
-.tf-title {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
-}
+/* --- TYPOGRAPHY --- */
+.tf-title { font-size: 2rem; font-weight: 700; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+.tf-subtitle { font-size: 0.95rem; color: var(--text-secondary); line-height: 1.5; }
+.tf-form-title { font-size: 1.5rem; font-weight: 700; margin: 0; }
 
-.tf-subtitle {
-  font-size: 0.95rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-/* SECTION TABS (NAVIGATION) */
-.tf-tab-navigation {
-  margin-top: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
+/* --- NAVIGATION TABS --- */
+.tf-tab-navigation { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.5rem; }
 
 .tf-tab-btn {
-  width: 100%;
-  padding: 0.85rem 1rem;
-  border-radius: 0.75rem;
-  background: transparent;
-  border: none;
-  color: var(--text-secondary);
-  font-weight: 600;
-  font-size: 0.95rem;
-  text-align: left;
-  cursor: pointer;
+  width: 100%; padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  background: transparent; border: none;
+  color: var(--text-secondary); font-weight: 600; font-size: 0.95rem;
+  text-align: left; cursor: pointer;
+  display: flex; align-items: center; gap: 0.75rem;
   transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
 }
+.tf-tab-btn:hover:not(:disabled) { background: var(--surface-elevated); color: var(--text-primary); }
+.tf-tab-btn.tf-active { background: var(--primary-grey-dim); color: var(--primary-grey); font-weight: 700; }
+.tf-tab-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.tf-tab-btn:hover:not(:disabled) {
-  background: var(--surface-elevated);
-  color: var(--text-primary);
-}
-
-.tf-tab-btn.tf-active {
-  background: var(--info-bg);
-  color: var(--primary-gold);
-  font-weight: 700;
-}
-
-.tf-tab-btn:disabled {
-  color: var(--text-secondary);
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* === MAIN CONTENT AREA === */
-.tf-right-column {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-.tf-content-container {
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* === STEPPER === */
-.tf-stepper {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  margin-bottom: 1.5rem;
-  padding: 0 1rem;
-  box-sizing: border-box;
-}
-
-.tf-step {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--text-secondary);
-  font-weight: 500;
-}
-
+/* --- STEPPER --- */
+.tf-stepper { display: flex; align-items: center; width: 100%; margin-bottom: 1.5rem; padding: 0 1rem; box-sizing: border-box; }
+.tf-step { display: flex; align-items: center; gap: 0.75rem; color: var(--text-secondary); font-weight: 500; }
 .tf-step-number {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface-elevated);
-  border: 1px solid var(--border-medium);
-  font-weight: 600;
-  transition: all 0.3s ease;
-  flex-shrink: 0;
+  width: 2rem; height: 2rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface-elevated); border: 1px solid var(--border-medium);
+  font-weight: 600; flex-shrink: 0; transition: all 0.3s ease;
 }
+.tf-step-divider { flex: 1; height: 2px; background: var(--border-medium); margin: 0 1.5rem; }
 
-.tf-step-label {
-  font-size: 1rem;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-}
+.tf-step.tf-active .tf-step-number { background: var(--primary-black); color: #fff; border-color: var(--primary-black); }
+.tf-step.tf-active .tf-step-label { color: var(--text-primary); font-weight: 600; }
 
-.tf-step-divider {
-  flex: 1;
-  height: 2px;
-  background: var(--border-medium);
-  margin: 0 1.5rem;
-}
-
-.tf-step.tf-active .tf-step-number {
-  background: var(--primary-black);
-  color: var(--text-inverse);
-  border-color: var(--primary-black);
-}
-
-.tf-step.tf-active .tf-step-label {
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-/* === FORM HEADER & ACTIONS === */
+/* --- FORM HEADER & BUTTONS --- */
 .tf-form-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-light);
-  gap: 1rem;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding-bottom: 1rem; border-bottom: 1px solid var(--border-light);
+  gap: 1rem; flex-shrink: 0;
 }
 
-.tf-form-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0;
+/* Shared Button Styles */
+.tf-nav-btn, .tf-btn-add, .tf-icon-btn, .tf-remove-btn {
+  cursor: pointer; transition: all 0.2s; border: 1px solid transparent;
 }
 
-.tf-header-actions {
-    display: flex;
-    align-items: center;
-}
-
-/* Action Buttons (Generate/Regenerate) */
 .tf-nav-btn {
-  background: var(--surface-elevated);
-  color: var(--text-primary);
-  padding: 0.6rem 1.25rem;
-  border-radius: 1000px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  transition: all 0.2s;
-  border: 1px solid var(--border-medium);
-  font-size: 0.95rem;
+  background: var(--surface-elevated); color: var(--text-primary);
+  padding: 0.6rem 1.25rem; border-radius: 1000px;
+  font-weight: 600; font-size: 0.95rem;
+  display: flex; align-items: center; gap: 0.75rem;
+  border-color: var(--border-medium);
 }
+.tf-nav-btn:hover:not(:disabled) { background: var(--primary-grey); color: #fff; border-color: var(--primary-grey); }
+.tf-nav-btn.tf-generate { background-color: var(--primary-black); color: #fff; border-color: var(--primary-black); }
+.tf-nav-btn.tf-generate:hover:not(:disabled) { background-color: var(--text-primary); }
+.tf-nav-btn:disabled { opacity: 0.7; cursor: not-allowed; }
 
-.tf-nav-btn:hover:not(:disabled) {
-  background: var(--primary-gold);
-  color: var(--text-inverse);
-  border-color: var(--primary-gold);
+.tf-icon-btn {
+  width: 36px; height: 36px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--surface); border-color: var(--border-medium); color: var(--text-secondary);
 }
+.tf-icon-btn:hover { background: var(--error-bg); color: var(--error-text); border-color: var(--error-bg); }
+.tf-icon-btn.tf-download-btn { background: var(--primary-black); color: #fff; border-color: var(--primary-black); }
+.tf-icon-btn.tf-download-btn:hover { opacity: 0.9; background: var(--primary-black); color: #fff; transform: translateY(-1px); }
 
-.tf-nav-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  background: var(--surface-elevated);
-  color: var(--text-secondary);
-}
-
-.tf-nav-btn.tf-generate {
-  background-color: var(--primary-black);
-  color: var(--text-inverse);
-  border-color: var(--primary-black);
-}
-
-.tf-nav-btn.tf-generate:hover:not(:disabled) {
-  background-color: var(--text-primary);
-  box-shadow: var(--shadow-sm);
-}
-
-/* === SPLIT VIEW (FORM | PREVIEW) === */
-.tf-form-content {
-  flex: 1;
-  overflow: hidden; 
-  margin-top: 1.5rem;
-  position: relative;
-  display: flex;
-  gap: 1.5rem;
-}
-
-/* FORM SCROLLER */
-.tf-form-scroller {
-  flex: 2;
-  overflow-y: auto;
-  padding-right: 0.5rem;
-}
+/* --- FORM SECTIONS & INPUTS --- */
+.tf-form-content { flex: 1; overflow: hidden; margin-top: 1.5rem; display: flex; gap: 1.5rem; position: relative; }
+.tf-form-scroller { flex: 2; overflow-y: auto; padding-right: 0.5rem; }
 
 .tf-section {
-  width: 100%;
-  margin-bottom: 2rem;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: 0.75rem;
-  padding: 1.5rem;
-  box-sizing: border-box;
+  width: 100%; margin-bottom: 2rem;
+  background: var(--surface); border: 1px solid var(--border-light);
+  border-radius: var(--radius-md); padding: 1.5rem; box-sizing: border-box;
 }
+.tf-section-title h4 { margin: 0 0 1.5rem 0; font-size: 1.3rem; font-weight: 600; }
 
-.tf-section-title {
-  margin-bottom: 1.5rem;
+.tf-form-group { margin-bottom: 1rem; display: flex; flex-direction: column; }
+.tf-form-group label { margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; }
+.tf-form-group label.tf-required::after { content: ' *'; color: var(--error-text); }
+
+/* Unified Input Styles */
+.tf-form-input {
+  width: 100%; padding: 0.75rem 1rem;
+  border: 1px solid var(--border-medium); border-radius: 0.7rem;
+  background: var(--surface-elevated); color: var(--text-primary);
+  font-size: 0.95rem; transition: all 0.2s ease;
+  box-sizing: border-box; appearance: none;
 }
+.tf-form-input:focus { outline: none; border-color: var(--primary-grey); box-shadow: 0 0 0 2px var(--focus-ring); }
+textarea.tf-form-input { min-height: 100px; resize: vertical; }
 
-.tf-section-title h4 {
-  margin: 0;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--text-primary);
-}
-
-/* === INPUT STYLES === */
-.tf-form-group {
-  margin-bottom: 1rem;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-}
-
-.tf-form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-}
-
-.tf-form-group label.tf-required::after {
-  content: ' *';
-  color: var(--error);
-}
-
-.tf-form-input,
-textarea.tf-form-input,
-select.tf-form-input {
-  width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid var(--border-medium);
-  border-radius: 0.7rem;
-  background: var(--surface-elevated);
-  color: var(--text-primary);
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
-  box-sizing: border-box;
-  appearance: none; /* Helps standardise select dropdowns */
-}
-
-/* Custom Arrow for Select Inputs */
 select.tf-form-input {
   background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1em;
-  padding-right: 2.5rem;
+  background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em; padding-right: 2.5rem;
 }
 
-.tf-form-input:focus,
-textarea.tf-form-input:focus,
-select.tf-form-input:focus {
-  outline: none;
-  border-color: var(--primary-gold);
-  box-shadow: 0 0 0 2px var(--focus-ring);
-}
+/* Form Grid System */
+.tf-form-row { display: grid; gap: 1.25rem; grid-template-columns: 1fr 1fr; }
+.tf-form-row[data-span="third"] { grid-template-columns: 1fr 1fr 1fr; }
+.tf-form-group[data-span="full"] { grid-column: 1 / -1; }
 
-textarea.tf-form-input {
-  min-height: 100px;
-  resize: vertical;
-}
-
-/* GRID LAYOUTS */
-.tf-form-row {
-  display: grid;
-  gap: 1.25rem;
-  grid-template-columns: 1fr 1fr;
-}
-
-.tf-form-group[data-span="full"] {
-  grid-column: 1 / -1;
-}
-
-.tf-form-row[data-span="third"] {
-  grid-template-columns: 1fr 1fr 1fr;
-}
-
-/* === DYNAMIC LISTS === */
+/* --- DYNAMIC LISTS --- */
 .tf-dynamic-list-item {
-    position: relative;
-    padding: 1.5rem;
-    border: 1px solid var(--border-medium);
-    border-radius: 0.75rem;
-    margin-bottom: 1rem;
-    background: var(--surface-elevated);
+  position: relative; padding: 1.5rem; margin-bottom: 1rem;
+  border: 1px solid var(--border-medium); border-radius: var(--radius-md);
+  background: var(--surface-elevated);
 }
-
-.tf-dynamic-list-fields {
-    display: grid;
-    gap: 1rem;
-}
+.tf-dynamic-list-fields { display: grid; gap: 1rem; }
 
 .tf-remove-btn {
-    position: absolute;
-    top: 0.75rem;
-    right: 0.75rem;
-    background: transparent;
-    border: none;
-    color: var(--error);
-    cursor: pointer;
-    padding: 0.25rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    transition: background 0.2s;
+  position: absolute; top: 0.75rem; right: 0.75rem;
+  color: var(--error-text); padding: 0.25rem; border-radius: 50%;
 }
-
-.tf-remove-btn:hover {
-    background: rgba(255, 0, 0, 0.1);
-}
+.tf-remove-btn:hover { background: var(--error-bg); }
 
 .tf-btn-add {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
-    background: transparent;
-    border: 1px dashed var(--border-medium);
-    border-radius: 0.5rem;
-    color: var(--primary-gold);
-    font-weight: 600;
-    cursor: pointer;
-    width: 100%;
-    justify-content: center;
-    transition: all 0.2s;
+  width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  padding: 0.6rem 1rem; background: transparent;
+  border: 1px dashed var(--border-medium); border-radius: 0.5rem;
+  color: var(--primary-grey); font-weight: 600;
 }
+.tf-btn-add:hover { background: var(--surface-elevated); border-color: var(--primary-grey); }
 
-.tf-btn-add:hover {
-    background: var(--surface-elevated);
-    border-color: var(--primary-gold);
-}
-
-
-/* === PREVIEW COLUMN & HEADER === */
+/* --- PREVIEW SECTION --- */
 .tf-preview-column {
-  flex: 3;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  background: var(--surface);
-  border: 1px solid var(--border-light);
-  border-radius: 1rem;
-  overflow: hidden;
+  flex: 3; display: flex; flex-direction: column;
+  background: var(--surface); border: 1px solid var(--border-light);
+  border-radius: 1rem; overflow: hidden;
 }
-
 .tf-preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.75rem 1.5rem;
-  border-bottom: 1px solid var(--border-medium);
-  background: var(--surface-elevated);
-  flex-shrink: 0;
-  min-height: 60px;
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.75rem 1.5rem; border-bottom: 1px solid var(--border-medium);
+  background: var(--surface-elevated); min-height: 60px;
 }
-
-.tf-preview-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-}
-
-.tf-preview-title svg {
-    color: var(--text-secondary);
-}
-
-.tf-preview-actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
-/* Circular Buttons (Close/X) */
-.tf-icon-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  border: 1px solid var(--border-medium);
-  background: var(--surface);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tf-icon-btn:hover {
-  background: #d3d3d3;
-  color: #ff0000;
-}
-
-/* Download Button (Primary Black) */
-.tf-icon-btn.tf-download-btn {
-  background: var(--primary-black);
-  color: var(--text-inverse);
-  border-color: var(--primary-black);
-}
-
-.tf-icon-btn.tf-download-btn:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
+.tf-preview-title { display: flex; align-items: center; gap: 0.75rem; font-size: 1rem; font-weight: 600; margin: 0; }
 .tf-preview-content {
-  background-color: var(--surface);
-  padding: 2rem;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-  flex: 1;
-  overflow-y: auto;
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--text-secondary);
+  padding: 2rem; white-space: pre-wrap; word-wrap: break-word;
+  flex: 1; overflow-y: auto; font-size: 0.9rem; line-height: 1.6; color: var(--text-secondary);
 }
-
 .tf-error-message {
-    padding: 1rem;
-    background: rgba(255, 0, 0, 0.1);
-    color: var(--error);
-    border-radius: 0.5rem;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+  padding: 1rem; background: var(--error-bg); color: var(--error-text);
+  border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;
 }
 
-.tf-nav-controls {
-    display: flex;
-    gap: 1rem;
-}
-
+/* --- RESPONSIVE DESIGN --- */
 /* =================================== */
-/* RESPONSIVE BREAKPOINTS              */
+/* MOBILE RESPONSIVE DESIGN (<767px)   */
 /* =================================== */
 
-/* === TABLET (768px to 1024px) === */
-@media (min-width: 768px) and (max-width: 1024px) {
-  .tf-layout-container {
-    flex-direction: column;
+@media (max-width: 767px) {
+  /* --- PAGE & LAYOUT RESET --- */
+  .tf-tool-form-page {
+    padding-top: 0;
     height: auto;
     min-height: 100vh;
   }
 
-  .tf-left-column {
-    flex: 0 0 auto;
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-light);
-    padding: 1.5rem 2rem;
-    box-sizing: border-box;
+  .tf-layout-container {
+    flex-direction: column; /* Stack sidebar and content */
+    height: auto;
+    border-radius: 0;
+    overflow: visible; /* Let the page scroll naturally */
   }
 
-  /* Section Tabs for Tablet (Horizontal Scroll) */
+  /* --- LEFT COLUMN (NAVIGATION) --- */
+  .tf-left-column {
+    flex: 0 0 auto; /* Don't stretch, just take needed space */
+    width: 100%;
+    padding: 1rem 1rem 0 1rem; /* Reduce padding */
+    border-right: none;
+    border-bottom: 1px solid var(--border-light);
+  }
+
+  .tf-title {
+    font-size: 1.5rem; /* Smaller title */
+  }
+
+  /* Horizontal Scrollable Tabs */
   .tf-tab-navigation {
-    display: flex;
     flex-direction: row;
-    overflow-x: auto;
-    padding-bottom: 0.5rem;
-    margin-top: 1.5rem;
+    overflow-x: auto; /* Allow horizontal scrolling */
+    white-space: nowrap;
+    margin-top: 1rem;
+    padding-bottom: 1rem;
+    gap: 0.75rem;
+    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
+    scrollbar-width: none; /* Hide scrollbar Firefox */
+  }
+  .tf-tab-navigation::-webkit-scrollbar { display: none; /* Hide scrollbar Chrome/Safari */ }
+
+  .tf-tab-btn {
+    width: auto;
+    flex-shrink: 0;
+    padding: 0.6rem 1rem;
+    border: 1px solid var(--border-medium);
+    background: var(--surface);
+  }
+  
+  .tf-tab-btn.tf-active {
+    background: var(--primary-black);
+    color: #fff;
+    border-color: var(--primary-black);
+  }
+
+  /* --- RIGHT COLUMN (CONTENT) --- */
+  .tf-right-column {
+    flex: 1 1 auto;
+    height: auto;
+    width: 100%;
+  }
+
+  .tf-content-container {
+    padding: 1rem;
+    height: auto; /* Remove fixed height constraint */
+  }
+
+  /* --- STEPPER --- */
+  .tf-stepper {
+    margin-bottom: 1rem;
+    padding: 0;
+    justify-content: space-between;
+  }
+  
+  .tf-step-label {
+    display: none; /* Hide text labels on mobile */
+  }
+  
+  .tf-step-divider {
+    margin: 0 0.5rem; /* Shrink divider lines */
+  }
+
+  /* --- FORM HEADER & ACTIONS --- */
+  .tf-form-header {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
   }
 
-  .tf-tab-btn {
-    width: auto;
-    white-space: nowrap;
-    border: 1px solid var(--border-light);
-    background: var(--surface-elevated);
-    flex-shrink: 0;
+  .tf-form-title {
+    font-size: 1.25rem;
+    width: 100%;
   }
 
-  .tf-tab-btn.tf-active {
-    background: var(--primary-black);
-    color: var(--text-inverse);
-    border-color: var(--primary-black);
+  /* Action buttons container */
+  .tf-header-actions {
+    display: flex;
+    width: 100%;
+    gap: 0.75rem;
+  }
+  
+  /* Make buttons full width or distribute space */
+  .tf-nav-btn {
+    flex: 1;
+    justify-content: center;
+    padding: 0.75rem;
   }
 
-  .tf-content-container {
-    padding: 1.5rem;
-  }
-
+  /* --- MAIN FORM CONTENT --- */
+  /* Critical: Remove internal scrolling, let the window scroll */
   .tf-form-content {
     flex-direction: column;
-    overflow: visible; 
+    display: block; 
+    margin-top: 1rem;
+    height: auto;
+    overflow: visible;
   }
 
   .tf-form-scroller {
-    width: 100%;
-    flex: 0 0 auto;
+    overflow: visible;
     padding-right: 0;
+    margin-bottom: 2rem;
   }
 
-  .tf-preview-column {
-    width: 100%;
-    flex: 0 0 auto;
-    height: 500px; 
-    margin-top: 2rem;
-  }
-}
-
-/* === MOBILE (Max 767px) === */
-@media (max-width: 767px) {
-  .tf-tool-form-page {
-    padding-top: 0;
+  /* --- INPUTS & GRID --- */
+  .tf-section {
+    padding: 1rem; /* Less padding inside cards */
   }
 
-  .tf-layout-container {
-    flex-direction: column;
-    border-radius: 0;
-  }
-
-  /* Header Section */
-  .tf-left-column {
-    flex: 0 0 auto;
-    width: 100%;
-    padding: 1.5rem;
-    border-right: none;
-    border-bottom: 1px solid var(--border-light);
-    box-sizing: border-box;
-  }
-
-  /* Mobile Section Tabs - Stacked Buttons */
-  .tf-tab-navigation {
-    display: flex;
-    flex-direction: column;
-    margin-top: 1.5rem;
-    gap: 0.75rem;
-  }
-
-  .tf-tab-btn {
-    width: 100%;
-    text-align: left;
-    background: var(--surface);
-    border: 1px solid var(--border-medium);
-    padding: 1rem;
-    justify-content: flex-start;
-  }
-
-  .tf-tab-btn.tf-active {
-    background: var(--primary-black);
-    color: var(--text-inverse);
-    border-color: var(--primary-black);
-  }
-
-  .tf-content-container {
-    padding: 1rem;
-  }
-
-  /* Stepper */
-  .tf-stepper {
-    padding: 0;
-    margin-bottom: 1rem;
-    justify-content: center;
-  }
-
-  .tf-step-label {
-    display: none;
-  }
-
-  /* Header Actions */
-  .tf-form-header {
-    flex-direction: row; 
-    align-items: center;
-    gap: 0.5rem; 
-  }
-
-  .tf-form-title {
-      font-size: 1.25rem; 
-      flex: 1; 
-  }
-
-  .tf-nav-controls {
-    display: flex; 
-    width: auto;
-  }
-  
-  .tf-nav-btn {
-    width: auto;
-    padding: 0.6rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  /* Form Content */
-  .tf-form-content {
-    flex-direction: column;
-    margin-top: 1rem;
-  }
-
-  .tf-form-row {
-    grid-template-columns: 1fr !important;
-  }
-
+  /* Force all grids to single column */
+  .tf-form-row, 
   .tf-form-row[data-span="third"] {
     grid-template-columns: 1fr !important;
+    gap: 1rem;
   }
 
-  /* Preview Section Mobile */
+  /* Increase touch targets for inputs */
+  .tf-form-input, 
+  select.tf-form-input {
+    padding: 0.85rem 1rem; /* Taller inputs for fingers */
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+  }
+
+  /* --- PREVIEW SECTION --- */
   .tf-preview-column {
-    height: 400px;
-    margin-top: 1.5rem;
+    width: 100%;
+    margin-top: 2rem;
+    height: auto;
+    max-height: 500px; /* Limit height but allow internal scroll */
+    flex: none;
   }
-
-  .tf-preview-header {
-     padding: 1rem;
-  }
-
-  .tf-preview-title {
-      font-size: 0.9rem;
+  
+  .tf-preview-content {
+    padding: 1rem;
+    max-height: 400px;
   }
 }

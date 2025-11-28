@@ -6,7 +6,7 @@ import { Route, Routes } from 'react-router-dom';
 // Core Pages
 import Home from './pages/HomePage/HomePage';
 import AboutPage from './pages/AboutPage/AboutPage';
-import ContactPage from './pages/ContactPage/ContactPage';
+import ContactModal from './pages/ContactModal/ContactModal';
 import PricingPage from './pages/PricingPage/PricingPage';
 
 // Services
@@ -31,7 +31,7 @@ const AppRoutes = () => {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/pricing" element={<PricingPage />} />
-      <Route path="/contact" element={<ContactPage />} />
+      <Route path="/contact" element={<ContactModal />} />
 
       {/* Specific Services */}
       <Route path="/legalmate-ai" element={<LegalMate />} />

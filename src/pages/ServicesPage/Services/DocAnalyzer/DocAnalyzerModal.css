@@ -1,69 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700;800&display=swap');
-@import "tailwindcss";
+/* DocAnalyzerModal.css */
 
-:root {
-  /* --- A. CORE PALETTE (Monochrome) --- */
-  --primary-black: #1e1f20;
-  --primary-black-light: #444444;
-  --primary-black-dark: #1e1f20;
-  --primary-gold: #777777;
-  --secondary-black: #333333;
-  --light-black: #F5F5F5;
-
-  /* Grays */
-  --gray-50: #FAFAFA;
-  --gray-100: #F5F5F5;
-  --gray-200: #E5E5E5;
-  --gray-300: #D4D4D4;
-  --gray-400: #A3A3A3;
-  --gray-500: #737373;
-  --gray-600: #525252;
-  --gray-700: #404040;
-  --gray-800: #262626;
-  --gray-900: #171717;
-
-  /* Semantic Colors */
-  --success-bg: rgba(0, 0, 0, 0.05);
-  --success-text: #171717;
-  --error-bg: #404040;
-  --error-text: #FFFFFF;
-  --info-bg: rgba(0, 0, 0, 0.1);
-  --info-text: #000000;
-
-  /* Background System */
-  --background: #ffffff;
-  --surface: #FAFAFA;
-  --surface-elevated: #FFFFFF;
-  --glass-bg: rgba(255, 255, 255, 0.5);
-
-  /* Text System */
-  --text-primary: #000000;
-  --text-secondary: #555555;
-  --text-muted: #888888;
-  --text-inverse: #FFFFFF;
-
-  /* Border System */
-  --border-light: #E5E5E5;
-  --border-medium: #D4D4D4;
-  --border-strong: #A3A3A3;
-
-  /* Shadow System */
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-base: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-}
-
-/* --- MODAL SPECIFIC STYLES --- */
-
-/* Animation for the modal entrance */
+/* --- Animation --- */
 @keyframes modalFadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
 }
 
+/* --- Overlay --- */
 .dam-overlay {
-  background-color: rgba(0, 0, 0, 0.6); /* Slightly darker for focus */
+  background-color: rgba(0, 0, 0, 0.6); /* Standard dim overlay */
   backdrop-filter: blur(5px);
   position: fixed;
   inset: 0;
@@ -74,36 +19,42 @@
   padding: 1rem;
 }
 
+/* --- Content Modal --- */
 .dam-content {
   background-color: var(--surface-elevated);
   border: 1px solid var(--border-light);
   border-radius: 1.25rem;
   box-shadow: var(--shadow-lg);
+  
   width: 100%;
-  max-width: 800px; /* WIDER */
-  height: 90vh; /* LONGER/TALLER */
+  max-width: 800px;
+  height: 90vh;
+  
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
   animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  
   color: var(--text-primary);
   font-family: 'Outfit', sans-serif;
 }
 
-/* Close Button - Floating Fixed Position */
+/* --- Close Button (Floating) --- */
 .dam-close-btn-floating {
   position: absolute;
   top: 1.25rem;
   right: 1.25rem;
   z-index: 20;
+  
   background: rgba(255, 255, 255, 0.8);
   border: 1px solid var(--border-light);
   color: var(--text-muted);
+  
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 50%;
-  transition: all 0.2s;
+  transition: all var(--transition-speed) ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -112,26 +63,26 @@
 
 .dam-close-btn-floating:hover {
   background: var(--primary-black);
-  color: white;
+  color: var(--text-inverse);
   border-color: var(--primary-black);
   transform: rotate(90deg);
 }
 
-/* Main Scrollable Body */
+/* --- Main Scrollable Body --- */
 .dam-body {
-  padding: 3rem 2.5rem 1rem 2.5rem; /* More top padding for title space */
-  flex: 1; /* Takes up all available space */
+  padding: 3rem 2.5rem 1rem 2.5rem;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto; /* Enable vertical scroll */
+  overflow-y: auto;
   scroll-behavior: smooth;
 }
 
-/* Title that scrolls with content */
+/* --- Typography --- */
 .dam-scroll-title {
   font-size: 1.75rem;
   font-weight: 700;
-  color: var(--primary-black);
+  color: var(--text-primary);
   margin-bottom: 0.5rem;
   display: flex;
   align-items: center;
@@ -144,15 +95,15 @@
   font-size: 0.95rem;
 }
 
-/* Upload State */
+/* --- Upload Zone --- */
 .dam-dropzone {
   width: 100%;
   border: 2px dashed var(--border-medium);
   border-radius: 1rem;
   padding: 4rem 2rem;
   text-align: center;
-  transition: all 0.2s ease;
-  background-color: var(--gray-50);
+  transition: all var(--transition-speed) ease;
+  background-color: var(--surface); /* Replaces gray-50 */
   cursor: pointer;
   margin-top: 1rem;
   display: flex;
@@ -165,10 +116,10 @@
 
 .dam-dropzone:hover {
   border-color: var(--primary-black);
-  background-color: var(--gray-100);
+  background-color: var(--surface-hover);
 }
 
-/* Progress Bar */
+/* --- Progress Bar --- */
 .dam-progress-wrapper {
   flex: 1;
   display: flex;
@@ -188,7 +139,7 @@
   width: 100%;
   height: 6px;
   background-color: var(--gray-200);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   overflow: hidden;
   margin-top: 1.5rem;
 }
@@ -199,7 +150,7 @@
   transition: width 0.4s ease-out;
 }
 
-/* Summary View */
+/* --- Summary / Content View --- */
 .dam-summary-container {
   width: 100%;
   text-align: left;
@@ -212,8 +163,8 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: var(--gray-100);
-  border-radius: 2rem;
+  background: var(--surface);
+  border-radius: var(--radius-pill);
   border: 1px solid var(--border-light);
   margin-bottom: 1.5rem;
   font-size: 0.875rem;
@@ -225,34 +176,34 @@
   font-family: 'Inter', sans-serif;
   color: var(--text-secondary);
   line-height: 1.8;
-  font-size: 1.05rem; /* Slightly larger text for readability */
+  font-size: 1.05rem;
   white-space: pre-line;
 }
 
-/* Footer / Actions */
+/* --- Footer --- */
 .dam-footer {
   padding: 1rem 2rem;
-  /* background: transparent;  REQUESTED TRANSPARENT */
-  background: linear-gradient(to top, var(--surface-elevated) 80%, rgba(255,255,255,0)); /* Fade out effect */
+  /* Fades from solid white to transparent */
+  background: linear-gradient(to top, var(--surface-elevated) 80%, rgba(255,255,255,0)); 
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
   width: 100%;
-  position: relative; /* Stays at bottom */
+  position: relative;
   z-index: 10;
 }
 
-/* Buttons - Reduced Height */
+/* --- Buttons --- */
 .dam-btn-primary {
   background: var(--primary-black);
   color: var(--text-inverse);
-  padding: 0.5rem 1.25rem; /* Reduced padding */
+  padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   font-size: 0.9rem;
   font-weight: 500;
   border: none;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-speed) ease;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -260,7 +211,7 @@
 }
 
 .dam-btn-primary:hover:not(:disabled) {
-  background: var(--primary-black-light);
+  background: var(--primary-black-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-lg);
 }
@@ -274,22 +225,22 @@
 .dam-btn-secondary {
   background: transparent;
   color: var(--text-muted);
-  padding: 0.5rem 1.25rem; /* Reduced padding */
+  padding: 0.5rem 1.25rem;
   border-radius: 0.5rem;
   font-size: 0.9rem;
   font-weight: 500;
-  border: 1px solid transparent; /* No visible border initially */
+  border: 1px solid transparent;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all var(--transition-speed) ease;
 }
 
 .dam-btn-secondary:hover {
-  background: var(--gray-50);
-  color: var(--primary-black);
+  background: var(--surface-hover);
+  color: var(--text-primary);
   border-color: var(--border-light);
 }
 
-/* Spinner */
+/* --- Spinner --- */
 .dam-spinner {
   width: 16px;
   height: 16px;
@@ -313,7 +264,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* Scrollbar Styling */
+/* --- Scrollbar --- */
 .dam-body::-webkit-scrollbar {
   width: 6px;
 }
@@ -325,5 +276,5 @@
   border-radius: 20px;
 }
 .dam-body::-webkit-scrollbar-thumb:hover {
-    background-color: var(--gray-400);
+    background-color: var(--gray-500);
 }

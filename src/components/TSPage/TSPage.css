@@ -1,9 +1,17 @@
+/* TSPage.css */
+
 .ts-page {
+  /* Local Variables for TS Page Specifics */
+  --card-bg-glass: rgba(255, 255, 255, 0.8); 
+  --card-border-glass: var(--border-light);
+  --card-icon-bg: var(--primary-black); 
+  --pill-bg-secondary: var(--surface-hover); 
+
   display: flex;
   flex-direction: column;
   gap: 2rem;
   min-height: 100vh;
-  padding: 2rem 2rem;
+  padding: 2rem;
   margin: var(--navbar-height) auto 0;
   max-width: 1400px;
 }
@@ -16,12 +24,28 @@
   width: 100%;
 }
 
+/* === HEADER ELEMENTS === */
+.ts-title-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.ts-page-logo {
+  filter: invert(1);
+  height: 60px;
+  width: auto;
+  object-fit: contain;
+}
+
 .ts-page-title {
   font-size: clamp(2rem, 4vw, 2.5rem);
   font-weight: 700;
-  margin-bottom: 0.5rem;
   color: var(--text-primary);
   letter-spacing: -0.02em;
+  margin: 0; 
 }
 
 .ts-page-subtitle {
@@ -30,6 +54,7 @@
   line-height: 1.5;
 }
 
+/* === CONTENT & GRID === */
 .ts-content-section {
   flex: 1;
   width: 100%;
@@ -49,6 +74,7 @@
   margin-top: 3rem;
 }
 
+/* === CARD STYLES === */
 .ts-card {
   display: flex;
   align-items: center;
@@ -58,7 +84,7 @@
   background: var(--card-bg-glass);
   border: 1px solid var(--card-border-glass);
   backdrop-filter: blur(10px);
-  border-radius: 12px;
+  border-radius: var(--radius-lg, 12px);
   box-shadow: var(--shadow-base);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -67,7 +93,7 @@
 
 .ts-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+  box-shadow: var(--shadow-lg); 
   border-color: var(--gray-400);
 }
 
@@ -97,9 +123,10 @@
   font-size: 1.1rem;
   font-weight: 600;
   line-height: 1.3;
-  color: var(--gray-900);
+  color: var(--text-primary);
 }
 
+/* === PILLS & ACTION ICON === */
 .ts-skill-pills {
   display: flex;
   flex-wrap: wrap;
@@ -122,7 +149,7 @@
   flex-shrink: 0;
   margin-left: auto;
   transition: transform 0.3s ease, filter 0.3s ease;
-  fill: var(--gray-800);
+  fill: var(--primary-black);
   display: block;
 }
 
@@ -130,6 +157,7 @@
   transform: scale(1.1);
 }
 
+/* === RESPONSIVE === */
 @media (max-width: 980px) {
   .ts-page {
     padding-left: 1.5rem;
@@ -138,15 +166,8 @@
     gap: 1.5rem;
   }
   
-  .ts-page-subtitle {
-    display: none;
-  }
-
-  .ts-skill-pills {
-    display: none;
-  }
-  
-  .ts-card {
-    padding: 0.75rem;
-  }
+  .ts-page-logo { height: 36px; }
+  .ts-page-subtitle { display: none; }
+  .ts-skill-pills { display: none; }
+  .ts-card { padding: 0.75rem; }
 }

@@ -33,7 +33,6 @@ export const blogClient = axios.create({
 // 4. Doc Analyzer Client (Port 8003)
 export const docAnalyzerClient = axios.create({
   baseURL: DOC_ANALYZER_API_URL,
-  // Note: Content-Type is set dynamically for uploads
 });
 
 // Helper to standardize error handling across all clients
