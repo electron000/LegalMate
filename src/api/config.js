@@ -5,7 +5,7 @@ const isDev = import.meta.env.DEV;
 
 export const BLOG_API_URL = 
   import.meta.env.VITE_BLOG_API_URL || 
-  (isDev ? 'http://localhost:8000' : 'https://legalblog-backend.onrender.com'); 
+  (isDev ? 'https://legalblog-backend.onrender.com' : 'http://localhost:8000'); 
 
 export const CHATBOT_API_URL = 
 import.meta.env.VITE_CHATBOT_API_URL ||
