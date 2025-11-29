@@ -1,4 +1,4 @@
-import { chatbotClient } from '../config';
+import { chatbotClient, legalMateClient } from '../config';
 import { getSessionId } from './sessionmanager';
 
 /**
@@ -35,7 +35,7 @@ export const getChatStrategy = async (query) => {
  */
 export const askSimple = async (query) => {
   const sessionId = getSessionId();
-  const response = await chatbotClient.post('/chat/legal_assistant/simple', {
+  const response = await legalMateClient.post('/chat/legal_assistant/simple', {
     query,
     session_id: sessionId,
   });
