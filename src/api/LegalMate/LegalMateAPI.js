@@ -1,4 +1,4 @@
-import { chatbotClient, legalMateClient } from '../config';
+import { legalMateClient } from '../config';
 import { getSessionId } from './sessionmanager';
 
 /**
@@ -8,7 +8,7 @@ import { getSessionId } from './sessionmanager';
  */
 export const askAdaptive = async (query) => {
   const sessionId = getSessionId();
-  const response = await chatbotClient.post('/chat/legal_assistant', {
+  const response = await legalMateClient.post('/chat/legal_assistant', {
     query,
     session_id: sessionId,
   });
@@ -21,7 +21,7 @@ export const askAdaptive = async (query) => {
  */
 export const getChatStrategy = async (query) => {
   const sessionId = getSessionId();
-  const response = await chatbotClient.post('/chat/plan', {
+  const response = await legalMateClient.post('/chat/plan', {
     query,
     session_id: sessionId,
   });
@@ -48,7 +48,7 @@ export const askSimple = async (query) => {
  * @returns {Promise<object>} - The chat history response.
  */
 export const getHistory = async (sessionId) => {
-  const response = await chatbotClient.get(`/chat/history/${sessionId}`);
+  const response = await legalMateClient.get(`/chat/history/${sessionId}`);
   return response.data;
 };
 
@@ -58,7 +58,7 @@ export const getHistory = async (sessionId) => {
  * @returns {Promise<object>} - The confirmation response from the API.
  */
 export const deleteCurrentSession = async (sessionId) => {
-  const response = await chatbotClient.delete(`/chat/sessions/${sessionId}`);
+  const response = await legalMateClient.delete(`/chat/sessions/${sessionId}`);
   return response.data;
 };
 
@@ -68,7 +68,7 @@ export const deleteCurrentSession = async (sessionId) => {
  * @returns {Promise<object>} - The confirmation response from the API.
  */
 export const clearCurrentHistory = async (sessionId) => {
-  const response = await chatbotClient.delete(`/chat/history/${sessionId}`);
+  const response = await legalMateClient.delete(`/chat/history/${sessionId}`);
   return response.data;
 };
 
@@ -77,7 +77,7 @@ export const clearCurrentHistory = async (sessionId) => {
  * @returns {Promise<object>}
  */
 export const getAllSessions = async () => {
-  const response = await chatbotClient.get('/chat/sessions');
+  const response = await legalMateClient.get('/chat/sessions');
   return response.data;
 };
 
@@ -86,6 +86,6 @@ export const getAllSessions = async () => {
  * @returns {Promise<object>} - The confirmation response from the API.
  */
 export const clearAllHistories = async () => {
-  const response = await chatbotClient.delete('/chat/history/all');
+  const response = await legalMateClient.delete('/chat/history/all');
   return response.data;
 };
