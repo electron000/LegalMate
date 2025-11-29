@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { BookOpen } from 'lucide-react';
 import SharedChatLayout from '../shared/sharedChatLayout';
-
+import { fetchLegalResearchAnswer } from '../../../../api';
 const LegalResearch = () => {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -26,18 +26,30 @@ const LegalResearch = () => {
     });
 
     setIsLoading(true);
-    // Simulation Logic
-    setTimeout(() => {
-      const mockResponse = { 
-        role: 'ai', 
-        content: { 
-          type: 'structured', 
-          explanation: `**Research Simulation**\n\nI have received your query regarding *" ${text} "*.\n\nSince I am currently in **Static Mode**, I cannot search the live legal database. \n\n### What I would usually do:\n* Search Case Law databases.\n* Analyze relevant Statutes.\n* Summarize Precedents.\n\n_Please connect the API to get real legal research results._` 
-        } 
-      };
-      setMessages(prev => [...prev, mockResponse]);
-      setIsLoading(false);
-    }, 1500);
+    try {
+        const aiResponseText = await fetchLegalResearchAnswer(text); 
+        const aiMessage = { 
+            role: 'ai', 
+            content: { 
+                type: 'structured', 
+                explanation: aiResponseText 
+            } 
+        };
+        setMessages(prev => [...prev, aiMessage]);
+        
+    } catch (error) {
+        console.error("Legal Research API Error:", error);
+        const errorMessage = {
+            role: 'ai',
+            content: {
+                type: 'structured',
+                explanation: `**Error:** Failed to fetch legal research. Please check the server connection and API keys. Details: _${error.message}_`
+            }
+        };
+        setMessages(prev => [...prev, errorMessage]);
+    } finally {
+        setIsLoading(false);
+    }
   };
 
   const handleSendMessage = async (e) => {

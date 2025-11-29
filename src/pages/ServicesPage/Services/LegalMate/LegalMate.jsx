@@ -5,7 +5,7 @@ import { Scale, Globe, BookOpen, BrainCircuit, ArrowRight } from 'lucide-react';
 import SharedChatLayout from '../shared/sharedChatLayout';
 import { 
   askAdaptive,
-  getChatStrategy, // <--- IMPORTED NEW API
+  getChatStrategy,
   getHistory, 
   deleteCurrentSession, 
   clearAllHistories,
@@ -105,17 +105,12 @@ const LegalMate = () => {
     setIsLoading(true);
 
     try {
-      // 1. STEP A: Visual "Thinking" Feedback
-      // We create a temporary placeholder message ID
       const tempAiMsgId = Date.now();
       
       let strategyMetadata = {};
 
       try {
-          // Attempt to get strategy first (The "Plan")
           const planData = await getChatStrategy(text);
-          
-          // Construct metadata manually from the plan response
           strategyMetadata = {
             strategy: {
               use_rag: !!planData.rag_query,
@@ -123,15 +118,13 @@ const LegalMate = () => {
               use_general: planData.direct_answer_possible
             }
           };
-
-          // Show the badge + spinner immediately
           setMessages(prev => [
             ...prev, 
             { 
               role: 'ai', 
               id: tempAiMsgId,
               content: { 
-                type: 'thinking', // Matches our new Layout logic
+                type: 'thinking', 
                 metadata: strategyMetadata 
               } 
             }
@@ -139,15 +132,12 @@ const LegalMate = () => {
 
       } catch (planError) {
           console.warn("Could not fetch plan separately, falling back to standard loader", planError);
-          // If plan fails, just push a generic thinking bubble without badges
           setMessages(prev => [...prev, { role: 'ai', id: tempAiMsgId, content: { type: 'thinking', metadata: {} } }]);
       }
 
-      // 2. STEP B: Get the Real Answer (Slow)
       const apiResponse = await askAdaptive(text); 
       const formattedResponse = formatResponse(apiResponse);
 
-      // 3. Replace the "Thinking" message with the "Actual" message
       setMessages(prev => prev.map(msg => {
           if (msg.id === tempAiMsgId) {
               return { role: 'ai', content: formattedResponse };
@@ -157,7 +147,6 @@ const LegalMate = () => {
 
     } catch (err) {
       const errorMessage = { role: 'error', content: { type: 'error', message: err.message } };
-      // Remove any pending thinking message and show error
       setMessages(prev => [...prev.filter(msg => msg.content.type !== 'thinking'), errorMessage]);
     } finally {
       setIsLoading(false);
@@ -278,8 +267,6 @@ const LegalMate = () => {
       onCreateNewSession={createNewSession}
       onDeleteSession={handleDeleteSession}
       onClearAllSessions={handleClearAll}
-      
-      // FIXED: Using valid prop 'renderBeforeMessage'
       renderBeforeMessage={(msg) => (
          msg.role === 'ai' && msg.content.metadata && (
              <ReasoningBadge metadata={msg.content.metadata} />

@@ -2,8 +2,6 @@ import axios from 'axios';
 
 // Helper to check if we are in development mode
 const isDev = import.meta.env.DEV;
-// export const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL || 'https://legalblog-backend.onrender.com';
-// export const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:8001';
 
 export const BLOG_API_URL = 
   import.meta.env.VITE_BLOG_API_URL || 
@@ -21,15 +19,27 @@ export const DOC_ANALYZER_API_URL =
   import.meta.env.VITE_DOC_ANALYZER_API_URL || 
   (isDev ? 'http://localhost:8003' : 'https://doc-analyzer-bd.onrender.com');
 
-// 1. LegalMate & Research Client
-export const chatbotClient = axios.create({
+export const LEGAL_RESEARCH_API_URL = 
+  import.meta.env.VITE_LEGAL_RESEARCH_API_URL ||
+  (isDev ? 'http://localhost:8004' : "https://legal-research-agent.onrender.com"); 
+
+// 1. LegalMate Client
+export const legalMateClient = axios.create({
   baseURL: CHATBOT_API_URL,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// 2. DocGen Client
+// 2. Research Client
+export const legalResearchClient = axios.create({
+  baseURL: LEGAL_RESEARCH_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// 3. DocGen Client
 export const docGenClient = axios.create({
   baseURL: DOCGEN_API_URL,
   headers: {
@@ -37,7 +47,7 @@ export const docGenClient = axios.create({
   },
 });
 
-// 3. Blog Client
+// 4. Blog Client
 export const blogClient = axios.create({
   baseURL: `${BLOG_API_URL}/api/law-generator`,
   headers: {
@@ -45,7 +55,7 @@ export const blogClient = axios.create({
   },
 });
 
-// 4. Doc Analyzer Client (Port 8003)
+// 5. Doc Analyzer Client (Port 8003)
 export const docAnalyzerClient = axios.create({
   baseURL: DOC_ANALYZER_API_URL,
 });
@@ -66,7 +76,7 @@ const handleAxiosError = (error) => {
 };
 
 // Apply interceptors
-[chatbotClient, docGenClient, blogClient, docAnalyzerClient].forEach(client => {
+[legalMateClient, legalResearchClient, docGenClient, blogClient, docAnalyzerClient].forEach(client => {
   client.interceptors.response.use(
     (response) => response,
     (error) => handleAxiosError(error)
