@@ -48,6 +48,7 @@ const AppRoutes = () => {
       {/* Blog Pages */}
       <Route path="/blogs" element={<AllBlogsPage isUserPage={false} />} />
       <Route path="/blogs/:blogId" element={<BlogViewPage />} />
+      <Route path="*" element={<div>Page Not Found</div>} />
     </Routes>
   );
 };

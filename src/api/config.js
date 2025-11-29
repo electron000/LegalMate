@@ -2,12 +2,14 @@ import axios from 'axios';
 
 // Helper to check if we are in development mode
 const isDev = import.meta.env.DEV;
-// export const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL || 'https://legalblog-backend.onrender.com';
-export const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:8001';
 
 export const BLOG_API_URL = 
   import.meta.env.VITE_BLOG_API_URL || 
   (isDev ? 'http://localhost:8000' : 'https://legalblog-backend.onrender.com'); 
+
+export const CHATBOT_API_URL = 
+import.meta.env.VITE_CHATBOT_API_URL ||
+(isDev ? 'http://localhost:8001' : "https://legalmate-agent.onrender.com")
 
 export const DOCGEN_API_URL = 
   import.meta.env.VITE_DOCGEN_API_URL || 
