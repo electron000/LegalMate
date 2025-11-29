@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { UploadCloud, FileText, CheckCircle, X, MessageSquare, ShieldCheck } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle, X, MessageSquare, ShieldCheck, AlertCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { DocAnalyzerAPI } from '../../../../api';
 import './DocAnalyzerModal.css';
@@ -9,6 +9,7 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
   const [progress, setProgress] = useState(0);
   const [fileName, setFileName] = useState('');
   const [summaryData, setSummaryData] = useState('');
+  const [isLegal, setIsLegal] = useState(true); // New state for QnA eligibility
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
@@ -17,6 +18,7 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
       setProgress(0);
       setFileName('');
       setSummaryData('');
+      setIsLegal(true); // Reset to true by default
       setErrorMsg('');
     }
   }, [isOpen]);
@@ -41,6 +43,10 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
       clearInterval(interval);
       setProgress(100);
       setSummaryData(data.answer);
+      
+      // Update state based on backend response
+      // Default to true if undefined to avoid locking features unnecessarily
+      setIsLegal(data.is_legal !== undefined ? data.is_legal : true);
 
       setTimeout(() => setStep('summary'), 600);
     } catch (error) {
@@ -52,6 +58,8 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
   };
 
   const handleStartQnA = async () => {
+    if (!isLegal) return; // Prevent action if not legal
+    
     setStep('embedding');
     try {
       await DocAnalyzerAPI.generateEmbeddings();
@@ -134,6 +142,12 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
                 <div className="dam-summary-content">
                     <ReactMarkdown>{summaryData}</ReactMarkdown>
                 </div>
+                {!isLegal && (
+                    <div className="flex items-center gap-2 mt-4 p-3 bg-gray-50 text-gray-500 text-sm rounded-lg border border-gray-200">
+                        <AlertCircle size={16} />
+                        <span>QnA is unavailable for non-legal documents.</span>
+                    </div>
+                )}
             </div>
         );
 
@@ -158,7 +172,12 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
             <button onClick={onClose} disabled={step === 'embedding'} className="dam-btn-secondary">
               Cancel
             </button>
-            <button onClick={handleStartQnA} disabled={step === 'embedding'} className="dam-btn-primary">
+            <button 
+                onClick={handleStartQnA} 
+                disabled={step === 'embedding' || !isLegal} 
+                className={`dam-btn-primary ${!isLegal ? 'opacity-50 cursor-not-allowed bg-gray-400 border-gray-400 hover:bg-gray-400' : ''}`}
+                title={!isLegal ? "QnA disabled for non-legal documents" : "Ask questions about this document"}
+            >
               {step === 'embedding' ? (
                 <>
                   <div className="dam-spinner"></div> Preparing...

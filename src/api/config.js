@@ -3,8 +3,8 @@ import axios from 'axios';
 // Environment Variables
 export const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL || 'http://localhost:8000';
 export const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:8001';
-export const DOCGEN_API_URL = import.meta.env.VITE_DOCGEN_API_URL || 'http://localhost:8002';
-export const DOC_ANALYZER_API_URL = import.meta.env.VITE_DOC_ANALYZER_API_URL || 'https://doc-analyzer-bd.onrender.com';
+export const DOCGEN_API_URL = import.meta.env.VITE_DOCGEN_API_URL || 'https://doc-gen-bd.onrender.com' | 'http://localhost:8002';
+export const DOC_ANALYZER_API_URL = import.meta.env.VITE_DOC_ANALYZER_API_URL ||'https://doc-analyzer-bd.onrender.com' | 'http://localhost:8003';
 
 // 1. LegalMate & Research Client
 export const chatbotClient = axios.create({
