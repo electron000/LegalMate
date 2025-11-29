@@ -110,12 +110,15 @@
   line-height: 0;
   z-index: 5;
   transform: rotate(180deg);
+  /* Ensure this container doesn't leak */
+  overflow: hidden; 
 }
 
 .hero-wave-bottom svg {
   position: relative;
   display: block;
-  width: calc(100% + 1.3px);
+  /* FIX: Changed from calc(100% + 1.3px) to just 100% */
+  width: 100%; 
   height: 80px; 
 }
 

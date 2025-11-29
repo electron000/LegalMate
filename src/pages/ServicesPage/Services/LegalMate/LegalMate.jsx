@@ -11,7 +11,6 @@ import {
   askAdaptive, 
   getHistory, 
   deleteCurrentSession, 
-  getAllSessions, 
   clearAllHistories,
   getSessionId, 
   clearAndResetSession 
@@ -181,7 +180,9 @@ const LegalMate = () => {
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
   const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
   const [sessions, setSessions] = useState([]);
-  const [activeSessionId, setActiveSessionId] = useState(getSessionId());
+  
+  // CHANGE 1: Initialize ID state as null first, we will set it on mount
+  const [activeSessionId, setActiveSessionId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState({ visible: false, type: null, id: null });
   
   // Refs
@@ -193,7 +194,9 @@ const LegalMate = () => {
   const closeSidebarOnMobile = () => {
     if (window.innerWidth <= 768) setIsSidebarExpanded(false);
   };
-
+  
+  const isNewSession = useRef(true);
+  
   // Logic Handlers
   const processUserMessage = async (text) => {
     if (!text || !text.trim()) return;
@@ -202,7 +205,10 @@ const LegalMate = () => {
 
     setMessages(prev => {
       if (prev.length === 0) {
-        const currentId = getSessionId();
+        // Ensure we have a session ID
+        const currentId = activeSessionId || getSessionId();
+        
+        // Update sidebar purely for visual context of CURRENT session
         setSessions(currentSessions => {
            if (!currentSessions.some(s => s.id === currentId)) {
              return [{ id: currentId, title: text.substring(0, 40) + '...' }, ...currentSessions];
@@ -228,34 +234,64 @@ const LegalMate = () => {
     }
   };
 
-  // Effects
+  // CHANGE 2: INITIALIZATION EFFECT
+  // This runs ONCE on reload. It clears old IDs and starts fresh.
   useEffect(() => {
+    const initFreshSession = async () => {
+      // 1. Clear the local storage ID from the previous visit
+      clearAndResetSession(); 
+
+      // OPTIONAL: If you want to wipe the actual Database on reload, uncomment below:
+      // await clearAllHistories(); 
+
+      // 2. Generate a brand new ID
+      const newId = getSessionId();
+      setActiveSessionId(newId);
+      
+      // 3. Reset UI states
+      setMessages([]);
+      setSessions([]); // Start with empty sidebar
+      setIsHistoryLoaded(true);
+    };
+
+    initFreshSession();
+  }, []);
+
+ useEffect(() => {
     const loadHistory = async () => {
-      if (!activeSessionId) {
-        setIsHistoryLoaded(true);
-        return;
+      // 1. If no ID, do nothing
+      if (!activeSessionId) return;
+
+      // 2. CHECK: Is this a brand new session? 
+      if (isNewSession.current) {
+         // It's new, so we KNOW there is no history on the server.
+         // Flip the flag off for next time and STOP here.
+         isNewSession.current = false;
+         setIsHistoryLoaded(true);
+         return; 
       }
+
+      // 3. If we get here, it's an old session (clicked from sidebar), so fetch it.
       setIsLoading(true);
       try {
         const historyData = await getHistory(activeSessionId);
         const formattedMessages = historyData.messages.map(msg => ({
-          role: msg.type === 'human' ? 'user' : msg.type,
-          content: msg.type === 'ai' ? formatResponse({ response: msg.content }) : msg.content,
-        }));
+        role: msg.type === 'human' ? 'user' : msg.type,
+        content: msg.type === 'ai' ? formatResponse({ response: msg.content }) : msg.content,
+      }));
         setMessages(formattedMessages);
-      } catch (error) {
-        if (error.message.includes("not found")) {
-            setMessages([]);
-        } else {
-            console.error("Failed to load chat history:", error);
-        }
+      } catch {
+        setMessages([]);
       } finally {
         setIsLoading(false);
         setIsHistoryLoaded(true);
       }
     };
-    loadHistory();
-  }, [activeSessionId]);
+    
+    if (activeSessionId) {
+        loadHistory();
+    }
+}, [activeSessionId]);
 
   useEffect(() => {
     if (!isHistoryLoaded) return;
@@ -273,18 +309,6 @@ const LegalMate = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isHistoryLoaded]);
-
-  useEffect(() => {
-    const loadSessions = async () => {
-      try {
-        const sessionData = await getAllSessions();
-        setSessions(sessionData.sessions);
-      } catch (error) {
-        console.error("Failed to load sessions:", error);
-      }
-    };
-    loadSessions();
-  }, []);
   
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -311,19 +335,25 @@ const LegalMate = () => {
   const createNewSession = () => {
     clearAndResetSession();
     const newId = getSessionId();
+    
+    // FLAG THIS: Tell the useEffect not to fetch history for this ID
+    isNewSession.current = true; 
+    
     setActiveSessionId(newId);
     setMessages([]);
     closeSidebarOnMobile();
-  };
+};
 
   const handleDelete = async () => {
     const { type, id } = showDeleteModal;
     try {
         if (type === 'single') {
             await deleteCurrentSession(id);
+            // If we deleted the active one, make a new one
             if (id === activeSessionId) createNewSession();
-            const sessionData = await getAllSessions();
-            setSessions(sessionData.sessions);
+            
+            // Remove from UI list manually instead of refetching from backend
+            setSessions(prev => prev.filter(s => s.id !== id));
         } else if (type === 'all') {
             await clearAllHistories();
             setSessions([]);

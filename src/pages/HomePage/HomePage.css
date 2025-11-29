@@ -22,15 +22,15 @@
 }
 
 .homepage {
-  overflow-x: hidden;
-  background-color: var(--background); 
   width: 100%;
   min-height: 100vh;
+  background-color: var(--background); 
+  display: flex;
+  flex-direction: column; 
 }
 
 .reveal-section {
   opacity: 0;
-  /* Updated from 30px to 40px to match new animation style */
   transform: translateY(40px);
   transition: opacity 1s ease-out, transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
   will-change: opacity, transform;

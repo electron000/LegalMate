@@ -164,7 +164,7 @@ const BlogViewPage = () => {
           </article>
 
           <aside className="blog-sidebar">
-            <div className="sidebar-header">
+            <div className="blog-sidebar-header">
               <TrendingUp size={18} className="sidebar-icon" />
               <h3>Trending Topics</h3>
             </div>

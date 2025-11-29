@@ -18,13 +18,21 @@ import './styles/index.css';
 
 function App() {
   const location = useLocation();
-  
-  // Create State for the Modal
   const [isContactOpen, setIsContactOpen] = useState(false);
 
-  // Helper functions to open/close
+  // Helper functions
   const openContactModal = () => setIsContactOpen(true);
   const closeContactModal = () => setIsContactOpen(false);
+
+  const noAnimationPaths = [
+    '/', 
+    '/legalmate-ai', 
+    '/doc-analyzer', 
+    '/case-management', 
+    '/legal-research'
+  ];
+
+  const shouldSkipAnimation = noAnimationPaths.includes(location.pathname);
   
   // Logic to hide Navbar/Footer on specific paths
   const noFooterPaths = [
@@ -48,19 +56,8 @@ function App() {
   const shouldShowNavbar = !noNavbarPaths.some(path => location.pathname.startsWith(path));
 
   return (
-    <div
-      className="app"
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        margin: 0,
-        padding: 0
-      }}
-    >
+    <div className="app" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', margin: 0, padding: 0 }}>
       <ScrollToTop />
-      
-      {/* 2. Render Navbars - CSS handles visibility at 767px breakpoint */}
       {shouldShowNavbar && (
         <>
            <Navbar /> 
@@ -68,26 +65,17 @@ function App() {
         </>
       )}
       
-      <main
-        className="mBotn-content"
-        style={{
-          flex: '1 0 auto',
-          margin: 0,
-          padding: 0
-        }}
-      >
-        {/* Render the extracted Routes here */}
-        <AppRoutes />
+      <main className="mBotn-content" style={{ flex: '1 0 auto', margin: 0, padding: 0 }}>
+        {/* 3. Apply the class conditionally based on the array check */}
+        <div 
+          key={location.pathname} 
+          className={shouldSkipAnimation ? '' : 'page-animate'}
+        >
+          <AppRoutes />
+        </div>
       </main>
-
-      {/* Pass the open function to Footer */}
       {shouldShowFooter && <Footer onContactClick={openContactModal} />}
-
-      {/* Render the Modal outside the main flow */}
-      <ContactModal 
-        isOpen={isContactOpen} 
-        onClose={closeContactModal} 
-      />
+      <ContactModal isOpen={isContactOpen} onClose={closeContactModal} />
     </div>
   );
 }

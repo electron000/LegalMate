@@ -1,55 +1,52 @@
-/* CombinedSections.css */
+/* PlatformHighlights.css */
 
-/* Animations Definition */
+/* Optimized Animations - Reduced travel distance to prevent jank */
 @keyframes slideInFromLeft {
     0% {
         opacity: 0;
-        transform: translateX(-100px);
+        /* Reduced from -100px to -30px for smoother paint */
+        transform: translate3d(-30px, 0, 0); 
     }
     100% {
         opacity: 1;
-        transform: translateX(0);
+        transform: translate3d(0, 0, 0);
     }
 }
 
 @keyframes slideInFromRight {
     0% {
         opacity: 0;
-        transform: translateX(100px);
+        /* Reduced from 100px to 30px */
+        transform: translate3d(30px, 0, 0);
     }
     100% {
         opacity: 1;
-        transform: translateX(0);
+        transform: translate3d(0, 0, 0);
     }
 }
 
-/* Apply Animation WHEN 'animate-active' class is added by React */
+/* Apply Animation */
 
-/* Odd Items (1st, 3rd, 5th) -> Come from Left */
 .animate-active .feature-list-item:nth-child(odd) {
-    animation: slideInFromLeft 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: slideInFromLeft 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
 }
 
-/* Even Items (2nd, 4th, 6th) -> Come from Right */
 .animate-active .feature-list-item:nth-child(even) {
-    animation: slideInFromRight 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: slideInFromRight 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
 }
 
-/* Staggered Delays for a flowing effect */
-/* Uses the CSS variable --item-index if supported, or nth-child fallback */
-.animate-active .feature-list-item:nth-child(1) { animation-delay: 0.1s; }
-.animate-active .feature-list-item:nth-child(2) { animation-delay: 0.2s; }
-.animate-active .feature-list-item:nth-child(3) { animation-delay: 0.3s; }
-.animate-active .feature-list-item:nth-child(4) { animation-delay: 0.4s; }
-.animate-active .feature-list-item:nth-child(5) { animation-delay: 0.5s; }
-.animate-active .feature-list-item:nth-child(6) { animation-delay: 0.6s; } 
+/* Staggered Delays - Slightly tightened */
+.animate-active .feature-list-item:nth-child(1) { animation-delay: 0.05s; }
+.animate-active .feature-list-item:nth-child(2) { animation-delay: 0.1s; }
+.animate-active .feature-list-item:nth-child(3) { animation-delay: 0.15s; }
+.animate-active .feature-list-item:nth-child(4) { animation-delay: 0.2s; }
+.animate-active .feature-list-item:nth-child(5) { animation-delay: 0.25s; }
+.animate-active .feature-list-item:nth-child(6) { animation-delay: 0.3s; } 
 
 .combined-sections-wrapper {
-    /* Local variable for glass effect to match TSPage style */
     --glass-bg: rgba(255, 255, 255, 0.8);
     --border-hover-color: var(--gray-400);
     overflow-x: hidden;
-
     position: relative;
     width: 100%;
     max-width: 1200px;
@@ -58,7 +55,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2rem 2rem 2rem 2rem;
+    padding: 2rem;
 }
 
 .combined-sections-main-title {
@@ -66,7 +63,8 @@
     font-size: clamp(2rem, 5vw, 2.5rem);
     font-weight: 800;
     text-align: center;
-    line-height: 4;
+    line-height: 1.4; /* Fixed excessive line-height */
+    margin-bottom: 2rem; /* Added margin instead of line-height for spacing */
     color: var(--text-primary);
 }
 
@@ -84,24 +82,26 @@
     padding: clamp(1.5rem, 4vw, 1.5rem);
     margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
     min-height: 60px;
-    opacity: 0; /* Hidden by default */
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0; 
     
-    /* Variables applied */
     background: var(--glass-bg);
     border: 1px solid var(--border-light);
+    
+    /* OPTIMIZATION NOTE: If scrolling is still laggy, remove this line: */
     backdrop-filter: blur(10px);
+    
     border-radius: clamp(0.5rem, 1.5vw, 0.75rem);
     box-shadow: var(--shadow-base);
-    
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    
+    /* Optimize hover transitions */
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    will-change: transform, opacity;
 }
 
 .feature-list-item:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
-    /* Updated to use gray-400 or border-medium */
     border-color: var(--border-hover-color);
 }
 
@@ -112,13 +112,11 @@
     width: clamp(32px, 8vw, 40px); height: clamp(32px, 8vw, 40px);
     display: flex; align-items: center; justify-content: center;
     border-radius: clamp(0.375rem, 1vw, 0.5rem); 
-    
-    /* Updated to Brand Black */
     background: var(--primary-black);
     color: var(--text-inverse); 
-    
     flex-shrink: 0;
-    box-shadow: var(--shadow-sm); transition: all 0.3s ease;
+    box-shadow: var(--shadow-sm); 
+    transition: background-color 0.3s ease;
     font-size: clamp(1.1rem, 2.5vw, 1.4rem);
 }
 
@@ -128,21 +126,18 @@
     margin: 0 0 clamp(0.2rem, 0.5vw, 0.25rem) 0;
     font-size: clamp(1rem, 2vw, 1.2rem);
     font-weight: 700; line-height: 1.3;
-    /* Updated to Text Primary */
     color: var(--text-primary);
 }
 
 .feature-text-content p {
     margin: 0; font-size: clamp(0.7rem, 1.8vw, 0.8rem);
     line-height: 1.5; 
-    /* Updated to Text Secondary */
     color: var(--text-secondary);
 }
 
 .ts-go-to-icon {
     width: clamp(28px, 6vw, 36px); 
     height: clamp(28px, 6vw, 36px);
-    /* Updated to Brand Black */
     fill: var(--primary-black);
     flex-shrink: 0;
     display: block;
@@ -150,22 +145,16 @@
 }
 
 .feature-list-item:hover .ts-go-to-icon {
-    /* Slightly lighter on hover or kept black */
     fill: var(--primary-black-hover);
     transform: scale(1.1);
 }
 
-
 .feature-list-item:hover .feature-icon-wrapper {
-    /* Updated to Hover Black */
     background: var(--primary-black-hover); 
     color: var(--text-inverse);
 }
 
 @media (max-width: 960px) {
-    .feature-list {
-        grid-template-columns: 1fr;
-    }
     .feature-list-item:nth-child(odd),
     .feature-list-item:nth-child(even) {
         justify-self: stretch; 

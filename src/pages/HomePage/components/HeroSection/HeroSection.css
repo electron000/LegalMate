@@ -1,15 +1,14 @@
 /* HeroSection.css */
-/* KEYFRAME ANIMATIONS */
 
-/* UPDATED: Using slideUpFade from new code (30px up) instead of old slideDownFade */
+/* KEYFRAME ANIMATIONS */
 @keyframes slideUpFade {
   0% {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translate3d(0, 30px, 0);
   }
   100% {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
   }
 }
 
@@ -21,14 +20,16 @@
 .hero-section {
   position: relative;
   width: 100%;
+  /* Removed max-width restriction to allow full bleed */
   min-height: 75vh; 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background: var(--hero-bg-gradient);
-  overflow: hidden;
+  overflow: hidden; 
   padding-top: 100px;
+  contain: content;
 }
 
 .hero-overlay {
@@ -41,6 +42,7 @@
               radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 20%);
   z-index: 0;
   animation: fadeInSlow 1.5s ease-out forwards;
+  will-change: opacity;
 }
 
 .hero-content-container {
@@ -48,6 +50,7 @@
   z-index: 2;
   max-width: 1000px;
   width: 100%;
+  /* With box-sizing: border-box in HomePage.css, this padding won't cause overflow anymore */
   padding: 0 1.5rem; 
   text-align: center;
   display: flex;
@@ -55,9 +58,8 @@
   align-items: center;
   justify-content: center;
   opacity: 0; 
-  /* UPDATED: Uses slideUpFade */
-  animation: slideUpFade 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
-  animation-delay: 0.2s; 
+  animation: slideUpFade 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: 0.1s; 
 }
 
 .hero-text {
@@ -69,7 +71,6 @@
   flex-wrap: wrap; 
 }
 
-/* --- Added Logo Styles --- */
 .hero-logo {
   width: clamp(60px, 8vw, 90px); 
   height: auto;
@@ -92,19 +93,22 @@
 /* --- The Curved Bottom (Wave) --- */
 .hero-wave-separator {
   position: absolute;
-  bottom: 0;
+  /* -1px overlap prevents white hairline gaps */
+  bottom: -1px; 
   left: 0;
   width: 100%;
   overflow: hidden;
   line-height: 0;
   z-index: 3;
   transform: rotate(180deg);
+  pointer-events: none;
 }
 
 .hero-wave-separator svg {
   position: relative;
   display: block;
-  width: calc(100% + 1.3px);
+  width: 100%;
+  /* Removed scale() - no longer needed with proper sizing */
   height: 80px; 
 }
 
@@ -112,10 +116,7 @@
   fill: var(--background);
 }
 
-/* =================================== */
-/* HERO SEARCH INPUT (Gemini Style)    */
-/* =================================== */
-
+/* Search Box Styles (Same as before) */
 .hero-search-wrapper {
   width: 100%;
   display: flex;
@@ -134,7 +135,7 @@
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
-  transition: all 0.3s ease;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
@@ -181,11 +182,10 @@
 }
 
 /* --- Responsive Adjustments --- */
-
 @media (max-width: 1024px) {
   .hero-content-container {
     max-width: 90%; 
-    transform: translateY(-40px);
+    margin-top: -40px;
   }
 }
 
@@ -196,7 +196,7 @@
   }
   
   .hero-content-container {
-    transform: translateY(-20px); 
+    margin-top: -20px; 
     padding: 0 1rem;
   }
   
