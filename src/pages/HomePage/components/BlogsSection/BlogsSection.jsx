@@ -4,11 +4,12 @@ import { ArrowRight } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import './BlogsSection.css';
 
+// --- UPDATED: Paths now point directly to the public root ---
 const thumbnailImages = [
-  '/images/bloga.webp',
-  '/images/blogb.webp',
-  '/images/blogc.webp',
-  '/images/blogd.webp'
+  '/bloga.webp',
+  '/blogb.webp',
+  '/blogc.webp',
+  '/blogd.webp'
 ];
 
 // === UPDATED FUNCTION BELOW ===

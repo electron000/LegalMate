@@ -5,11 +5,12 @@ import { fetchAllBlogs } from '../../../api';
 import './AllBlogsPage.css';
 
 // --- Constants & Helpers ---
+// UPDATED: Paths now point directly to the public root (removed '/images/')
 const thumbnailImages = [
-  '/images/bloga.webp',
-  '/images/blogb.webp',
-  '/images/blogc.webp',
-  '/images/blogd.webp'
+  '/bloga.webp',
+  '/blogb.webp',
+  '/blogc.webp',
+  '/blogd.webp'
 ];
 
 const getNumericId = (id) => {
