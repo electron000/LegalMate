@@ -308,11 +308,27 @@
 
 /* --- MOBILE --- */
 .mobile-menu-toggle {
-  display: none; position: absolute; top: 16px; left: 16px; z-index: 50;
+  display: none; position: absolute; top: 16px; left: 16px; z-index: 40;
   background: var(--sidebar-btn-hover); border: 1px solid var(--sidebar-btn-hover);
   color: #ffffff; padding: 8px; border-radius: 8px; backdrop-filter: blur(4px);
 }
 .mobile-backdrop { display: none; }
+
+/* --- HEADER FILENAME TRUNCATION --- */
+.doc-header-filename {
+  display: inline-block;
+  max-width: 300px; /* Desktop limit */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  font-size: 0.75rem; 
+  color: rgba(255, 255, 255, 0.7); 
+  font-weight: 400;
+  margin-left: 0.5rem;
+  padding-left: 0.5rem;
+  border-left: 1px solid rgba(255, 255, 255, 0.2);
+}
 
 @media (max-width: 768px) {
   .sidebar { width: var(--sidebar-width-expanded) !important; transform: translateX(-100%); background-color: var(--primary-black); }
@@ -329,4 +345,12 @@
   .welcome-message h1 { font-size: 2.5rem; }
   .input-form { padding: 0 16px; }
   .chat-header { justify-content: flex-end; padding-left: 60px; }
+  
+  /* Mobile Filename Limit */
+  .doc-header-filename { max-width: 130px; }
+  .model-selector{
+    padding: 10px 5px;
+    border-radius: 10px;
+    font-size: 12px;
+  }
 }

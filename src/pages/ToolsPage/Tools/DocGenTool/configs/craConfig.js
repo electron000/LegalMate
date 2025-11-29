@@ -1,10 +1,8 @@
 export const craConfig = {
-  id: 'cra', // <--- This ID is now the most important link
+  id: 'cra',
   title: 'Commercial Rental Agreement',
   subtitle: 'Define terms for your commercial property lease.',
-  // Phase 1: Generate Text
   apiEndpoint: '/docs/cra_generator',      
-  // Phase 2: Download DOCX
   downloadEndpoint: '/docs/cra_download',  
   outputType: 'preview', 
   initialState: {
@@ -30,6 +28,9 @@ export const craConfig = {
     { id: 'terms', label: 'Rental Terms' },
   ],
   sections: {
+    /* ---------------------------------------------------------------------- */
+    /* 1. PARTIES (Landlord = Mandatory)                                      */
+    /* ---------------------------------------------------------------------- */
     landlord: {
       tab: 'parties',
       title: 'Landlord Details',
@@ -40,6 +41,10 @@ export const craConfig = {
         { name: 'landlord.address', label: 'Full Address', required: true, type: 'textarea' },
       ],
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. PARTIES (Tenant Type = Mandatory)                                   */
+    /* ---------------------------------------------------------------------- */
     tenant: {
       tab: 'parties',
       title: 'Tenant Details',
@@ -48,6 +53,10 @@ export const craConfig = {
         { name: 'tenant.tenant_type', label: 'Tenant Type', required: true, type: 'radio', options: [{ label: 'Individual', value: 'individual' }, { label: 'Organization', value: 'organization' }] },
       ],
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 3. PARTIES (Individual Tenant = Mandatory if selected)                 */
+    /* ---------------------------------------------------------------------- */
     tenantIndividual: {
       tab: 'parties',
       title: 'Individual Tenant',
@@ -59,6 +68,10 @@ export const craConfig = {
         { name: 'tenant.address', label: 'Full Address', required: true, type: 'textarea' },
       ],
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 4. PARTIES (Org Tenant = Mandatory except Reg Number)                  */
+    /* ---------------------------------------------------------------------- */
     tenantOrg: {
       tab: 'parties',
       title: 'Organization Tenant',
@@ -67,10 +80,15 @@ export const craConfig = {
       fields: [
         { name: 'tenant.organization_name', label: 'Organization Name', required: true, span: 'half' },
         { name: 'tenant.authorized_signatory', label: 'Authorized Signatory', required: true, span: 'half' },
-        { name: 'tenant.registration_number', label: 'CIN / Registration Number', span: 'full' },
+        // This is the ONLY optional field in the entire config
+        { name: 'tenant.registration_number', label: 'CIN / Registration Number', span: 'full' }, 
         { name: 'tenant.address', label: 'Full Address', required: true, type: 'textarea' },
       ],
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 5. PREMISES (Mandatory)                                                */
+    /* ---------------------------------------------------------------------- */
     premisesAddress: {
       tab: 'premises',
       title: 'Premises Address',
@@ -90,6 +108,10 @@ export const craConfig = {
         { name: 'premises_boundaries.west', label: 'West', required: true, span: 'half' },
       ],
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 6. TERMS (Mandatory)                                                   */
+    /* ---------------------------------------------------------------------- */
     terms: {
       tab: 'terms',
       title: 'Agreement & Rental Terms',

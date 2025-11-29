@@ -2,13 +2,10 @@ export const rentalConfig = {
   id: 'rental',
   title: 'Residential Rental Agreement',
   subtitle: 'standard residential rent agreement',
-  // Phase 1: Generate Text (Using Jinja2 Template)
   apiEndpoint: '/docs/rental_generator',      
-  // Phase 2: Download DOCX
   downloadEndpoint: '/docs/rental_download',  
   outputType: 'preview', 
   
-  // MATCHING SCHEMA: app/schemas/schema.py -> Class ResiRent
   initialState: {
     place_of_execution: '',
     execution_date: '',
@@ -23,7 +20,7 @@ export const rentalConfig = {
     start_date: '',
     end_date: '',
     security_deposit_amount: '',
-    security_amount_words: '', // Specific field required by your Jinja template
+    security_amount_words: '',
     first_witness: '',
     second_witness: '',
   },
@@ -35,7 +32,9 @@ export const rentalConfig = {
   ],
 
   sections: {
-    // --- TAB 1: PARTIES ---
+    /* ---------------------------------------------------------------------- */
+    /* 1. PARTIES (Landlord & Tenant = All Mandatory)                         */
+    /* ---------------------------------------------------------------------- */
     landlord: {
       tab: 'parties',
       title: 'Landlord (First Party) Details',
@@ -57,7 +56,9 @@ export const rentalConfig = {
       ],
     },
 
-    // --- TAB 2: PROPERTY & TERMS ---
+    /* ---------------------------------------------------------------------- */
+    /* 2. PROPERTY & TERMS (All Mandatory)                                    */
+    /* ---------------------------------------------------------------------- */
     premises: {
       tab: 'property',
       title: 'Rented Premises Details',
@@ -81,7 +82,9 @@ export const rentalConfig = {
       ],
     },
 
-    // --- TAB 3: WITNESSES ---
+    /* ---------------------------------------------------------------------- */
+    /* 3. WITNESSES (All Mandatory)                                           */
+    /* ---------------------------------------------------------------------- */
     witnesses: {
       tab: 'witnesses',
       title: 'Witness Details',

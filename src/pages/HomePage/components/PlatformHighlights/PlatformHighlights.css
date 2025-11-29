@@ -1,9 +1,54 @@
 /* CombinedSections.css */
 
+/* Animations Definition */
+@keyframes slideInFromLeft {
+    0% {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromRight {
+    0% {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Apply Animation WHEN 'animate-active' class is added by React */
+
+/* Odd Items (1st, 3rd, 5th) -> Come from Left */
+.animate-active .feature-list-item:nth-child(odd) {
+    animation: slideInFromLeft 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Even Items (2nd, 4th, 6th) -> Come from Right */
+.animate-active .feature-list-item:nth-child(even) {
+    animation: slideInFromRight 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Staggered Delays for a flowing effect */
+/* Uses the CSS variable --item-index if supported, or nth-child fallback */
+.animate-active .feature-list-item:nth-child(1) { animation-delay: 0.1s; }
+.animate-active .feature-list-item:nth-child(2) { animation-delay: 0.2s; }
+.animate-active .feature-list-item:nth-child(3) { animation-delay: 0.3s; }
+.animate-active .feature-list-item:nth-child(4) { animation-delay: 0.4s; }
+.animate-active .feature-list-item:nth-child(5) { animation-delay: 0.5s; }
+.animate-active .feature-list-item:nth-child(6) { animation-delay: 0.6s; } 
+
 .combined-sections-wrapper {
     /* Local variable for glass effect to match TSPage style */
     --glass-bg: rgba(255, 255, 255, 0.8);
     --border-hover-color: var(--gray-400);
+    overflow-x: hidden;
 
     position: relative;
     width: 100%;
@@ -39,6 +84,8 @@
     padding: clamp(1.5rem, 4vw, 1.5rem);
     margin-bottom: clamp(0.5rem, 1.5vw, 0.75rem);
     min-height: 60px;
+    opacity: 0; /* Hidden by default */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     
     /* Variables applied */
     background: var(--glass-bg);

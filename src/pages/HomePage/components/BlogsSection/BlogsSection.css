@@ -3,6 +3,7 @@
 .blogs-section-container {
   max-width: 1400px;
   margin: 3rem auto 1rem auto;
+  padding-bottom: 6rem;
 }
 
 .blogs-section-header {

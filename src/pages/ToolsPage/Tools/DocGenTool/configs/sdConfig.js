@@ -2,9 +2,7 @@ export const sdConfig = {
   id: 'sd',
   title: 'Sale Deed',
   subtitle: 'Draft a deed for the sale of property.',
-  // Phase 1: Generate Text
   apiEndpoint: '/docs/sd_generator',
-  // Phase 2: Download DOCX
   downloadEndpoint: '/docs/sd_download',
   outputType: 'preview', 
   initialState: {
@@ -24,6 +22,9 @@ export const sdConfig = {
     { id: 'consideration', label: 'Consideration' },
   ],
   sections: {
+    /* ---------------------------------------------------------------------- */
+    /* 1. PARTIES (Vendor & Vendee = All Mandatory)                           */
+    /* ---------------------------------------------------------------------- */
     vendor: {
       tab: 'parties',
       title: 'Vendor (Seller) Details',
@@ -44,6 +45,10 @@ export const sdConfig = {
         { name: 'vendee.address', label: 'Full Address', required: true, type: 'textarea' },
       ],
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. PROPERTY (Address & Boundaries = All Mandatory)                     */
+    /* ---------------------------------------------------------------------- */
     propertyAddress: {
       tab: 'property',
       title: 'Property Address',
@@ -63,6 +68,10 @@ export const sdConfig = {
         { name: 'property_boundaries.west', label: 'West', required: true, span: 'half' },
       ],
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 3. CONSIDERATION (All Mandatory)                                       */
+    /* ---------------------------------------------------------------------- */
     consideration: {
       tab: 'consideration',
       title: 'Execution & Consideration Details',
@@ -74,13 +83,14 @@ export const sdConfig = {
         { name: 'vendor_acquisition_method', label: 'How Vendor Acquired Property', placeholder: 'e.g., By a previous sale deed dated 01-01-2010', required: true, type: 'textarea' },
       ],
     },
+    // Strict List: Must have at least 1 item, and all fields inside are required
     payments: {
       tab: 'consideration',
       title: 'Payment Details',
       type: 'dynamicList',
       listName: 'payment_details',
       itemTitle: 'Payment',
-      required: true,
+      required: true, 
       newItem: { amount: '', mode: '', details: '' },
       fields: [
         { name: 'amount', label: 'Amount (₹)', placeholder: 'Amount (₹)', type: 'number', required: true },

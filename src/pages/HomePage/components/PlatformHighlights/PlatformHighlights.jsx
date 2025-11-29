@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Scale, ScanLine, PenSquare, Briefcase, Bot, Users } from 'lucide-react';
 import './PlatformHighlights.css';
@@ -42,7 +42,7 @@ const TSGoToIcon = ({ onClick, uniqueId }) => {
     );
 };
 
-const FeatureListItem = ({ title, description, icon, onClick }) => {
+const FeatureListItem = ({ title, description, icon, onClick, index }) => {
     const uniqueId = getSafeId(title);
     return (
         <div 
@@ -50,6 +50,7 @@ const FeatureListItem = ({ title, description, icon, onClick }) => {
             onClick={onClick}
             role="button"
             tabIndex={0}
+            style={{ '--item-index': index }} // Pass index for CSS delay calculation
             onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                     e.preventDefault();
@@ -74,6 +75,34 @@ const FeatureListItem = ({ title, description, icon, onClick }) => {
 
 const PlatformHighlights = () => {
     const navigate = useNavigate();
+    const [isVisible, setIsVisible] = useState(false);
+    const sectionRef = useRef(null);
+
+    // Logic to check if section is in view
+    useEffect(() => {
+        // FIX: Capture the current ref value to a variable 
+        // to prevent ESLint warning and ensure safe cleanup.
+        const element = sectionRef.current;
+
+        const observer = new IntersectionObserver(
+            ([entry]) => {
+                // If 15% of the component is visible, trigger animation
+                if (entry.isIntersecting) {
+                    setIsVisible(true);
+                    observer.disconnect(); // Only animate once
+                }
+            },
+            { threshold: 0.15 }
+        );
+
+        if (element) {
+            observer.observe(element);
+        }
+
+        return () => {
+            if (element) observer.unobserve(element);
+        };
+    }, []);
 
     const allFeatures = [
         {
@@ -115,7 +144,10 @@ const PlatformHighlights = () => {
     ];
 
     return (
-        <div className="combined-sections-wrapper">
+        <div 
+            ref={sectionRef} 
+            className={`combined-sections-wrapper ${isVisible ? 'animate-active' : ''}`}
+        >
             <h2 className="combined-sections-main-title">
                 Platform Highlights
             </h2>
@@ -125,6 +157,7 @@ const PlatformHighlights = () => {
                     {allFeatures.map((feature, index) => (
                         <FeatureListItem
                             key={`feature-${index}`}
+                            index={index}
                             {...feature}
                         />
                     ))}

@@ -12,6 +12,8 @@ export const ncaConfig = {
     deponent_father_name: '',
     deponent_age: '',
     deponent_address: '',
+    deponent_id_type: '',   // NEW
+    deponent_id_number: '', // NEW
     reason_for_change: ''
   },
   tabs: [{ id: 'main', label: 'Details' }],
@@ -26,6 +28,11 @@ export const ncaConfig = {
         { name: 'deponent_father_name', label: "Father's Name", required: true, span: 'half' },
         { name: 'deponent_age', label: 'Age', type: 'number', required: true, span: 'half' },
         { name: 'deponent_address', label: 'Address', required: true, span: 'full' },
+        
+        // NEW ID FIELDS
+        { name: 'deponent_id_type', label: 'ID Proof (e.g. Aadhaar)', required: false, span: 'half' },
+        { name: 'deponent_id_number', label: 'ID Number', required: false, span: 'half' },
+
         { name: 'reason_for_change', label: 'Reason for Change', type: 'textarea', required: true },
         { name: 'place_of_execution', label: 'Place of Execution', required: true, span: 'half' },
         { name: 'verification_date', label: 'Verification Date', type: 'date', required: true, span: 'half' },

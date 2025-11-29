@@ -2,13 +2,20 @@ import React, { useState } from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { DocGenService, downloadBlob } from '../../../../../api'; 
 import './DocForm.css';
-import { X, Save, Loader2, FileText, Download, RefreshCw, Plus, Trash2 } from 'lucide-react';
+import { X, Save, Loader2, FileText, Download, RefreshCw, Plus, Trash2, AlertCircle } from 'lucide-react';
 
 /* -------------------------------------------------------------------------- */
-/* INTERNAL FORM COMPONENTS                         */
+/* HELPER: Access Nested Object by String Path                                */
 /* -------------------------------------------------------------------------- */
+const getValueByPath = (obj, path) => {
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+};
 
-// Standard Input Field (Text, Number, Date, etc.)
+/* -------------------------------------------------------------------------- */
+/* INTERNAL FORM COMPONENTS (RenderField, FormField, etc. - UNCHANGED)        */
+/* -------------------------------------------------------------------------- */
+// ... [Keep FormField, TextareaField, SelectField, RenderField, DynamicListSection, FormSection exactly as they were] ...
+
 const FormField = ({ control, name, label, type = 'text', required, placeholder, span }) => (
   <div className="tf-form-group" data-span={span || 'full'}>
     <label className={required ? 'tf-required' : ''}>{label}</label>
@@ -16,19 +23,21 @@ const FormField = ({ control, name, label, type = 'text', required, placeholder,
       name={name}
       control={control}
       rules={{ required: required && 'This field is required.' }}
-      render={({ field }) => (
-        <input
-          type={type}
-          placeholder={placeholder}
-          {...field}
-          className="tf-form-input"
-        />
+      render={({ field, fieldState: { error } }) => (
+        <>
+          <input
+            type={type}
+            placeholder={placeholder}
+            {...field}
+            className={`tf-form-input ${error ? 'tf-input-error' : ''}`}
+          />
+          {error && <span className="tf-field-error">{error.message}</span>}
+        </>
       )}
     />
   </div>
 );
 
-// Textarea Field
 const TextareaField = ({ control, name, label, required, placeholder, span }) => (
   <div className="tf-form-group" data-span={span || 'full'}>
     <label className={required ? 'tf-required' : ''}>{label}</label>
@@ -36,19 +45,21 @@ const TextareaField = ({ control, name, label, required, placeholder, span }) =>
       name={name}
       control={control}
       rules={{ required: required && 'This field is required.' }}
-      render={({ field }) => (
-        <textarea
-          placeholder={placeholder}
-          {...field}
-          className="tf-form-input"
-          rows={3}
-        />
+      render={({ field, fieldState: { error } }) => (
+        <>
+          <textarea
+            placeholder={placeholder}
+            {...field}
+            className={`tf-form-input ${error ? 'tf-input-error' : ''}`}
+            rows={3}
+          />
+          {error && <span className="tf-field-error">{error.message}</span>}
+        </>
       )}
     />
   </div>
 );
 
-// Select Field (Used for Select AND Radio configurations)
 const SelectField = ({ control, name, label, required, options, span }) => (
   <div className="tf-form-group" data-span={span || 'full'}>
     <label className={required ? 'tf-required' : ''}>{label}</label>
@@ -56,23 +67,24 @@ const SelectField = ({ control, name, label, required, options, span }) => (
       name={name}
       control={control}
       rules={{ required: required && 'This field is required.' }}
-      render={({ field }) => (
-        <select {...field} className="tf-form-input">
-            <option value="" disabled>Select {label}</option>
-          {options && options.map((opt, idx) => (
-            <option key={`${opt.value}-${idx}`} value={opt.value}>{opt.label}</option>
-          ))}
-        </select>
+      render={({ field, fieldState: { error } }) => (
+        <>
+          <select {...field} className={`tf-form-input ${error ? 'tf-input-error' : ''}`}>
+              <option value="" disabled>Select {label}</option>
+            {options && options.map((opt, idx) => (
+              <option key={`${opt.value}-${idx}`} value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+          {error && <span className="tf-field-error">{error.message}</span>}
+        </>
       )}
     />
   </div>
 );
 
-// Main Field Router
 const RenderField = ({ control, fieldConfig, formData }) => {
   const props = { control, ...fieldConfig };
 
-  // Handle Dynamic Options (e.g., selecting a beneficiary from a list created in another tab)
   if ((fieldConfig.type === 'select' || fieldConfig.type === 'radio') && fieldConfig.dynamicOptions && formData) {
     const sourceList = formData[fieldConfig.dynamicOptions] || [];
     if (Array.isArray(sourceList)) {
@@ -85,7 +97,6 @@ const RenderField = ({ control, fieldConfig, formData }) => {
     }
   }
 
-  // Force 'radio' types to render as SelectField to satisfy requirements
   if (fieldConfig.type === 'radio') {
       return <SelectField {...props} />;
   }
@@ -103,18 +114,21 @@ const RenderField = ({ control, fieldConfig, formData }) => {
   }
 };
 
-// Dynamic List Section (Add/Remove items)
-const DynamicListSection = ({ control, section, formData }) => {
+const DynamicListSection = ({ control, section, formData, listError }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: section.listName,
   });
 
   return (
-    <div className="tf-section">
+    <div className={`tf-section ${listError ? 'tf-section-error' : ''}`}>
       <div className="tf-section-title">
-        <h4>{section.title} {section.required && <span className="tf-required">*</span>}</h4>
+        <h4>
+          {section.title} {section.required && <span className="tf-required">*</span>}
+        </h4>
+        {listError && <span className="tf-list-error-msg"><AlertCircle size={14}/> {listError}</span>}
       </div>
+      
       {fields.map((item, index) => (
         <div key={item.id} className="tf-dynamic-list-item">
           <button type="button" className="tf-remove-btn" onClick={() => remove(index)}>
@@ -138,7 +152,6 @@ const DynamicListSection = ({ control, section, formData }) => {
   );
 };
 
-// Standard Static Form Section
 const FormSection = ({ control, section, formData }) => (
   <div className="tf-section">
     <div className="tf-section-title">
@@ -152,8 +165,9 @@ const FormSection = ({ control, section, formData }) => (
   </div>
 );
 
+
 /* -------------------------------------------------------------------------- */
-/* MAIN DOCFORM COMPONENT                         */
+/* MAIN DOCFORM COMPONENT                                                     */
 /* -------------------------------------------------------------------------- */
 
 const DocForm = ({ toolConfig }) => {
@@ -162,6 +176,7 @@ const DocForm = ({ toolConfig }) => {
   const [error, setError] = useState('');
   const [documentText, setDocumentText] = useState('');
   const [activeTab, setActiveTab] = useState(toolConfig.tabs[0].id);
+  const [sectionErrors, setSectionErrors] = useState({}); 
 
   const isReviewing = !!documentText;
   const currentStep = isReviewing ? 2 : 1;
@@ -170,21 +185,148 @@ const DocForm = ({ toolConfig }) => {
     control,
     handleSubmit,
     watch,
-    formState: { isValid },
+    trigger, 
   } = useForm({
     mode: 'onChange',
     defaultValues: toolConfig.initialState,
   });
 
-  const allFormData = watch(); // Watch all form data for conditional rendering
+  const allFormData = watch();
+
+  const handleTabChange = async (targetTabId) => {
+    if (isReviewing) {
+      setActiveTab(targetTabId);
+      return;
+    }
+
+    const currentSections = Object.values(toolConfig.sections).filter(s => s.tab === activeTab);
+    
+    let fieldsToValidate = [];
+    let isListValid = true;
+    let newSectionErrors = {};
+
+    for (const section of currentSections) {
+      if (section.condition && !section.condition(allFormData)) continue;
+
+      if (section.type === 'form') {
+        section.fields.forEach(field => {
+          fieldsToValidate.push(field.name);
+        });
+      } else if (section.type === 'dynamicList') {
+        const listData = getValueByPath(allFormData, section.listName) || [];
+        
+        if (section.required && listData.length === 0) {
+          newSectionErrors[section.listName] = `Please add at least one ${section.itemTitle}.`;
+          isListValid = false;
+        } else {
+          listData.forEach((_, index) => {
+            section.fields.forEach(field => {
+              fieldsToValidate.push(`${section.listName}.${index}.${field.name}`);
+            });
+          });
+        }
+      }
+    }
+
+    setSectionErrors(newSectionErrors);
+
+    const result = await trigger(fieldsToValidate);
+
+    if (result && isListValid) {
+      setActiveTab(targetTabId);
+      setError(''); 
+    } else {
+      setError('Please fill in all mandatory fields in this section before proceeding.');
+    }
+  };
+
+  // --- NEW: TRANSFORM PAYLOAD LOGIC (FIXED FOR POA) ---
+  const preparePayload = (rawData) => {
+    // 1. Clone data to avoid mutating state
+    const payload = JSON.parse(JSON.stringify(rawData));
+    const extras = {};
+
+    // 2. Iterate through all sections in config
+    Object.values(toolConfig.sections).forEach(section => {
+      
+      // --- FIX: Handle Simple String Lists (like PoA Powers) ---
+      if (section.type === 'dynamicList' && section.isSimpleStringList) {
+        const listData = getValueByPath(payload, section.listName);
+        
+        if (Array.isArray(listData)) {
+          // Convert [{description: "Value"}] -> ["Value"]
+          // We take the value of the first key in the object
+          const simpleList = listData.map(item => Object.values(item)[0]);
+          
+          // Update the payload with the simple string list
+          // We must traverse the path (e.g., 'specific_powers') to set it correctly
+          const pathParts = section.listName.split('.');
+          let current = payload;
+          for (let i = 0; i < pathParts.length - 1; i++) {
+            current = current[pathParts[i]];
+          }
+          current[pathParts[pathParts.length - 1]] = simpleList;
+        }
+      }
+
+      // --- Extras Logic (Separating Optional Fields) ---
+      if (section.type === 'dynamicList') {
+        const listData = getValueByPath(payload, section.listName);
+        // If the whole list section is optional (no required: true), add to extras
+        if (!section.required && listData && listData.length > 0) {
+           extras[section.listName] = listData;
+        }
+      } else if (section.type === 'form') {
+         // Check individual fields
+         section.fields.forEach(field => {
+            if (!field.required) {
+               const val = getValueByPath(payload, field.name);
+               if(val) {
+                 extras[field.name] = val;
+               }
+            }
+         });
+      }
+    });
+
+    // 3. Attach extras to payload
+    payload.extras = extras;
+    return payload;
+  };
 
   const onFormSubmit = async (data) => {
+    // 1. Strict Validation Check (Triggers all fields)
+    const isTotalValid = await trigger();
+    
+    // 2. Additional Custom Validation for Required Lists (e.g., Banks)
+    let listValidationError = false;
+    let newSectionErrors = {};
+    
+    Object.values(toolConfig.sections).forEach(section => {
+       if (section.type === 'dynamicList' && section.required) {
+          const listData = getValueByPath(data, section.listName);
+          if (!listData || listData.length === 0) {
+             listValidationError = true;
+             newSectionErrors[section.listName] = `Missing required ${section.itemTitle}.`;
+          }
+       }
+    });
+
+    if(!isTotalValid || listValidationError) {
+        setSectionErrors(prev => ({...prev, ...newSectionErrors}));
+        setError('Please complete all mandatory sections (Agreement, Personal Details, Bank Details).');
+        return;
+    }
+
     setError('');
     setLoading(true);
     setDocumentText('');
 
+    // 3. Prepare Payload (Separate Optional to Extras + Fix String Lists)
+    const finalPayload = preparePayload(data);
+
     try {
-      const text = await DocGenService.getPreview(toolConfig.apiEndpoint, data);
+      const text = await DocGenService.getPreview(toolConfig.apiEndpoint, finalPayload);
       setDocumentText(text);
     } catch (err) {
       console.error("Preview Generation Error:", err);
@@ -194,8 +336,9 @@ const DocForm = ({ toolConfig }) => {
     }
   };
 
-  const onFormError = () => {
-    setError('Please fill in all required fields.');
+  const onFormError = (errors) => {
+    console.log("Validation Errors:", errors);
+    setError('Please fill in all mandatory fields (marked with *).');
   };
 
   const handleClearPreview = () => {
@@ -207,7 +350,10 @@ const DocForm = ({ toolConfig }) => {
     try {
       setLoading(true);
       const formData = watch();
-      const blob = await DocGenService.getDownload(toolConfig.downloadEndpoint, formData);
+      // Apply same payload transformation for download
+      const finalPayload = preparePayload(formData);
+      
+      const blob = await DocGenService.getDownload(toolConfig.downloadEndpoint, finalPayload);
       downloadBlob(blob, `${toolConfig.title.replace(/ /g, '_')}.docx`);
     } catch (err) {
       console.error("Download Error:", err);
@@ -221,6 +367,7 @@ const DocForm = ({ toolConfig }) => {
     <div className="tf-tool-form-page">
       <form
         className="tf-layout-container"
+        // Bind onFormError to catch validation failures
         onSubmit={handleSubmit(onFormSubmit, onFormError)}
       >
         {/* Left Sidebar / Navigation */}
@@ -236,7 +383,7 @@ const DocForm = ({ toolConfig }) => {
                 type="button"
                 key={tab.id}
                 className={`tf-tab-btn ${activeTab === tab.id ? 'tf-active' : ''}`}
-                onClick={() => setActiveTab(tab.id)}
+                onClick={() => handleTabChange(tab.id)} 
                 disabled={isReviewing}
               >
                 {tab.label}
@@ -252,7 +399,7 @@ const DocForm = ({ toolConfig }) => {
             <div className="tf-stepper">
               <div className={`tf-step ${currentStep === 1 ? 'tf-active' : ''}`}>
                 <span className="tf-step-number">1</span>
-                <span className="tf-step-label">Fill Details & Generate</span>
+                <span className="tf-step-label">Fill & Generate</span>
               </div>
               <div className="tf-step-divider" />
               <div className={`tf-step ${currentStep === 2 ? 'tf-active' : ''}`}>
@@ -264,13 +411,13 @@ const DocForm = ({ toolConfig }) => {
             {/* Form Actions Header */}
             <div className="tf-form-header">
               <h2 className="tf-form-title">
-                {isReviewing ? 'Step 2: Review & Download' : 'Step 1: Fill Details & Generate'}
+                {isReviewing ? 'Review & Download' : 'Fill & Generate'}
               </h2>
               <div className="tf-header-actions">
                 <div className="tf-nav-controls">
                   <button
                     type="submit"
-                    disabled={!isValid || loading}
+                    disabled={loading} 
                     className="tf-nav-btn tf-generate"
                     title={isReviewing ? 'REGENERATE' : 'GENERATE'}
                   >
@@ -351,6 +498,7 @@ const DocForm = ({ toolConfig }) => {
                             control={control} 
                             section={section} 
                             formData={allFormData}
+                            listError={sectionErrors[section.listName]} 
                           />
                         );
                       }

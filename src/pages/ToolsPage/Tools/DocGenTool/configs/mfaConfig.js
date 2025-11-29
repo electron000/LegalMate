@@ -2,9 +2,7 @@ export const mfaConfig = {
   id: 'mfa',
   title: 'Marital Financial Agreement',
   subtitle: 'Define financial arrangements and asset division.',
-  // Phase 1: Generate Text
   apiEndpoint: '/docs/mfa_generator',
-  // Phase 2: Download DOCX
   downloadEndpoint: '/docs/mfa_download',
   outputType: 'preview', 
   initialState: {
@@ -26,12 +24,17 @@ export const mfaConfig = {
   },
   tabs: [
     { id: 'agreement', label: 'Agreement Details' },
+    // Bank details will now appear inside these tabs
     { id: 'party1', label: 'Party One Details' },
     { id: 'party2', label: 'Party Two Details' },
-    { id: 'financials1', label: "Party One's Financials" },
-    { id: 'financials2', label: "Party Two's Financials" },
+    // Financials now only contain assets/liabilities not related to banking
+    { id: 'financials1', label: "Party One's Assets" },
+    { id: 'financials2', label: "Party Two's Assets" },
   ],
   sections: {
+    /* ---------------------------------------------------------------------- */
+    /* 1. AGREEMENT (Mandatory)                                               */
+    /* ---------------------------------------------------------------------- */
     agreement: {
       tab: 'agreement',
       title: 'Agreement Details',
@@ -42,7 +45,10 @@ export const mfaConfig = {
         { name: 'marriage_date', label: 'Marriage Date', type: 'date', required: true, span: 'third' },
       ],
     },
-    // Party One
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. PARTY ONE (Personal + Bank = Mandatory)                             */
+    /* ---------------------------------------------------------------------- */
     partyOnePersonal: {
       tab: 'party1',
       title: 'Party One: Personal Details',
@@ -53,20 +59,39 @@ export const mfaConfig = {
         { name: 'partyOne.personal.father_name', label: "Father's Name", required: true, span: 'half' },
         { name: 'partyOne.personal.mother_name', label: "Mother's Name", required: true, span: 'half' },
         { name: 'partyOne.personal.gender', label: 'Gender', required: true, type: 'select', options: [{ label: 'Select...', value: '' }, { label: 'Male', value: 'Male' }, { label: 'Female', value: 'Female' }, { label: 'Other', value: 'Other' }], span: 'half' },
-        { name: 'partyOne.personal.address', label: 'Address', required: true, type: 'textarea', span: 'half' },
+        { name: 'partyOne.personal.address', label: 'Address', required: true, type: 'textarea', span: 'full' },
       ],
     },
+    // MOVED HERE: Bank Details are now part of the Personal Tab validation flow
+    partyOneBank: {
+      tab: 'party1',
+      title: 'Party One: Bank Accounts (Required)',
+      type: 'dynamicList',
+      listName: 'partyOne.assets.bank_account',
+      itemTitle: 'Account',
+      required: true, // STRICT: List cannot be empty
+      newItem: { bank_name: '', account_number: '', balance: '' },
+      fields: [
+        { name: 'bank_name', label: 'Bank Name', placeholder: 'Bank Name', required: true },
+        { name: 'account_number', label: 'Account Number', placeholder: 'Account Number', required: true },
+        { name: 'balance', label: 'Balance (₹)', placeholder: 'Balance (₹)', type: 'number', required: true },
+      ],
+    },
+    // Employment is mandatory per your request
     partyOneEmployment: {
       tab: 'party1',
-      title: 'Party One: Employment (Optional)',
+      title: 'Party One: Employment',
       type: 'form',
       fields: [
-        { name: 'partyOne.employment.occupation', label: 'Occupation', span: 'half' },
-        { name: 'partyOne.employment.employer', label: 'Employer', span: 'half' },
-        { name: 'partyOne.employment.annual_income', label: 'Annual Income (₹)', type: 'number' },
+        { name: 'partyOne.employment.occupation', label: 'Occupation', required: true, span: 'half' },
+        { name: 'partyOne.employment.employer', label: 'Employer', required: true, span: 'half' },
+        { name: 'partyOne.employment.annual_income', label: 'Annual Income (₹)', type: 'number', required: true },
       ],
     },
-    // Party Two
+
+    /* ---------------------------------------------------------------------- */
+    /* 3. PARTY TWO (Personal + Bank = Mandatory)                             */
+    /* ---------------------------------------------------------------------- */
     partyTwoPersonal: {
       tab: 'party2',
       title: 'Party Two: Personal Details',
@@ -77,50 +102,55 @@ export const mfaConfig = {
         { name: 'partyTwo.personal.father_name', label: "Father's Name", required: true, span: 'half' },
         { name: 'partyTwo.personal.mother_name', label: "Mother's Name", required: true, span: 'half' },
         { name: 'partyTwo.personal.gender', label: 'Gender', required: true, type: 'select', options: [{ label: 'Select...', value: '' }, { label: 'Male', value: 'Male' }, { label: 'Female', value: 'Female' }, { label: 'Other', value: 'Other' }], span: 'half' },
-        { name: 'partyTwo.personal.address', label: 'Address', required: true, type: 'textarea', span: 'half' },
+        { name: 'partyTwo.personal.address', label: 'Address', required: true, type: 'textarea', span: 'full' },
+      ],
+    },
+    // MOVED HERE
+    partyTwoBank: {
+      tab: 'party2',
+      title: 'Party Two: Bank Accounts (Required)',
+      type: 'dynamicList',
+      listName: 'partyTwo.assets.bank_account',
+      itemTitle: 'Account',
+      required: true, // STRICT
+      newItem: { bank_name: '', account_number: '', balance: '' },
+      fields: [
+        { name: 'bank_name', label: 'Bank Name', placeholder: 'Bank Name', required: true },
+        { name: 'account_number', label: 'Account Number', placeholder: 'Account Number', required: true },
+        { name: 'balance', label: 'Balance (₹)', placeholder: 'Balance (₹)', type: 'number', required: true },
       ],
     },
     partyTwoEmployment: {
       tab: 'party2',
-      title: 'Party Two: Employment (Optional)',
+      title: 'Party Two: Employment',
       type: 'form',
       fields: [
-        { name: 'partyTwo.employment.occupation', label: 'Occupation', span: 'half' },
-        { name: 'partyTwo.employment.employer', label: 'Employer', span: 'half' },
-        { name: 'partyTwo.employment.annual_income', label: 'Annual Income (₹)', type: 'number' },
+        { name: 'partyTwo.employment.occupation', label: 'Occupation', required: true, span: 'half' },
+        { name: 'partyTwo.employment.employer', label: 'Employer', required: true, span: 'half' },
+        { name: 'partyTwo.employment.annual_income', label: 'Annual Income (₹)', type: 'number', required: true },
       ],
     },
-    // Party One Financials
+
+    /* ---------------------------------------------------------------------- */
+    /* REMAINING TABS (Optional / Extra Assets)                               */
+    /* Fields here are not marked 'required: true' so they are optional       */
+    /* ---------------------------------------------------------------------- */
     partyOneRealEstate: {
       tab: 'financials1',
-      title: 'Party One: Real Estate',
+      title: 'Party One: Real Estate (Optional)',
       type: 'dynamicList',
       listName: 'partyOne.assets.real_estate',
       itemTitle: 'Property',
       newItem: { address: '', value: '', is_pre_marital: true },
       fields: [
-        { name: 'address', label: 'Property Address', placeholder: 'Property Address' },
+        { name: 'address', label: 'Property Address', placeholder: 'Property Address' }, // No required: true
         { name: 'value', label: 'Value (₹)', placeholder: 'Value (₹)', type: 'number' },
         { name: 'is_pre_marital', label: 'Type', type: 'select', options: [{ label: 'Pre-Marital', value: true }, { label: 'Marital', value: false }] },
       ],
     },
-    partyOneBank: {
-      tab: 'financials1',
-      title: 'Party One: Bank Accounts',
-      type: 'dynamicList',
-      listName: 'partyOne.assets.bank_account',
-      itemTitle: 'Account',
-      required: true,
-      newItem: { bank_name: '', account_number: '', balance: '' },
-      fields: [
-        { name: 'bank_name', label: 'Bank Name', placeholder: 'Bank Name' },
-        { name: 'account_number', label: 'Account Number', placeholder: 'Account Number' },
-        { name: 'balance', label: 'Balance (₹)', placeholder: 'Balance (₹)', type: 'number' },
-      ],
-    },
     partyOneInvestments: {
       tab: 'financials1',
-      title: 'Party One: Investments',
+      title: 'Party One: Investments (Optional)',
       type: 'dynamicList',
       listName: 'partyOne.assets.investment',
       itemTitle: 'Investment',
@@ -134,7 +164,7 @@ export const mfaConfig = {
     },
     partyOneLoans: {
       tab: 'financials1',
-      title: 'Party One: Liabilities (Loans)',
+      title: 'Party One: Liabilities (Optional)',
       type: 'dynamicList',
       listName: 'partyOne.liabilities.loans',
       itemTitle: 'Loan',
@@ -145,10 +175,11 @@ export const mfaConfig = {
         { name: 'bank', label: 'Bank/Lender', placeholder: 'Bank/Lender' },
       ],
     },
-    // Party Two Financials
+    
+    // PARTY TWO EXTRAS
     partyTwoRealEstate: {
       tab: 'financials2',
-      title: 'Party Two: Real Estate',
+      title: 'Party Two: Real Estate (Optional)',
       type: 'dynamicList',
       listName: 'partyTwo.assets.real_estate',
       itemTitle: 'Property',
@@ -159,23 +190,9 @@ export const mfaConfig = {
         { name: 'is_pre_marital', label: 'Type', type: 'select', options: [{ label: 'Pre-Marital', value: true }, { label: 'Marital', value: false }] },
       ],
     },
-    partyTwoBank: {
-      tab: 'financials2',
-      title: 'Party Two: Bank Accounts',
-      type: 'dynamicList',
-      listName: 'partyTwo.assets.bank_account',
-      itemTitle: 'Account',
-      required: true,
-      newItem: { bank_name: '', account_number: '', balance: '' },
-      fields: [
-        { name: 'bank_name', label: 'Bank Name', placeholder: 'Bank Name' },
-        { name: 'account_number', label: 'Account Number', placeholder: 'Account Number' },
-        { name: 'balance', label: 'Balance (₹)', placeholder: 'Balance (₹)', type: 'number' },
-      ],
-    },
     partyTwoInvestments: {
       tab: 'financials2',
-      title: 'Party Two: Investments',
+      title: 'Party Two: Investments (Optional)',
       type: 'dynamicList',
       listName: 'partyTwo.assets.investment',
       itemTitle: 'Investment',
@@ -189,7 +206,7 @@ export const mfaConfig = {
     },
     partyTwoLoans: {
       tab: 'financials2',
-      title: 'Party Two: Liabilities (Loans)',
+      title: 'Party Two: Liabilities (Optional)',
       type: 'dynamicList',
       listName: 'partyTwo.liabilities.loans',
       itemTitle: 'Loan',

@@ -1,8 +1,10 @@
-
+// 1. Finance & Asset & Job Contracts
 import { craConfig } from './craConfig';
 import { willConfig } from './willConfig';
 import { mfaConfig } from './mfaConfig';
 import { sdConfig } from './sdConfig';
+import { contractConfig } from './contractConfig';
+
 
 // 2. Business Contracts
 import { ndaConfig } from './ndaConfig';
@@ -22,27 +24,27 @@ import { ceaseDesistConfig } from './ceasedesistConfig';
 import { legalNoticeDuesConfig } from './legalnoticeConfig';
 
 export const ToolRegistry = {
-  // Existing
+  // Contracts
   [craConfig.id]: craConfig,
-  // [rentalConfig.id]: rentalConfig, <--- REMOVED DUPLICATE FROM HERE
   [willConfig.id]: willConfig,
   [mfaConfig.id]: mfaConfig,
   [sdConfig.id]: sdConfig,
+  [contractConfig.id]: contractConfig,
 
-  // New Business
+  // Business
   [ndaConfig.id]: ndaConfig,
   [employmentConfig.id]: employmentConfig,
   [partnershipConfig.id]: partnershipConfig,
   [freelancerConfig.id]: freelancerConfig,
   [saConfig.id]: saConfig,
 
-  // New Personal
+  // Personal
   [poaConfig.id]: poaConfig,
   [rentalConfig.id]: rentalConfig, // Kept this one
   [aConfig.id]: aConfig,
   [ncaConfig.id]: ncaConfig,
 
-  // New Notices
+  // Notices
   [ceaseDesistConfig.id]: ceaseDesistConfig,
   [legalNoticeDuesConfig.id]: legalNoticeDuesConfig,
 };

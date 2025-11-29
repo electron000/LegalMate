@@ -14,9 +14,9 @@
    ========================================= */
 .mobile-nav-pill {
     position: fixed;
-    top: 1rem;
-    left: 1rem;
-    right: 1rem;
+    top: 0.6rem;
+    left: 0.6rem;
+    right: 0.6rem;
     height: var(--mn-height);
     background: var(--mn-bg);
     border-radius: 10px;
@@ -24,7 +24,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1rem 0 1rem;
+    padding: 0 0.6rem 0 0.6rem;
     z-index: 2000; 
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -37,7 +37,7 @@
 .mobile-brand {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.3rem;
     text-decoration: none;
     color: var(--mn-text);
 }
@@ -66,9 +66,9 @@
     background-color: #111111;
     color: #ffffff;
     border: none;
-    border-radius: 10px;
-    padding: 0.6rem 1.2rem;
-    font-size: 0.85rem;
+    border-radius: 20px;
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
     font-weight: 600;
     cursor: pointer;
     white-space: nowrap;

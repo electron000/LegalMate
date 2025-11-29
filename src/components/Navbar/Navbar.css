@@ -14,7 +14,7 @@
     --nav-text: var(--text-inverse);
     --nav-logo-filter: none;
 
-    position: fixed;
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -46,14 +46,14 @@
 }
 
 .brand-logo {
-    height: 40px;
+    height: 38px;
     width: auto;
     transition: filter 0.3s ease;
     filter: var(--nav-logo-filter);
 }
 
 .brand-text {
-    font-size: 1.25rem;
+    font-size: 1rem;
     font-weight: 700;
     color: var(--nav-text);
     transition: color 0.3s ease;

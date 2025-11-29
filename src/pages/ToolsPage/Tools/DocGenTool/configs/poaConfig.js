@@ -4,6 +4,7 @@ export const poaConfig = {
   subtitle: 'Authorize an agent to act on your behalf.',
   apiEndpoint: '/docs/poa_generator',
   downloadEndpoint: '/docs/poa_download',
+  outputType: 'preview', 
   initialState: {
     execution_date: '',
     place_of_execution: '',
@@ -16,10 +17,13 @@ export const poaConfig = {
     attorney_father_name: '',
     attorney_address: '',
     purpose_of_poa: '',
-    specific_powers: []
+    specific_powers: [] 
   },
   tabs: [{ id: 'parties', label: 'Parties' }, { id: 'powers', label: 'Powers' }],
   sections: {
+    /* ---------------------------------------------------------------------- */
+    /* 1. PRINCIPAL (All Mandatory)                                           */
+    /* ---------------------------------------------------------------------- */
     principal: {
       tab: 'parties',
       title: 'Principal (You)',
@@ -31,6 +35,10 @@ export const poaConfig = {
         { name: 'principal_address', label: 'Address', required: true, span: 'half' },
       ]
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 2. ATTORNEY (All Mandatory)                                            */
+    /* ---------------------------------------------------------------------- */
     attorney: {
       tab: 'parties',
       title: 'Attorney (Agent)',
@@ -42,6 +50,10 @@ export const poaConfig = {
         { name: 'attorney_address', label: 'Address', required: true, span: 'half' },
       ]
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 3. DETAILS (All Mandatory)                                             */
+    /* ---------------------------------------------------------------------- */
     details: {
       tab: 'powers',
       title: 'PoA Details',
@@ -52,16 +64,27 @@ export const poaConfig = {
         { name: 'place_of_execution', label: 'Place', required: true, span: 'half' },
       ]
     },
+
+    /* ---------------------------------------------------------------------- */
+    /* 4. SPECIFIC POWERS (Mandatory List)                                    */
+    /* ---------------------------------------------------------------------- */
     powersList: {
       tab: 'powers',
       title: 'Specific Powers',
       type: 'dynamicList',
       listName: 'specific_powers',
       itemTitle: 'Power',
-      isSimpleStringList: true, // Special flag for list of strings
-      newItem: '',
+      required: true,
+      
+      // 1. ADD THIS FLAG
+      isSimpleStringList: true, 
+      
+      // 2. Ensure newItem is an object so React handles it correctly in the UI
+      newItem: { description: '' }, 
+      
       fields: [
-        { name: '', label: 'Power Description', placeholder: 'e.g., To sign lease agreements...', required: true }
+        // 3. Ensure name matches the key in newItem
+        { name: 'description', label: 'Power Description', placeholder: 'e.g., To sign lease agreements...', required: true, type: 'textarea' }
       ]
     }
   }

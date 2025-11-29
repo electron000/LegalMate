@@ -1,22 +1,36 @@
 /* HeroSection.css */
+/* KEYFRAME ANIMATIONS */
+
+/* UPDATED: Using slideUpFade from new code (30px up) instead of old slideDownFade */
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInSlow {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
 
 .hero-section {
   position: relative;
   width: 100%;
-  min-height: 100vh; /* Tall hero area */
+  min-height: 75vh; 
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  
-  /* Mapped to primary dark brand color */
   background: var(--hero-bg-gradient);
-  
   overflow: hidden;
-  padding-top: 60px; /* Space for navbar */
+  padding-top: 100px;
 }
 
-/* Optional: Add a subtle mesh/noise pattern if desired later */
 .hero-overlay {
   position: absolute;
   top: 0;
@@ -26,6 +40,7 @@
   background: radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 25%),
               radial-gradient(circle at 80% 30%, rgba(255, 255, 255, 0.03) 0%, transparent 20%);
   z-index: 0;
+  animation: fadeInSlow 1.5s ease-out forwards;
 }
 
 .hero-content-container {
@@ -39,40 +54,38 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
-  transform: translateY(-50px); 
+  opacity: 0; 
+  /* UPDATED: Uses slideUpFade */
+  animation: slideUpFade 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  animation-delay: 0.2s; 
 }
 
 .hero-text {
-  /* padding-top: 4rem; */
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.5rem; /* Consistent gap */
+  flex-direction: row; 
+  align-items: center; 
+  justify-content: center;
+  gap: 1.5rem; 
+  flex-wrap: wrap; 
 }
 
 /* --- Added Logo Styles --- */
 .hero-logo {
-  width: 250px; 
+  width: clamp(60px, 8vw, 90px); 
   height: auto;
   object-fit: contain;
-  /* Optional: Adds a subtle drop shadow to pop against the dark background */
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3)); 
 }
 
 .hero-text h1 {
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.1; 
 }
 
 .hero-title-main {
-  /* Use 'clamp' for fluid typography */
   font-size: clamp(3rem, 5vw, 6rem); 
   font-weight: 1000;
-  
-  /* Replaced --white with --text-inverse (light gray/white) */
   color: var(--text-inverse); 
-  
   text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
@@ -85,18 +98,17 @@
   overflow: hidden;
   line-height: 0;
   z-index: 3;
-  transform: rotate(180deg); /* Flips the standard wave to create the "valley" look */
+  transform: rotate(180deg);
 }
 
 .hero-wave-separator svg {
   position: relative;
   display: block;
   width: calc(100% + 1.3px);
-  height: 80px; /* Adjust height of the curve here */
+  height: 80px; 
 }
 
 .hero-wave-separator .shape-fill {
-  /* Matches the main page background (white) */
   fill: var(--background);
 }
 
@@ -108,20 +120,17 @@
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-top: 2rem; /* Space between Title and Input */
+  margin-top: 2.5rem; 
 }
 
 .hero-search-box {
   position: relative;
   width: 100%;
-  max-width: 600px; /* Max width like Gemini */
+  max-width: 600px;
   height: 56px;
-  
-  /* Using standard grays for dark mode input */
   background-color: var(--gray-800);
   border: 1px solid var(--gray-600);
-  
-  border-radius: 28px; /* Fully rounded pill shape */
+  border-radius: 28px;
   display: flex;
   align-items: center;
   padding: 0 1.5rem;
@@ -130,10 +139,8 @@
 }
 
 .hero-search-box:focus-within {
-  /* Lighter background on focus */
   background-color: var(--primary-black-active);
   border-color: var(--gray-400);
-  
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
 }
 
@@ -141,16 +148,12 @@
   flex: 1;
   background: transparent;
   border: none;
-  
-  /* Replaced --white with --text-inverse */
   color: var(--text-inverse);
-  
   font-size: 1.1rem;
   outline: none;
 }
 
 .hero-search-input::placeholder {
-  /* Replaced --text-placeholder with --text-secondary */
   color: var(--text-secondary);
   font-weight: 400;
 }
@@ -164,15 +167,11 @@
   justify-content: center;
   padding: 8px;
   border-radius: 50%;
-  
-  /* Replaced --hero-icon-color with --text-inverse */
   color: var(--text-inverse);
-  
   transition: background 0.2s;
 }
 
 .hero-search-btn:hover {
-  /* Using sidebar button hover for consistent interaction state */
   background-color: var(--sidebar-btn-hover);
 }
 
@@ -186,16 +185,13 @@
 @media (max-width: 1024px) {
   .hero-content-container {
     max-width: 90%; 
-  }
-  .hero-content-container {
     transform: translateY(-40px);
   }
 }
 
 @media (max-width: 768px) {
-  
   .hero-section {
-    min-height: 80vh; 
+    min-height: 70vh; 
     padding-top: 50px; 
   }
   
@@ -205,16 +201,16 @@
   }
   
   .hero-text {
+    flex-direction: column;
     gap: 1rem; 
   }
 
-  /* Make logo slightly smaller on mobile */
   .hero-logo {
-    width: 120px;
+    width: 100px;
   }
   
   .hero-title-main {
-    font-size: clamp(1.8rem, 8vw, 1rem); 
+    font-size: clamp(1.5rem, 8vw, 2.5rem);
   }
 
   .hero-wave-separator svg {

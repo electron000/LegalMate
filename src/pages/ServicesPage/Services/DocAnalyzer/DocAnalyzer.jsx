@@ -1,22 +1,14 @@
-// src/pages/DocAnalyzer/DocAnalyzer.jsx
-
 import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
-import { 
-  Send, Loader, Menu, Plus, 
-  Trash2, MessageSquare, ShieldX, AlertTriangle, FileText
-} from 'lucide-react';
+import { Send, Loader, Menu, Plus, Trash2, MessageSquare, ShieldX, AlertTriangle, FileText } from 'lucide-react';
 import '../shared/ChatInterface.css';
 import legalLogo from '../../../../assets/legal-logo.png'; 
 import DocAnalyzerModal from './DocAnalyzerModal'; 
 import { DocAnalyzerAPI } from '../../../../api';
 
-// --- Message Renderer Component (No Changes) ---
 const DocMessageRenderer = ({ message }) => {
-  if (message.role === 'user') {
-    return <p>{message.content}</p>;
-  }
-
+  if (message.role === 'user') return <p>{message.content}</p>;
+  
   if (message.role === 'error') {
     return (
       <div className="error-header">
@@ -31,18 +23,17 @@ const DocMessageRenderer = ({ message }) => {
 
   if (message.role === 'ai') {
     const { content } = message;
-
     if (content.type === 'structured') {
       return (
         <div className="ai-response-card">
           <ReactMarkdown
             components={{
-              h2: ({...props}) => <h2 className="ai-response-heading" {...props} />,
-              h3: ({...props}) => <h3 className="ai-subheading" {...props} />,
-              p: ({...props}) => <p className="ai-paragraph" {...props} />,
-              strong: ({...props}) => <strong className="ai-bold" {...props} />,
-              ul: ({...props}) => <ul className="ai-list" {...props} />,
-              li: ({...props}) => <li className="ai-list-item" {...props} />,
+              h2: (props) => <h2 className="ai-response-heading" {...props} />,
+              h3: (props) => <h3 className="ai-subheading" {...props} />,
+              p: (props) => <p className="ai-paragraph" {...props} />,
+              strong: (props) => <strong className="ai-bold" {...props} />,
+              ul: (props) => <ul className="ai-list" {...props} />,
+              li: (props) => <li className="ai-list-item" {...props} />,
             }}
           >
             {content.explanation}
@@ -56,21 +47,10 @@ const DocMessageRenderer = ({ message }) => {
       </div>
     );
   }
-
   return null;
 };
 
-// --- Sidebar Component (No Changes) ---
-const DocSideBar = ({
-  sessions,
-  activeSessionId,
-  onSelectSession,
-  onDeleteSession,
-  onClearAllSessions,
-  createNewSession,
-  isExpanded,
-  toggleSidebar
-}) => {
+const DocSideBar = ({ sessions, activeSessionId, onSelectSession, onDeleteSession, onClearAllSessions, createNewSession, isExpanded, toggleSidebar }) => {
   return (
     <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
       <div className="sidebar-content-wrapper">
@@ -79,12 +59,7 @@ const DocSideBar = ({
             <button className="sidebar-icon-btn menu-btn" onClick={toggleSidebar} aria-label="Expand Menu">
               <Menu size={24} />
             </button>
-            <button 
-              className="sidebar-icon-btn new-chat-mini-btn" 
-              onClick={createNewSession} 
-              aria-label="New Analysis"
-              title="New Analysis"
-            >
+            <button className="sidebar-icon-btn new-chat-mini-btn" onClick={createNewSession} aria-label="New Analysis" title="New Analysis">
               <FileText size={20} />
             </button>
           </div>
@@ -96,14 +71,12 @@ const DocSideBar = ({
                 <Menu size={24} />
              </button>
           </div>
-          
           <div className="new-chat-container">
             <button className="new-chat-btn" onClick={createNewSession}>
               <FileText size={18} className="plus-icon"/>
               <span>New analysis</span>
             </button>
           </div>
-          
           <div className="threads-section">
             <div className="threads-header">Recent</div>
             <div className="threads-list">
@@ -117,22 +90,13 @@ const DocSideBar = ({
                     <MessageSquare size={18} className="chat-icon" />
                     <span className="thread-title">{session.title || 'New Analysis'}</span>
                   </button>
-                  
-                  <button 
-                    className="delete-session-btn" 
-                    aria-label="Delete chat"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteSession(session.id);
-                    }}
-                  >
+                  <button className="delete-session-btn" onClick={(e) => { e.stopPropagation(); onDeleteSession(session.id); }}>
                     <Trash2 size={16} />
                   </button>
                 </div>
               ))}
             </div>
           </div>
-          
           <div className="sidebar-footer">
             <button className="footer-item" onClick={onClearAllSessions}>
               <ShieldX size={18} />
@@ -145,11 +109,9 @@ const DocSideBar = ({
   );
 };
 
-// --- MAIN COMPONENT ---
 const DocAnalyzer = () => {
   const [isSessionReady, setIsSessionReady] = useState(false);
   const [showModal, setShowModal] = useState(true); 
-  
   const [currentDocName, setCurrentDocName] = useState('');
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -162,25 +124,17 @@ const DocAnalyzer = () => {
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
 
-  // --- HANDLERS ---
-  
-  const toggleSidebar = () => {
-    setIsSidebarExpanded(prev => !prev);
-  };
-
+  const toggleSidebar = () => setIsSidebarExpanded(prev => !prev);
   const closeSidebarOnMobile = () => {
-    if (window.innerWidth <= 768) {
-      setIsSidebarExpanded(false);
-    }
+    if (window.innerWidth <= 768) setIsSidebarExpanded(false);
   };
 
-  // Helper to reset the main view without necessarily clearing history
   const resetSessionView = () => {
     setMessages([]);
     setIsSessionReady(false);
     setShowModal(true);
     setActiveSessionId('');
-    setCurrentDocName(''); // <--- CLEARED HERE
+    setCurrentDocName('');
     closeSidebarOnMobile();
   };
 
@@ -188,40 +142,23 @@ const DocAnalyzer = () => {
     setShowModal(false);
     setIsSessionReady(true);
     setCurrentDocName(fileName);
-
     const newId = Date.now().toString();
     setActiveSessionId(newId);
-
-    const initialMessages = [
-        { 
-            role: 'ai', 
-            content: { 
-                type: 'structured', 
-                explanation: summary
-            } 
-        }
-    ];
-    setMessages(initialMessages);
+    setMessages([{ 
+        role: 'ai', 
+        content: { type: 'structured', explanation: summary } 
+    }]);
   };
 
-  const handleModalClose = () => {
-    setShowModal(false);
-  };
-
-  // Called when "New Analysis" is clicked - Clears Sidebar History & Doc Name
   const openNewAnalysis = () => {
-      setSessions([]); // Clears sidebar history
-      resetSessionView(); // Clears current view and doc name
+      setSessions([]);
+      resetSessionView();
   };
 
   const processUserMessage = async (text) => {
-    if (!text || !text.trim()) return;
+    if (!text?.trim()) return;
 
-    // 1. Add User Message
-    const userMessage = { role: 'user', content: text };
-    setMessages(prev => [...prev, userMessage]);
-
-    // Update session title if new
+    setMessages(prev => [...prev, { role: 'user', content: text }]);
     setSessions(prev => {
         if (!prev.find(s => s.id === activeSessionId)) {
             return [{ id: activeSessionId, title: text.slice(0, 30) + '...' }, ...prev];
@@ -230,29 +167,18 @@ const DocAnalyzer = () => {
     });
 
     setIsLoading(true);
-
     try {
-        // 2. ACTUAL API CALL TO QnA ENDPOINT
         const data = await DocAnalyzerAPI.askQuestion(text);
-        
-        const aiResponse = {
+        setMessages(prev => [...prev, {
             role: 'ai',
-            content: {
-                type: 'structured',
-                explanation: data.answer // Backend returns { answer: "..." }
-            }
-        };
-        setMessages(prev => [...prev, aiResponse]);
-
+            content: { type: 'structured', explanation: data.answer }
+        }]);
     } catch (error) {
         console.error("QnA Error:", error);
-        const errorResponse = {
+        setMessages(prev => [...prev, {
             role: 'error',
-            content: {
-                message: "I encountered an error retrieving the answer. Please ensure the document context is loaded."
-            }
-        };
-        setMessages(prev => [...prev, errorResponse]);
+            content: { message: "I encountered an error retrieving the answer. Please ensure the document context is loaded." }
+        }]);
     } finally {
         setIsLoading(false);
     }
@@ -283,9 +209,7 @@ const DocAnalyzer = () => {
     const { type, id } = showDeleteModal;
     if (type === 'single') {
         setSessions(prev => prev.filter(s => s.id !== id));
-        if (id === activeSessionId) {
-            resetSessionView(); // Just reset view, preserve other sessions
-        }
+        if (id === activeSessionId) resetSessionView();
     } else if (type === 'all') {
         setSessions([]);
         resetSessionView();
@@ -296,26 +220,14 @@ const DocAnalyzer = () => {
   const DeleteModal = () => {
     if (!showDeleteModal.visible) return null;
     const isSingle = showDeleteModal.type === 'single';
-    
     return (
       <div className="modal-overlay" onClick={() => setShowDeleteModal({ visible: false, type: null, id: null })}>
         <div className="modal-content" onClick={(e) => e.stopPropagation()}>
           <h3>{isSingle ? 'Delete Analysis?' : 'Clear All History?'}</h3>
-          <p>
-            {isSingle 
-              ? 'This will permanently delete this analysis session.' 
-              : 'This will permanently delete ALL your analysis sessions.'}
-          </p>
+          <p>{isSingle ? 'This will permanently delete this analysis session.' : 'This will permanently delete ALL your analysis sessions.'}</p>
           <div className="modal-buttons">
-            <button 
-              className="btn-cancel" 
-              onClick={() => setShowDeleteModal({ visible: false, type: null, id: null })}
-            >
-              Cancel
-            </button>
-            <button className="btn-delete" onClick={handleDelete}>
-              {isSingle ? 'Delete' : 'Clear All'}
-            </button>
+            <button className="btn-cancel" onClick={() => setShowDeleteModal({ visible: false, type: null, id: null })}>Cancel</button>
+            <button className="btn-delete" onClick={handleDelete}>{isSingle ? 'Delete' : 'Clear All'}</button>
           </div>
         </div>
       </div>
@@ -324,18 +236,13 @@ const DocAnalyzer = () => {
   
   return (
     <div className={`chatbot-page ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
-      
       <div className="chat-background-wave">
           <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
               <path fill="#ffffff" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
           </svg>
       </div>
 
-      <DocAnalyzerModal 
-        isOpen={showModal} 
-        onClose={handleModalClose} 
-        onAnalysisComplete={handleAnalysisComplete}
-      />
+      <DocAnalyzerModal isOpen={showModal} onClose={() => setShowModal(false)} onAnalysisComplete={handleAnalysisComplete} />
 
       <DocSideBar
         sessions={sessions}
@@ -353,9 +260,7 @@ const DocAnalyzer = () => {
         toggleSidebar={toggleSidebar} 
       />
 
-      {isSidebarExpanded && (
-        <div className="mobile-backdrop" onClick={() => setIsSidebarExpanded(false)} />
-      )}
+      {isSidebarExpanded && <div className="mobile-backdrop" onClick={() => setIsSidebarExpanded(false)} />}
 
       <main className="chat-main">
         <button className="mobile-menu-toggle" onClick={toggleSidebar} aria-label="Open Menu">
@@ -366,7 +271,11 @@ const DocAnalyzer = () => {
             <div className="model-selector">
                 <img src={legalLogo} alt="DocAnalyzer" className="header-logo" onError={(e) => e.target.style.display='none'} />
                 <span>Doc Analyzer</span>
-                {currentDocName && <span className="text-xs ml-2 text-gray-500 font-normal border-l pl-2 border-gray-300">{currentDocName}</span>}
+                {currentDocName && (
+                  <span className="doc-header-filename" title={currentDocName}>
+                    {currentDocName}
+                  </span>
+                )}
             </div>
         </div>
 
@@ -374,68 +283,46 @@ const DocAnalyzer = () => {
             <div className="chat-messages">
                 {messages.length === 0 && !isLoading ? (
                 <div className="welcome-message">
-                    <h1>
-                    <img src={legalLogo} alt="DocAnalyzer" className="welcome-logo" onError={(e) => e.target.style.display='none'} />
-                    Doc Analyzer
-                    </h1>
+                    <h1><img src={legalLogo} alt="DocAnalyzer" className="welcome-logo" onError={(e) => e.target.style.display='none'} />Doc Analyzer</h1>
                     <p>Your intelligent assistant for legal document analysis.</p>
                 </div>
                 ) : (
-                messages.map((message, index) => (
-                    <div key={index} className={`message ${message.role}`}>
-                    <DocMessageRenderer message={message} />
-                    </div>
-                ))
+                messages.map((message, index) => <div key={index} className={`message ${message.role}`}><DocMessageRenderer message={message} /></div>)
                 )}
                 {isLoading && (
                 <div className="message ai">
-                    <div className="loading-indicator">
-                    <Loader size={16} className="spinner" /> Analyzing your document...
-                    </div>
+                    <div className="loading-indicator"><Loader size={16} className="spinner" /> Analyzing your document...</div>
                 </div>
                 )}
                 <div ref={chatEndRef} />
             </div>
         </div>
 
-        {/* Input Area - Now always visible */}
         <div className="input-area">
             <form className="input-form" onSubmit={handleSendMessage}>
             <div className="input-container">
-    {/* Only show Upload button if session is NOT ready */}
-    {!isSessionReady && (
-      <button 
-        type="button" 
-        className="upload-button"
-        onClick={() => setShowModal(true)}
-        title="Upload Document"
-      >
-        <Plus size={20} />
-      </button>
-    )}
-
-    <textarea
-      ref={textareaRef} 
-      className="message-input"
-      value={userInput}
+                {!isSessionReady && (
+                <button type="button" className="upload-button" onClick={() => setShowModal(true)} title="Upload Document">
+                    <Plus size={20} />
+                </button>
+                )}
+                <textarea
+                ref={textareaRef} 
+                className="message-input"
+                value={userInput}
                 onChange={handleInputChange} 
                 placeholder={!isSessionReady ? "Upload a document to start..." : "Ask about your documents..."}
                 disabled={isLoading || !isSessionReady}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); }}}
                 rows={1}
                 />
-                <button 
-                  type="submit" 
-                  className="send-button" 
-                  disabled={isLoading || !userInput.trim() || !isSessionReady}
-                >
+                <button type="submit" className="send-button" disabled={isLoading || !userInput.trim() || !isSessionReady}>
                 {isLoading ? <Loader size={16} /> : <Send size={16} />}
                 </button>
             </div>
             </form>
         </div>
       </main>
-      
       <DeleteModal />
     </div>
   );

@@ -12,6 +12,7 @@ export const legalNoticeDuesConfig = {
     recipient_address: '',
     transaction_details: '',
     outstanding_amount: '',
+    outstanding_amount_in_words: '', // NEW: Added for HTML match
     payment_deadline_days: ''
   },
   tabs: [{ id: 'main', label: 'Notice Details' }],
@@ -35,7 +36,8 @@ export const legalNoticeDuesConfig = {
       fields: [
         { name: 'transaction_details', label: 'Transaction Details', type: 'textarea', placeholder: 'Describe the service/product provided...', required: true },
         { name: 'outstanding_amount', label: 'Outstanding Amount (₹)', type: 'number', required: true, span: 'half' },
-        { name: 'payment_deadline_days', label: 'Payment Deadline (Days)', type: 'number', required: true, span: 'half' },
+        { name: 'outstanding_amount_in_words', label: 'Amount (in Words)', required: true, span: 'half' }, // NEW FIELD
+        { name: 'payment_deadline_days', label: 'Payment Deadline (Days)', type: 'number', required: true, span: 'full' },
       ]
     }
   }
