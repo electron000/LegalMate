@@ -2,11 +2,7 @@ import axios from 'axios';
 
 // Helper to check if we are in development mode
 const isDev = import.meta.env.DEV;
-
-// Environment Variables
-// If the VITE env var is set, use it. 
-// Otherwise, check if we are in Dev mode to use localhost, or else use the Render URL.
-export const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL || 'http://localhost:8000';
+export const BLOG_API_URL = import.meta.env.VITE_BLOG_API_URL || 'https://legalblog-backend.onrender.com';
 export const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://localhost:8001';
 
 export const DOCGEN_API_URL = 

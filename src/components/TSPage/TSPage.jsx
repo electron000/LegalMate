@@ -1,6 +1,5 @@
 import React from 'react';
 import './TSPage.css';
-import legalLogo from '../../assets/legal-logo.png';
 
 // Helper to generate unique IDs for SVG masks to prevent conflicts
 const getSafeId = (str) => {
@@ -82,8 +81,9 @@ export const TSPage = ({ title, subtitle, children }) => {
     <div className="ts-page">
       <div className="ts-header-section">
         <div className="ts-title-container">
+          {/* Updated to use public folder logo */}
           <img 
-            src={legalLogo} 
+            src="/legal-logo.webp" 
             alt="LegalMate" 
             className="ts-page-logo"
             onError={(e) => e.target.style.display = 'none'} 

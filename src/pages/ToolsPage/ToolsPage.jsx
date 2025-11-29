@@ -45,7 +45,7 @@ const ToolsPage = () => {
   return (
     <TSPage 
       title="Legal Tools" 
-      subtitle="Powerful AI-driven tools for your legal needs"
+      subtitle="Simple to use Document Drafting Tools"
     >
       {filteredTools.length > 0 ? (
         filteredTools.map(tool => (
@@ -59,7 +59,7 @@ const ToolsPage = () => {
         ))
       ) : (
         <div className="ts-empty-state">
-          No tools found matching your criteria.
+          No such tools found
         </div>
       )}
     </TSPage>

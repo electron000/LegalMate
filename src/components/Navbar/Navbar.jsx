@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useSearch } from '../../contexts/SearchContext';
-import { Search } from 'lucide-react'; // Removed Menu, X
-import logo from '../../assets/legal-logo.png';
+import { Search } from 'lucide-react'; 
 import './Navbar.css';
 
 const NAV_LINKS = [
@@ -20,14 +19,15 @@ const Navbar = () => {
 
     const searchRef = useRef(null);
     const inputRef = useRef(null);
-    const navigate = useNavigate();
+    // REMOVED: useNavigate hook (was causing unused var error)
     const location = useLocation();
     const { searchQuery, setSearchQuery } = useSearch();
 
     // -- Derived State --
-    const showSearch = ['/tools', '/services', '/blogs'].some(path => location.pathname.startsWith(path));
+    // Search only shows for Tools & Services
+    const showSearch = ['/tools', '/services'].some(path => location.pathname.startsWith(path));
+    
     const isHomePage = location.pathname === '/';
-    // Navbar is "active" (dark text/white bg) if not home OR if scrolled
     const isNavbarActive = !isHomePage || state.scrolled;
 
     // -- Helpers --
@@ -36,7 +36,7 @@ const Navbar = () => {
     const getPlaceholder = useCallback(() => {
         if (location.pathname.startsWith('/tools')) return 'Search tools...';
         if (location.pathname.startsWith('/services')) return 'Search services...';
-        return 'Search blogs...';
+        return 'Search...'; 
     }, [location.pathname]);
 
     // -- Effects --
@@ -69,10 +69,11 @@ const Navbar = () => {
         };
     }, []);
 
-    // Reset search on navigation/visibility change
+    // Reset search text and close search bar whenever the page path changes
     useEffect(() => {
-        if (!showSearch) setSearchQuery('');
-    }, [showSearch, setSearchQuery]);
+        setSearchQuery('');
+        updateState({ searchOpen: false });
+    }, [location.pathname, setSearchQuery]);
 
     // Auto-focus search input when opened
     useEffect(() => {
@@ -85,30 +86,21 @@ const Navbar = () => {
     const handleSearchSubmit = (e) => {
         if ((e.type === 'keydown' && e.key !== 'Enter') || !searchQuery.trim()) return;
         e.preventDefault();
-
-        const isLocalSearch = ['/tools', '/services'].some(p => location.pathname.startsWith(p));
         
-        if (!isLocalSearch) {
-            navigate(`/blogs?q=${encodeURIComponent(searchQuery)}`);
-        }
-        
+        // No navigation needed anymore as search is purely local filter
         updateState({ searchOpen: false });
         inputRef.current?.blur();
     };
 
     return (
         <div className="desktop-navbar-wrapper">
-            {/* 1. Main Navbar (Logo + Right Actions) */}
             <nav className={`navbar ${isNavbarActive ? 'scrolled' : ''}`}>
-                {/* Brand */}
                 <Link to="/" className="navbar-brand">
-                    <img src={logo} alt="LegalMate" className="brand-logo" />
+                    <img src="/legal-logo.webp" alt="LegalMate" className="brand-logo" />
                     <span className="brand-text">LEGALMATE</span>
                 </Link>
 
-                {/* Right Actions */}
                 <div className="navbar-right">
-                    {/* Desktop Search */}
                     {showSearch && (
                         <div className={`desktop-search ${state.searchOpen ? 'active' : ''}`} ref={searchRef}>
                             <button 
@@ -132,7 +124,6 @@ const Navbar = () => {
                 </div>
             </nav>
 
-            {/* 2. Floating Desktop Navigation (The Pill) */}
             <div className={`desktop-nav-pill-container ${isNavbarActive ? 'scrolled' : ''}`}>
                 <div className="nav-pill">
                     {NAV_LINKS.map(link => {

@@ -176,15 +176,12 @@ select.tf-form-input {
 .tf-preview-actions {
     gap: 1rem;
     display: flex; flex-direction: row;
-    
-
 }
 .tf-error-message {
   padding: 1rem; background: var(--error-bg); color: var(--error-text);
   border-radius: 0.5rem; margin-bottom: 1rem; font-size: 0.9rem;
 }
 
-/* --- RESPONSIVE DESIGN --- */
 /* =================================== */
 /* MOBILE RESPONSIVE DESIGN (<767px)   */
 /* =================================== */
@@ -193,49 +190,48 @@ select.tf-form-input {
   /* --- PAGE & LAYOUT RESET --- */
   .tf-tool-form-page {
     padding-top: 0;
-    height: auto;
     min-height: 100vh;
   }
 
   .tf-layout-container {
-    flex-direction: column; /* Stack sidebar and content */
-    height: auto;
+    flex-direction: column;
     border-radius: 0;
-    overflow: visible; /* Let the page scroll naturally */
   }
 
   /* --- LEFT COLUMN (NAVIGATION) --- */
   .tf-left-column {
-    flex: 0 0 auto; /* Don't stretch, just take needed space */
+    flex: 0 0 auto;
     width: 100%;
-    padding: 1rem 1rem 0 1rem; /* Reduce padding */
+    padding: 1rem 1rem 0 1rem; /* Compact padding */
     border-right: none;
     border-bottom: 1px solid var(--border-light);
   }
 
   .tf-title {
-    font-size: 1.5rem; /* Smaller title */
+    font-size: 1.4rem; /* Smaller main title */
   }
 
-  /* Horizontal Scrollable Tabs */
+  /* Compact Horizontal Scrollable Tabs */
   .tf-tab-navigation {
     flex-direction: row;
-    overflow-x: auto; /* Allow horizontal scrolling */
+    overflow-x: auto;
     white-space: nowrap;
-    margin-top: 1rem;
-    padding-bottom: 1rem;
-    gap: 0.75rem;
-    -webkit-overflow-scrolling: touch; /* Smooth scroll on iOS */
-    scrollbar-width: none; /* Hide scrollbar Firefox */
+    margin-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    gap: 0.5rem; /* Tighter gap */
+    -webkit-overflow-scrolling: touch; 
+    scrollbar-width: none; 
   }
-  .tf-tab-navigation::-webkit-scrollbar { display: none; /* Hide scrollbar Chrome/Safari */ }
+  .tf-tab-navigation::-webkit-scrollbar { display: none; }
 
   .tf-tab-btn {
     width: auto;
     flex-shrink: 0;
-    padding: 0.6rem 1rem;
+    padding: 0.5rem 0.85rem; /* Smaller buttons */
     border: 1px solid var(--border-medium);
     background: var(--surface);
+    font-size: 0.8rem; /* Smaller text */
+    height: 36px; /* Fixed height for uniformity */
   }
   
   .tf-tab-btn.tf-active {
@@ -246,14 +242,12 @@ select.tf-form-input {
 
   /* --- RIGHT COLUMN (CONTENT) --- */
   .tf-right-column {
-    flex: 1 1 auto;
-    height: auto;
+    flex: 1;
     width: 100%;
   }
 
   .tf-content-container {
-    padding: 1rem;
-    height: auto; /* Remove fixed height constraint */
+    padding: 1rem; /* Reduced padding */
   }
 
   /* --- STEPPER --- */
@@ -264,17 +258,19 @@ select.tf-form-input {
   }
   
   .tf-step-label {
-    display: none; /* Hide text labels on mobile */
+    display: none; 
   }
   
   .tf-step-divider {
-    margin: 0 0.5rem; /* Shrink divider lines */
+    margin: 0 0.5rem;
   }
 
   /* --- FORM HEADER & ACTIONS --- */
   .tf-form-header {
-    justify-content: space-between;
-    gap: 3rem;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-bottom: 1rem;
   }
 
   .tf-form-title {
@@ -282,22 +278,23 @@ select.tf-form-input {
     width: 100%;
   }
 
-  /* Action buttons container */
   .tf-header-actions {
-    display: flex;
     width: 100%;
-    gap: 0.75rem;
   }
   
-  /* Make buttons full width or distribute space */
+  .tf-nav-controls {
+    width: 100%;
+  }
+
+  /* Full Width Generate Button */
   .tf-nav-btn {
-    flex: 1;
+    width: 100%;
     justify-content: center;
     padding: 0.75rem;
+    font-size: 0.9rem;
   }
 
   /* --- MAIN FORM CONTENT --- */
-  /* Critical: Remove internal scrolling, let the window scroll */
   .tf-form-content {
     flex-direction: column;
     display: block; 
@@ -314,34 +311,64 @@ select.tf-form-input {
 
   /* --- INPUTS & GRID --- */
   .tf-section {
-    padding: 1rem; /* Less padding inside cards */
+    padding: 1rem;
   }
 
-  /* Force all grids to single column */
+  /* Force single column for all grids */
   .tf-form-row, 
-  .tf-form-row[data-span="third"] {
+  .tf-form-row[data-span="third"],
+  .tf-dynamic-list-fields {
     grid-template-columns: 1fr !important;
     gap: 1rem;
   }
 
-  /* Increase touch targets for inputs */
+  /* Optimized Mobile Inputs */
   .tf-form-input, 
-  select.tf-form-input {
-    padding: 0.85rem 1rem; /* Taller inputs for fingers */
-    font-size: 16px; /* Prevents auto-zoom on iOS */
+  select.tf-form-input,
+  textarea.tf-form-input {
+    padding: 0.75rem 0.85rem; 
+    font-size: 16px; /* Prevents iOS Zoom */
+    width: 100%;
   }
 
-  /* --- PREVIEW SECTION --- */
+  /* Add Button Full Width */
+  .tf-btn-add {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+  }
+
+  /* --- PREVIEW SECTION (Fixed Height Issue) --- */
   .tf-preview-column {
     width: 100%;
-    margin-top: 2rem;
+    margin-top: 1rem;
+    
+    /* Critical Fixes for Loading/Preview Height */
+    min-height: 85vh; /* Takes full screen height */
     height: auto;
-    max-height: 500px; /* Limit height but allow internal scroll */
-    flex: none;
+    max-height: none !important; /* Remove any caps */
+    
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
   }
   
   .tf-preview-content {
     padding: 1rem;
-    max-height: 400px;
+    flex: 1; /* Fills the min-height */
+  }
+
+  .tf-preview-header {
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Loading State Center */
+  .tf-preview-loader {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 50vh;
   }
 }

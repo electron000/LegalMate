@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { Calendar, Clock, User, ArrowLeft, TrendingUp, Loader2 } from 'lucide-react';
+import { Calendar, Clock, User, ArrowLeft, BookOpen, ChevronDown } from 'lucide-react'; // Changed Icon
 import ReactMarkdown from 'react-markdown';
 import toast, { Toaster } from 'react-hot-toast';
-import { fetchMoreBlogs, fetchBlogById, searchBlogsByTopic } from '../../../api';
+import { fetchAllBlogs } from '../../../api';
 import './BlogViewPage.css';
 
 const BlogViewPage = () => {
@@ -12,43 +12,70 @@ const BlogViewPage = () => {
   const location = useLocation();
   
   const [blog, setBlog] = useState(null);
-  const [trendingBlogs, setTrendingBlogs] = useState([]);
+  const [sidebarBlogs, setSidebarBlogs] = useState([]); // Stores ALL available sidebar blogs
+  const [visibleCount, setVisibleCount] = useState(5); // Controls how many are shown
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   
+  // Reset visible count when switching blogs
+  useEffect(() => {
+    setVisibleCount(5);
+  }, [blogId]);
+
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       setError(null);
       
-      const blogDataFromState = location.state?.blog;
-      const trendingDataFromState = location.state?.trendingBlogs;
-
-      // Scenario A: Use State (Optimistic)
-      if (blogDataFromState && String(blogDataFromState.id) === blogId) {
-        setBlog(blogDataFromState);
-        setTrendingBlogs((trendingDataFromState || []).filter(b => String(b.id) !== blogId).slice(0, 6));
-        setLoading(false);
-      } 
-      // Scenario B: Fetch Fresh
-      else {
-        try {
-          const fetchedBlog = await fetchBlogById(blogId);
-          if (!fetchedBlog) throw new Error("Blog not found");
-          setBlog(fetchedBlog);
-
-          const sidebarBlogs = await searchBlogsByTopic("Trending", false);
-          setTrendingBlogs(sidebarBlogs.filter(b => String(b.id) !== blogId).slice(0, 6));
-
-        } catch (err) {
-          console.error(err);
-          setError('Blog not found or could not be loaded.');
-        } finally {
-          setLoading(false);
+      // 1. Check if data was passed via Router State
+      if (location.state?.blog) {
+        setBlog(location.state.blog);
+        
+        let allContext = location.state.allBlogsContext || [];
+        
+        // If context wasn't passed, we might need to fetch to populate the sidebar properly
+        // However, if we have location.state.trendingBlogs, we use that temporarily, 
+        // but ideally we want the FULL list now.
+        if (allContext.length === 0 && location.state.trendingBlogs) {
+             allContext = location.state.trendingBlogs;
         }
+
+        // Filter out the current blog
+        const others = allContext.filter(b => String(b.id) !== String(location.state.blog.id));
+        
+        // If we have a decent amount of data from state, use it
+        if (others.length > 0) {
+            setSidebarBlogs(others);
+            setLoading(false);
+            return;
+        }
+        // If we don't have enough data in state, fall through to fetch
+      }
+
+      // 2. Fallback: Fetch ALL blogs
+      try {
+        const allBlogs = await fetchAllBlogs();
+        
+        const foundBlog = allBlogs.find(b => String(b.id) === String(blogId));
+        
+        if (!foundBlog) {
+            throw new Error("Blog not found.");
+        }
+
+        setBlog(foundBlog);
+        
+        // Set Sidebar to include ALL other blogs
+        const others = allBlogs.filter(b => String(b.id) !== String(blogId));
+        setSidebarBlogs(others);
+
+      } catch (err) {
+        console.error(err);
+        setError('Blog could not be loaded.');
+      } finally {
+        setLoading(false);
       }
     };
+
     loadData();
   }, [blogId, location.state]);
 
@@ -69,52 +96,31 @@ const BlogViewPage = () => {
   };
 
   const handleSidebarClick = (clickedBlog) => {
+    // Pass the full sidebar context so we don't re-fetch on the next page
     navigate(`/blogs/${clickedBlog.id}`, { 
       state: { 
         blog: clickedBlog, 
-        trendingBlogs: [...trendingBlogs, blog].filter(b => b.id !== clickedBlog.id)
+        allBlogsContext: [...sidebarBlogs, blog] // Pass current + sidebar as new context
       } 
     });
     window.scrollTo(0, 0);
   };
 
-  const handleLoadMore = async () => {
-    setLoadingMore(true);
-    const existingTitles = [...trendingBlogs.map(b => b.title), blog?.title];
-
-    try {
-      const newBlogs = await fetchMoreBlogs('Trending', existingTitles, false);
-      if (newBlogs?.length > 0) {
-        const uniqueNewBlogs = newBlogs.filter(b => String(b.id) !== blogId);
-        if (uniqueNewBlogs.length > 0) {
-            setTrendingBlogs(prev => [...prev, ...uniqueNewBlogs]);
-        } else {
-            toast('No new unique blogs found.', { icon: 'ℹ️' });
-        }
-      } else {
-        toast('No more trending blogs available.', { icon: 'ℹ️' });
-      }
-    } catch {
-      toast.error("Failed to load more blogs.");
-    } finally {
-      setLoadingMore(false);
-    }
+  const handleShowMore = () => {
+    setVisibleCount(prev => prev + 5);
   };
 
-  // Custom Component for Code Blocks (Replaces manual DOM manipulation)
   const CodeBlock = ({ children, ...props }) => {
     const handleCopy = () => {
-        // Extract text content from the children (code)
         const codeText = String(children).replace(/\n$/, '');
         navigator.clipboard.writeText(codeText)
             .then(() => toast.success('Code copied!'))
             .catch(() => toast.error('Failed to copy.'));
     };
-
     return (
         <div style={{ position: 'relative' }}>
             <button className="copy-code-btn" onClick={handleCopy}>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                 Copy
             </button>
             <code {...props}>{children}</code>
         </div>
@@ -147,17 +153,13 @@ const BlogViewPage = () => {
             <header className="blog-header">
                 <h1 className="blog-title">{blog.title}</h1>
                 <div className="blog-meta">
-                    <span><User size={14} /> By {blog.author || 'LegalMate AI'}</span>
+                    <span><User size={14} /> By LegalMate AI</span>
                     <span><Calendar size={14} /> {formatDate(blog.createdAt)}</span>
                     <span><Clock size={14} /> {estimateReadTime(blog.content)}</span>
                 </div>
             </header>
             <div className="blog-body">
-              <ReactMarkdown 
-                components={{
-                    code: CodeBlock
-                }}
-              >
+              <ReactMarkdown components={{ code: CodeBlock }}>
                 {getContentWithoutTitle(blog.content)}
               </ReactMarkdown>
             </div>
@@ -165,31 +167,35 @@ const BlogViewPage = () => {
 
           <aside className="blog-sidebar">
             <div className="blog-sidebar-header">
-              <TrendingUp size={18} className="sidebar-icon" />
-              <h3>Trending Topics</h3>
+              <BookOpen size={18} className="sidebar-icon" />
+              <h3>More Blogs</h3>
             </div>
             
             <div className="sidebar-list">
-              {trendingBlogs.length > 0 ? (
-                trendingBlogs.map((item) => (
-                  <div key={item.id} className="sidebar-card" onClick={() => handleSidebarClick(item)}>
-                    <h4 className="sidebar-card-title">{item.title}</h4>
-                    <div className="sidebar-card-meta">
-                      <span>{estimateReadTime(item.content)}</span>
-                      <span>•</span>
-                      <span>{formatDate(item.createdAt)}</span>
-                    </div>
-                  </div>
-                ))
+              {sidebarBlogs.length > 0 ? (
+                <>
+                    {/* Render slice based on visibleCount */}
+                    {sidebarBlogs.slice(0, visibleCount).map((item) => (
+                      <div key={item.id} className="sidebar-card" onClick={() => handleSidebarClick(item)}>
+                        <h4 className="sidebar-card-title">{item.title}</h4>
+                        <div className="sidebar-card-meta">
+                          <span>{estimateReadTime(item.content)}</span>
+                          <span>•</span>
+                          <span>{formatDate(item.createdAt)}</span>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Show More Button if there are more blogs to show */}
+                    {visibleCount < sidebarBlogs.length && (
+                        <button className="sidebar-show-more-btn" onClick={handleShowMore}>
+                            Show More <ChevronDown size={14} />
+                        </button>
+                    )}
+                </>
               ) : (
                 <div className="empty-sidebar">No other blogs available</div>
               )}
-            </div>
-
-            <div className="sidebar-load-more-container">
-                <button className="sidebar-load-more-btn" onClick={handleLoadMore} disabled={loadingMore}>
-                    {loadingMore ? <><Loader2 className="spinner" size={14} /> Loading...</> : 'More'}
-                </button>
             </div>
           </aside>
         </div>

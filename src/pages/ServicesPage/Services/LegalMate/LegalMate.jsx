@@ -1,14 +1,11 @@
 // src/pages/LegalChat/LegalMate.jsx
 
-import React, { useState, useEffect, useRef } from 'react';
-import ReactMarkdown from 'react-markdown';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Scale, Globe, BookOpen, BrainCircuit, ArrowRight } from 'lucide-react';
+import SharedChatLayout from '../shared/sharedChatLayout';
 import { 
-  Send, Loader, Menu, AlertTriangle, 
-  Trash2, MessageSquare, ShieldX, Scale 
-} from 'lucide-react';
-
-import { 
-  askAdaptive, 
+  askAdaptive,
+  getChatStrategy, // <--- IMPORTED NEW API
   getHistory, 
   deleteCurrentSession, 
   clearAllHistories,
@@ -16,151 +13,56 @@ import {
   clearAndResetSession 
 } from '../../../../api';
 
-import legalLogo from '../../../../assets/legal-logo.png';
-import '../shared/ChatInterface.css';
+// --- REASONING BADGE ---
+const ReasoningBadge = ({ metadata }) => {
+  if (!metadata || !metadata.strategy) return null;
 
-// SUB-COMPONENT: MessageRenderer
-const MessageRenderer = ({ message }) => {
-  if (message.role === 'user') {
-    return <p>{message.content}</p>;
-  }
+  const { use_web, use_rag, use_general } = metadata.strategy;
 
-  if (message.role === 'error') {
-    return (
-      <div className="error-header">
-        <AlertTriangle size={20} />
-        <div>
-          <h3>Error occurred</h3>
-          <p>{message.content.message}</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (message.role === 'ai') {
-    const { content } = message;
-
-    if (content.type === 'structured') {
-      return (
-        <div className="ai-response-card">
-          <ReactMarkdown
-            components={{
-              h2: ({...props}) => <h2 className="ai-response-heading" {...props} />,
-              h3: ({...props}) => <h3 className="ai-subheading" {...props} />,
-              p: ({...props}) => <p className="ai-paragraph" {...props} />,
-              strong: ({...props}) => <strong className="ai-bold" {...props} />,
-              ul: ({...props}) => <ul className="ai-list" {...props} />,
-              li: ({...props}) => <li className="ai-list-item" {...props} />,
-            }}
-          >
-            {content.explanation}
-          </ReactMarkdown>
-        </div>
-      );
-    }
-    return (
-      <div className="ai-response-simple">
-        <ReactMarkdown>{content.content || content}</ReactMarkdown>
-      </div>
-    );
-  }
-  return null;
-};
-
-// SUB-COMPONENT: SideBar
-const SideBar = ({
-  sessions,
-  activeSessionId,
-  onSelectSession,
-  onDeleteSession,
-  onClearAllSessions,
-  createNewSession,
-  isExpanded,
-  toggleSidebar
-}) => {
   return (
-    <div className={`sidebar ${isExpanded ? 'expanded' : ''}`}>
-      <div className="sidebar-content-wrapper">
-        
-        {/* COLLAPSED VIEW */}
-        <div className="sidebar-view collapsed-view">
-          <div className="top-icons">
-            <button className="sidebar-icon-btn menu-btn" onClick={toggleSidebar} aria-label="Expand Menu">
-              <Menu size={24} />
-            </button>
-            <button 
-              className="sidebar-icon-btn new-chat-mini-btn" 
-              onClick={createNewSession} 
-              aria-label="New Chat"
-              title="New Chat"
-            >
-              <Scale size={20} />
-            </button>
-          </div>
+    <div className="thinking-process-container">
+      <span className="thinking-label">SOURCE:</span>
+      
+      {/* General Knowledge */}
+      {use_general && !use_web && !use_rag && (
+        <div className="thinking-tag tag-general">
+          <BrainCircuit size={12} />
+          <span>General Concept</span>
         </div>
+      )}
 
-        {/* EXPANDED VIEW */}
-        <div className="sidebar-view expanded-view">
-          
-          {/* Header */}
-          <div className="sidebar-header">
-             <button className="sidebar-icon-btn menu-btn-expanded" onClick={toggleSidebar}>
-                <Menu size={24} />
-             </button>
-          </div>
-          
-          {/* New Chat */}
-          <div className="new-chat-container">
-            <button className="new-chat-btn" onClick={createNewSession}>
-              <Scale size={18} className="plus-icon"/>
-              <span>New chat</span>
-            </button>
-          </div>
-          
-          {/* Recent List */}
-          <div className="threads-section">
-            <div className="threads-header">Recent</div>
-            <div className="threads-list">
-              {sessions.map((session) => (
-                <div key={session.id} className="thread-item-container">
-                  <button
-                    className={`thread-item ${session.id === activeSessionId ? 'active' : ''}`}
-                    onClick={() => onSelectSession(session.id)}
-                    title={session.title}
-                  >
-                    <MessageSquare size={18} className="chat-icon" />
-                    <span className="thread-title">{session.title || 'New Chat'}</span>
-                  </button>
-                  
-                  <button 
-                    className="delete-session-btn" 
-                    aria-label="Delete chat"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onDeleteSession(session.id);
-                    }}
-                  >
-                    <Trash2 size={16} />
-                  </button>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          {/* Footer */}
-          <div className="sidebar-footer">
-            <button className="footer-item" onClick={onClearAllSessions}>
-              <ShieldX size={18} />
-              <span>Clear all history</span>
-            </button>
-          </div>
+      {/* Web Search */}
+      {use_web && (
+        <div className="thinking-tag tag-web">
+          <Globe size={12} />
+          <span>Live Web Search</span>
         </div>
-      </div>
+      )}
+
+      {/* RAG / Database */}
+      {use_rag && (
+        <div className="thinking-tag tag-rag">
+          <BookOpen size={12} />
+          <span>Legal Database</span>
+        </div>
+      )}
+      
+      {/* Connector Arrow */}
+      {(use_web || use_rag) && (
+        <ArrowRight size={12} className="thinking-arrow" />
+      )}
+
+      {/* Synthesis Badge */}
+      {(use_web || use_rag) && (
+        <div className="thinking-tag tag-synthesis">
+          <BrainCircuit size={12} />
+          <span>AI Synthesis</span>
+        </div>
+      )}
     </div>
   );
 };
 
-// MAIN COMPONENT: LegalMate
 const formatResponse = (apiResponse) => {
   if (apiResponse.response) {
     return {
@@ -173,42 +75,23 @@ const formatResponse = (apiResponse) => {
 };
 
 const LegalMate = () => {
-  // State
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
-  const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
   const [sessions, setSessions] = useState([]);
-  
-  // CHANGE 1: Initialize ID state as null first, we will set it on mount
   const [activeSessionId, setActiveSessionId] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState({ visible: false, type: null, id: null });
-  
-  // Refs
-  const chatEndRef = useRef(null);
-  const textareaRef = useRef(null);
-
-  // Layout Handlers
-  const toggleSidebar = () => setIsSidebarExpanded(prev => !prev);
-  const closeSidebarOnMobile = () => {
-    if (window.innerWidth <= 768) setIsSidebarExpanded(false);
-  };
-  
+  const [isHistoryLoaded, setIsHistoryLoaded] = useState(false);
   const isNewSession = useRef(true);
-  
-  // Logic Handlers
-  const processUserMessage = async (text) => {
+
+  // Logic: Process Message
+  const processUserMessage = useCallback(async (text) => {
     if (!text || !text.trim()) return;
 
     const userMessage = { role: 'user', content: text };
 
     setMessages(prev => {
       if (prev.length === 0) {
-        // Ensure we have a session ID
         const currentId = activeSessionId || getSessionId();
-        
-        // Update sidebar purely for visual context of CURRENT session
         setSessions(currentSessions => {
            if (!currentSessions.some(s => s.id === currentId)) {
              return [{ id: currentId, title: text.substring(0, 40) + '...' }, ...currentSessions];
@@ -222,63 +105,97 @@ const LegalMate = () => {
     setIsLoading(true);
 
     try {
+      // 1. STEP A: Visual "Thinking" Feedback
+      // We create a temporary placeholder message ID
+      const tempAiMsgId = Date.now();
+      
+      let strategyMetadata = {};
+
+      try {
+          // Attempt to get strategy first (The "Plan")
+          const planData = await getChatStrategy(text);
+          
+          // Construct metadata manually from the plan response
+          strategyMetadata = {
+            strategy: {
+              use_rag: !!planData.rag_query,
+              use_web: !!planData.web_query,
+              use_general: planData.direct_answer_possible
+            }
+          };
+
+          // Show the badge + spinner immediately
+          setMessages(prev => [
+            ...prev, 
+            { 
+              role: 'ai', 
+              id: tempAiMsgId,
+              content: { 
+                type: 'thinking', // Matches our new Layout logic
+                metadata: strategyMetadata 
+              } 
+            }
+          ]);
+
+      } catch (planError) {
+          console.warn("Could not fetch plan separately, falling back to standard loader", planError);
+          // If plan fails, just push a generic thinking bubble without badges
+          setMessages(prev => [...prev, { role: 'ai', id: tempAiMsgId, content: { type: 'thinking', metadata: {} } }]);
+      }
+
+      // 2. STEP B: Get the Real Answer (Slow)
       const apiResponse = await askAdaptive(text); 
       const formattedResponse = formatResponse(apiResponse);
-      const aiMessage = { role: 'ai', content: formattedResponse };
-      setMessages(prev => [...prev, aiMessage]);
+
+      // 3. Replace the "Thinking" message with the "Actual" message
+      setMessages(prev => prev.map(msg => {
+          if (msg.id === tempAiMsgId) {
+              return { role: 'ai', content: formattedResponse };
+          }
+          return msg;
+      }));
+
     } catch (err) {
       const errorMessage = { role: 'error', content: { type: 'error', message: err.message } };
-      setMessages(prev => [...prev, errorMessage]);
+      // Remove any pending thinking message and show error
+      setMessages(prev => [...prev.filter(msg => msg.content.type !== 'thinking'), errorMessage]);
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [activeSessionId]);
 
-  // CHANGE 2: INITIALIZATION EFFECT
-  // This runs ONCE on reload. It clears old IDs and starts fresh.
+  // Logic: Initialization
   useEffect(() => {
     const initFreshSession = async () => {
-      // 1. Clear the local storage ID from the previous visit
       clearAndResetSession(); 
-
-      // OPTIONAL: If you want to wipe the actual Database on reload, uncomment below:
-      // await clearAllHistories(); 
-
-      // 2. Generate a brand new ID
       const newId = getSessionId();
       setActiveSessionId(newId);
-      
-      // 3. Reset UI states
       setMessages([]);
-      setSessions([]); // Start with empty sidebar
+      setSessions([]);
       setIsHistoryLoaded(true);
     };
-
     initFreshSession();
   }, []);
 
- useEffect(() => {
+  // Logic: Load History
+  useEffect(() => {
     const loadHistory = async () => {
-      // 1. If no ID, do nothing
       if (!activeSessionId) return;
-
-      // 2. CHECK: Is this a brand new session? 
       if (isNewSession.current) {
-         // It's new, so we KNOW there is no history on the server.
-         // Flip the flag off for next time and STOP here.
          isNewSession.current = false;
          setIsHistoryLoaded(true);
          return; 
       }
-
-      // 3. If we get here, it's an old session (clicked from sidebar), so fetch it.
       setIsLoading(true);
       try {
         const historyData = await getHistory(activeSessionId);
         const formattedMessages = historyData.messages.map(msg => ({
-        role: msg.type === 'human' ? 'user' : msg.type,
-        content: msg.type === 'ai' ? formatResponse({ response: msg.content }) : msg.content,
-      }));
+          role: msg.type === 'human' ? 'user' : msg.type,
+          content: msg.type === 'ai' ? formatResponse({ 
+            response: msg.content, 
+            metadata: msg.metadata || {} 
+          }) : msg.content,
+        }));
         setMessages(formattedMessages);
       } catch {
         setMessages([]);
@@ -287,205 +204,88 @@ const LegalMate = () => {
         setIsHistoryLoaded(true);
       }
     };
-    
-    if (activeSessionId) {
-        loadHistory();
-    }
-}, [activeSessionId]);
+    if (activeSessionId) loadHistory();
+  }, [activeSessionId]);
 
+  // Logic: URL Params
   useEffect(() => {
     if (!isHistoryLoaded) return;
     const params = new URLSearchParams(window.location.search);
-    
     if (params.has('new')) {
       createNewSession();
       window.history.replaceState({}, document.title, window.location.pathname);
     }
-
     const queryParam = params.get('query');
     if (queryParam) {
       window.history.replaceState({}, document.title, window.location.pathname);
       processUserMessage(queryParam);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isHistoryLoaded]);
-  
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isLoading]);
+  }, [isHistoryLoaded, processUserMessage]);
 
-  // Actions
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!userInput.trim() || isLoading) return;
     const text = userInput;
     setUserInput('');
-    if (textareaRef.current) textareaRef.current.style.height = 'auto';
     await processUserMessage(text);
   };
 
-  const handleInputChange = (e) => {
-    setUserInput(e.target.value);
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto'; 
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; 
-    }
-  };
-  
   const createNewSession = () => {
     clearAndResetSession();
     const newId = getSessionId();
-    
-    // FLAG THIS: Tell the useEffect not to fetch history for this ID
     isNewSession.current = true; 
-    
     setActiveSessionId(newId);
     setMessages([]);
-    closeSidebarOnMobile();
-};
+  };
 
-  const handleDelete = async () => {
-    const { type, id } = showDeleteModal;
+  const handleDeleteSession = async (id) => {
     try {
-        if (type === 'single') {
-            await deleteCurrentSession(id);
-            // If we deleted the active one, make a new one
-            if (id === activeSessionId) createNewSession();
-            
-            // Remove from UI list manually instead of refetching from backend
-            setSessions(prev => prev.filter(s => s.id !== id));
-        } else if (type === 'all') {
-            await clearAllHistories();
-            setSessions([]);
-            createNewSession(); 
-        }
+        await deleteCurrentSession(id);
+        if (id === activeSessionId) createNewSession();
+        setSessions(prev => prev.filter(s => s.id !== id));
     } catch (error) {
-        console.error("Failed during delete operation:", error);
-    } finally {
-        setShowDeleteModal({ visible: false, type: null, id: null });
+        console.error("Failed delete:", error);
     }
   };
 
-  // Modal Render
-  const DeleteModal = () => {
-    if (!showDeleteModal.visible) return null;
-    const isSingle = showDeleteModal.type === 'single';
-    
-    return (
-      <div className="modal-overlay" onClick={() => setShowDeleteModal({ visible: false, type: null, id: null })}>
-        <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-          <h3>{isSingle ? 'Delete Chat?' : 'Clear All History?'}</h3>
-          <p>
-            {isSingle 
-              ? 'This will permanently delete this chat session. This action cannot be undone.' 
-              : 'This will permanently delete ALL your chat sessions. This action cannot be undone.'}
-          </p>
-          <div className="modal-buttons">
-            <button 
-              className="btn-cancel" 
-              onClick={() => setShowDeleteModal({ visible: false, type: null, id: null })}
-            >
-              Cancel
-            </button>
-            <button className="btn-delete" onClick={handleDelete}>
-              {isSingle ? 'Delete' : 'Clear All'}
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+  const handleClearAll = async () => {
+    try {
+        await clearAllHistories();
+        setSessions([]);
+        createNewSession(); 
+    } catch (error) {
+        console.error("Failed clear all:", error);
+    }
   };
-  
-  // Main Render
+
   return (
-    <div className={`chatbot-page ${isSidebarExpanded ? 'sidebar-expanded' : ''}`}>
+    <SharedChatLayout
+      title="LegalMate AI"
+      subtitle="Your intelligent legal assistant for Indian law queries."
+      placeholder="Ask me about Indian law..."
+      logo="/legal-logo.webp"
+      NewChatIcon={Scale}
       
-      {/* Background Wave */}
-      <div className="chat-background-wave">
-          <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
-              <path fill="#ffffff" fillOpacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
-          </svg>
-      </div>
-
-      <SideBar
-        sessions={sessions}
-        activeSessionId={activeSessionId}
-        onSelectSession={(id) => {
-            setActiveSessionId(id);
-            closeSidebarOnMobile(); 
-        }}
-        onDeleteSession={(id) => setShowDeleteModal({ visible: true, type: 'single', id })}
-        onClearAllSessions={() => setShowDeleteModal({ visible: true, type: 'all', id: null })}
-        createNewSession={createNewSession}
-        isExpanded={isSidebarExpanded}
-        toggleSidebar={toggleSidebar} 
-      />
-
-      {isSidebarExpanded && (
-        <div className="mobile-backdrop" onClick={() => setIsSidebarExpanded(false)} />
+      messages={messages}
+      sessions={sessions}
+      activeSessionId={activeSessionId}
+      isLoading={isLoading}
+      userInput={userInput}
+      
+      onInputChange={setUserInput}
+      onSendMessage={handleSendMessage}
+      onSelectSession={setActiveSessionId}
+      onCreateNewSession={createNewSession}
+      onDeleteSession={handleDeleteSession}
+      onClearAllSessions={handleClearAll}
+      
+      // FIXED: Using valid prop 'renderBeforeMessage'
+      renderBeforeMessage={(msg) => (
+         msg.role === 'ai' && msg.content.metadata && (
+             <ReasoningBadge metadata={msg.content.metadata} />
+         )
       )}
-
-      <main className="chat-main">
-        <button className="mobile-menu-toggle" onClick={toggleSidebar} aria-label="Open Menu">
-            <Menu size={24} />
-        </button>
-
-        <div className="chat-header">
-            <div className="model-selector">
-                <img src={legalLogo} alt="LegalMate" className="header-logo" />
-                <span>LegalMate AI</span>
-            </div>
-        </div>
-
-        <div className="chat-messages">
-          {messages.length === 0 && !isLoading ? (
-            <div className="welcome-message">
-              <h1>
-                <img src={legalLogo} alt="LegalMate" className="welcome-logo" />
-                LegalMate AI
-              </h1>
-              <p>Your intelligent legal assistant for Indian law queries.</p>
-            </div>
-          ) : (
-            messages.map((message, index) => (
-              <div key={index} className={`message ${message.role}`}>
-                <MessageRenderer message={message} />
-              </div>
-            ))
-          )}
-          {isLoading && (
-            <div className="message ai">
-              <div className="loading-indicator">
-                <Loader size={16} className="spinner" /> Analyzing your legal query...
-              </div>
-            </div>
-          )}
-          <div ref={chatEndRef} />
-        </div>
-
-        <div className="input-area">
-          <form className="input-form" onSubmit={handleSendMessage}>
-            <div className="input-container">
-              <textarea
-                ref={textareaRef} 
-                className="message-input"
-                value={userInput}
-                onChange={handleInputChange} 
-                placeholder="Ask me about Indian law..."
-                disabled={isLoading}
-                onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSendMessage(e); }}}
-                rows={1}
-              />
-              <button type="submit" className="send-button" disabled={isLoading || !userInput.trim()}>
-                {isLoading ? <Loader size={16} /> : <Send size={16} />}
-              </button>
-            </div>
-          </form>
-        </div>
-      </main>
-      
-      <DeleteModal />
-    </div>
+    />
   );
 };
 

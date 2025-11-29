@@ -1,15 +1,19 @@
+// src/pages/LegalChat/DocAnalyzerModal.jsx
+
 import React, { useState, useEffect } from 'react';
-import { UploadCloud, FileText, CheckCircle, X, MessageSquare, ShieldCheck, AlertCircle } from 'lucide-react';
+import { UploadCloud, FileText, CheckCircle, MessageSquare, ShieldCheck, AlertCircle } from 'lucide-react'; // Removed X import
 import ReactMarkdown from 'react-markdown';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import { DocAnalyzerAPI } from '../../../../api';
 import './DocAnalyzerModal.css';
 
-const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
+const DocAnalyzerModal = ({ isOpen, onAnalysisComplete }) => {
+  const navigate = useNavigate(); // Initialize hook
   const [step, setStep] = useState('upload');
   const [progress, setProgress] = useState(0);
   const [fileName, setFileName] = useState('');
   const [summaryData, setSummaryData] = useState('');
-  const [isLegal, setIsLegal] = useState(true); // New state for QnA eligibility
+  const [isLegal, setIsLegal] = useState(true);
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
@@ -18,7 +22,7 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
       setProgress(0);
       setFileName('');
       setSummaryData('');
-      setIsLegal(true); // Reset to true by default
+      setIsLegal(true);
       setErrorMsg('');
     }
   }, [isOpen]);
@@ -44,8 +48,6 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
       setProgress(100);
       setSummaryData(data.answer);
       
-      // Update state based on backend response
-      // Default to true if undefined to avoid locking features unnecessarily
       setIsLegal(data.is_legal !== undefined ? data.is_legal : true);
 
       setTimeout(() => setStep('summary'), 600);
@@ -58,7 +60,7 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
   };
 
   const handleStartQnA = async () => {
-    if (!isLegal) return; // Prevent action if not legal
+    if (!isLegal) return;
     
     setStep('embedding');
     try {
@@ -71,6 +73,11 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
       alert("Failed to prepare knowledge base. Please try again.");
       setStep('summary');
     }
+  };
+
+  // Handle Cancel: Navigate back to the previous location
+  const handleCancel = () => {
+    navigate(-1);
   };
 
   if (!isOpen) return null;
@@ -157,19 +164,26 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
   };
 
   return (
-    <div className="dam-overlay">
+    <div className="dam-overlay"> 
+      {/* Overlay has no onClick, so clicking bg does nothing */}
       <div className="dam-content">
-        {onClose && (
-            <button onClick={onClose} className="dam-close-btn-floating" title="Close">
-                <X size={20} />
-            </button>
-        )}
+        {/* Floating X button removed from here */}
+        
         <div className="dam-body">
           {renderContent()}
         </div>
+        
+        {/* Footer is only shown in summary/embedding steps or could be adapted if you want a Cancel button on upload screen too. 
+            Based on previous code, footer was only for summary/embedding. 
+            If you want a "Go Back" on the upload screen, you can add a button there, 
+            but keeping logic consistent with your provided file: */}
         {(step === 'summary' || step === 'embedding') && (
           <div className="dam-footer">
-            <button onClick={onClose} disabled={step === 'embedding'} className="dam-btn-secondary">
+            <button 
+                onClick={handleCancel} 
+                disabled={step === 'embedding'} 
+                className="dam-btn-secondary"
+            >
               Cancel
             </button>
             <button 
@@ -189,6 +203,15 @@ const DocAnalyzerModal = ({ isOpen, onClose, onAnalysisComplete }) => {
               )}
             </button>
           </div>
+        )}
+        
+        {/* Optional: If you want a Cancel button during Upload/Processing steps too (to go back) */}
+        {step === 'upload' && (
+             <div className="dam-footer" style={{justifyContent: 'flex-start'}}>
+                <button onClick={handleCancel} className="dam-btn-secondary">
+                    Cancel / Go Back
+                </button>
+             </div>
         )}
       </div>
     </div>

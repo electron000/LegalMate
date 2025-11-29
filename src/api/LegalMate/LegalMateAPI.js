@@ -16,6 +16,19 @@ export const askAdaptive = async (query) => {
 };
 
 /**
+ * NEW: Gets ONLY the strategy/plan for a query (Fast).
+ * Used for "Live Thinking" visualization.
+ */
+export const getChatStrategy = async (query) => {
+  const sessionId = getSessionId();
+  const response = await chatbotClient.post('/chat/plan', {
+    query,
+    session_id: sessionId,
+  });
+  return response.data;
+};
+
+/**
  * Sends a query to the simplified text-only endpoint.
  * @param {string} query - The user's question.
  * @returns {Promise<object>} - A simple response object with the answer text.

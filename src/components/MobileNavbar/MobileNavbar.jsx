@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Menu, X, ArrowRight } from 'lucide-react';
-// Adjust this path if your assets folder is located differently
-import logo from '../../assets/legal-logo.png';
 import './MobileNavbar.css';
 
 const MOBILE_LINKS = [
@@ -63,7 +61,8 @@ const MobileNavbar = ({ onContactClick }) => {
                 
                 {/* 1. Left: Brand */}
                 <Link to="/" className="mobile-brand" onClick={() => setIsOpen(false)}>
-                    <img src={logo} alt="LegalMate" className="mobile-logo-img" />
+                    {/* Updated to use public folder logo */}
+                    <img src="/legal-logo.webp" alt="LegalMate" className="mobile-logo-img" />
                     <span className="mobile-logo-text">LEGALMATE</span>
                 </Link>
 
@@ -103,9 +102,6 @@ const MobileNavbar = ({ onContactClick }) => {
                     ))}
                 </div>
             </div>
-            
-            {/* Optional: Transparent invisible layer to catch clicks if needed, 
-                but handleClickOutside handles it better for popups */}
         </>
     );
 };

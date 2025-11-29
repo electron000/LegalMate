@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
 import { DocGenService, downloadBlob } from '../../../../../api'; 
 import './DocForm.css';
-import { X, Save, Loader2, FileText, Download, RefreshCw, Plus, Trash2, AlertCircle } from 'lucide-react';
+import { X, Save, Loader2, FileText, Download, RefreshCw, Plus, Trash2 } from 'lucide-react';
 
 /* -------------------------------------------------------------------------- */
 /* HELPER: Access Nested Object by String Path                                */
 /* -------------------------------------------------------------------------- */
 const getValueByPath = (obj, path) => {
+  if (!obj) return undefined;
   return path.split('.').reduce((acc, part) => acc && acc[part], obj);
 };
 
 /* -------------------------------------------------------------------------- */
-/* INTERNAL FORM COMPONENTS (RenderField, FormField, etc. - UNCHANGED)        */
+/* INTERNAL FORM COMPONENTS                                                   */
 /* -------------------------------------------------------------------------- */
-// ... [Keep FormField, TextareaField, SelectField, RenderField, DynamicListSection, FormSection exactly as they were] ...
 
 const FormField = ({ control, name, label, type = 'text', required, placeholder, span }) => (
   <div className="tf-form-group" data-span={span || 'full'}>
@@ -29,6 +29,7 @@ const FormField = ({ control, name, label, type = 'text', required, placeholder,
             type={type}
             placeholder={placeholder}
             {...field}
+            value={field.value || ''} 
             className={`tf-form-input ${error ? 'tf-input-error' : ''}`}
           />
           {error && <span className="tf-field-error">{error.message}</span>}
@@ -50,6 +51,7 @@ const TextareaField = ({ control, name, label, required, placeholder, span }) =>
           <textarea
             placeholder={placeholder}
             {...field}
+            value={field.value || ''}
             className={`tf-form-input ${error ? 'tf-input-error' : ''}`}
             rows={3}
           />
@@ -69,7 +71,11 @@ const SelectField = ({ control, name, label, required, options, span }) => (
       rules={{ required: required && 'This field is required.' }}
       render={({ field, fieldState: { error } }) => (
         <>
-          <select {...field} className={`tf-form-input ${error ? 'tf-input-error' : ''}`}>
+          <select 
+            {...field} 
+            value={field.value || ''}
+            className={`tf-form-input ${error ? 'tf-input-error' : ''}`}
+          >
               <option value="" disabled>Select {label}</option>
             {options && options.map((opt, idx) => (
               <option key={`${opt.value}-${idx}`} value={opt.value}>{opt.label}</option>
@@ -114,19 +120,18 @@ const RenderField = ({ control, fieldConfig, formData }) => {
   }
 };
 
-const DynamicListSection = ({ control, section, formData, listError }) => {
+const DynamicListSection = ({ control, section, formData }) => {
   const { fields, append, remove } = useFieldArray({
     control,
     name: section.listName,
   });
 
   return (
-    <div className={`tf-section ${listError ? 'tf-section-error' : ''}`}>
+    <div className="tf-section">
       <div className="tf-section-title">
         <h4>
           {section.title} {section.required && <span className="tf-required">*</span>}
         </h4>
-        {listError && <span className="tf-list-error-msg"><AlertCircle size={14}/> {listError}</span>}
       </div>
       
       {fields.map((item, index) => (
@@ -176,16 +181,15 @@ const DocForm = ({ toolConfig }) => {
   const [error, setError] = useState('');
   const [documentText, setDocumentText] = useState('');
   const [activeTab, setActiveTab] = useState(toolConfig.tabs[0].id);
-  const [sectionErrors, setSectionErrors] = useState({}); 
 
   const isReviewing = !!documentText;
   const currentStep = isReviewing ? 2 : 1;
 
+  // Removed 'trigger' as it was unused
   const {
     control,
     handleSubmit,
     watch,
-    trigger, 
   } = useForm({
     mode: 'onChange',
     defaultValues: toolConfig.initialState,
@@ -193,73 +197,83 @@ const DocForm = ({ toolConfig }) => {
 
   const allFormData = watch();
 
-  const handleTabChange = async (targetTabId) => {
-    if (isReviewing) {
-      setActiveTab(targetTabId);
-      return;
-    }
+  /* ------------------------------------------------------------------------ */
+  /* NEW LOGIC: Check Validity of ALL fields (across all tabs)                */
+  /* Wrapped in useCallback to satisfy linter                                 */
+  /* ------------------------------------------------------------------------ */
+  const checkFormValidity = useCallback((currentData) => {
+    const sections = Object.values(toolConfig.sections);
 
-    const currentSections = Object.values(toolConfig.sections).filter(s => s.tab === activeTab);
-    
-    let fieldsToValidate = [];
-    let isListValid = true;
-    let newSectionErrors = {};
+    for (const section of sections) {
+      // 1. Skip sections that are hidden due to conditions
+      if (section.condition && !section.condition(currentData)) {
+        continue; 
+      }
 
-    for (const section of currentSections) {
-      if (section.condition && !section.condition(allFormData)) continue;
+      // 2. Handle Dynamic Lists
+      if (section.type === 'dynamicList') {
+        const listData = getValueByPath(currentData, section.listName);
+        const list = Array.isArray(listData) ? listData : [];
 
-      if (section.type === 'form') {
-        section.fields.forEach(field => {
-          fieldsToValidate.push(field.name);
-        });
-      } else if (section.type === 'dynamicList') {
-        const listData = getValueByPath(allFormData, section.listName) || [];
-        
-        if (section.required && listData.length === 0) {
-          newSectionErrors[section.listName] = `Please add at least one ${section.itemTitle}.`;
-          isListValid = false;
-        } else {
-          listData.forEach((_, index) => {
-            section.fields.forEach(field => {
-              fieldsToValidate.push(`${section.listName}.${index}.${field.name}`);
-            });
-          });
+        // Check A: Is the list itself required? (Must have > 0 items)
+        if (section.required && list.length === 0) {
+          return false;
+        }
+
+        // Check B: Are required fields INSIDE the list items filled?
+        for (const item of list) {
+          for (const field of section.fields) {
+            if (field.required) {
+               const val = item[field.name];
+               if (val === undefined || val === null || val === '') {
+                 return false;
+               }
+            }
+          }
+        }
+      } 
+      // 3. Handle Standard Forms
+      else if (section.type === 'form') {
+        for (const field of section.fields) {
+          if (field.required) {
+            const val = getValueByPath(currentData, field.name);
+            if (val === undefined || val === null || val === '') {
+              return false;
+            }
+          }
         }
       }
     }
+    return true;
+  }, [toolConfig]); // Dependency added here
 
-    setSectionErrors(newSectionErrors);
+  // Correct dependency array for useMemo
+  const isFormValid = useMemo(() => checkFormValidity(allFormData), [allFormData, checkFormValidity]);
 
-    const result = await trigger(fieldsToValidate);
 
-    if (result && isListValid) {
-      setActiveTab(targetTabId);
-      setError(''); 
-    } else {
-      setError('Please fill in all mandatory fields in this section before proceeding.');
+  /* ------------------------------------------------------------------------ */
+  /* NAVIGATION                                                               */
+  /* ------------------------------------------------------------------------ */
+  const handleTabChange = (targetTabId) => {
+    if (isReviewing) {
+      setActiveTab(targetTabId); 
+      return;
     }
+    setActiveTab(targetTabId);
+    setError(''); 
   };
 
-  // --- NEW: TRANSFORM PAYLOAD LOGIC (FIXED FOR POA) ---
   const preparePayload = (rawData) => {
-    // 1. Clone data to avoid mutating state
     const payload = JSON.parse(JSON.stringify(rawData));
     const extras = {};
 
-    // 2. Iterate through all sections in config
     Object.values(toolConfig.sections).forEach(section => {
       
-      // --- FIX: Handle Simple String Lists (like PoA Powers) ---
+      // Handle Simple String Lists
       if (section.type === 'dynamicList' && section.isSimpleStringList) {
         const listData = getValueByPath(payload, section.listName);
-        
         if (Array.isArray(listData)) {
-          // Convert [{description: "Value"}] -> ["Value"]
-          // We take the value of the first key in the object
           const simpleList = listData.map(item => Object.values(item)[0]);
-          
-          // Update the payload with the simple string list
-          // We must traverse the path (e.g., 'specific_powers') to set it correctly
           const pathParts = section.listName.split('.');
           let current = payload;
           for (let i = 0; i < pathParts.length - 1; i++) {
@@ -269,15 +283,13 @@ const DocForm = ({ toolConfig }) => {
         }
       }
 
-      // --- Extras Logic (Separating Optional Fields) ---
+      // Handle Extras
       if (section.type === 'dynamicList') {
         const listData = getValueByPath(payload, section.listName);
-        // If the whole list section is optional (no required: true), add to extras
         if (!section.required && listData && listData.length > 0) {
            extras[section.listName] = listData;
         }
       } else if (section.type === 'form') {
-         // Check individual fields
          section.fields.forEach(field => {
             if (!field.required) {
                const val = getValueByPath(payload, field.name);
@@ -289,32 +301,13 @@ const DocForm = ({ toolConfig }) => {
       }
     });
 
-    // 3. Attach extras to payload
     payload.extras = extras;
     return payload;
   };
 
   const onFormSubmit = async (data) => {
-    // 1. Strict Validation Check (Triggers all fields)
-    const isTotalValid = await trigger();
-    
-    // 2. Additional Custom Validation for Required Lists (e.g., Banks)
-    let listValidationError = false;
-    let newSectionErrors = {};
-    
-    Object.values(toolConfig.sections).forEach(section => {
-       if (section.type === 'dynamicList' && section.required) {
-          const listData = getValueByPath(data, section.listName);
-          if (!listData || listData.length === 0) {
-             listValidationError = true;
-             newSectionErrors[section.listName] = `Missing required ${section.itemTitle}.`;
-          }
-       }
-    });
-
-    if(!isTotalValid || listValidationError) {
-        setSectionErrors(prev => ({...prev, ...newSectionErrors}));
-        setError('Please complete all mandatory sections (Agreement, Personal Details, Bank Details).');
+    if (!checkFormValidity(data)) {
+        setError('Please complete all mandatory fields (marked with *).');
         return;
     }
 
@@ -322,7 +315,6 @@ const DocForm = ({ toolConfig }) => {
     setLoading(true);
     setDocumentText('');
 
-    // 3. Prepare Payload (Separate Optional to Extras + Fix String Lists)
     const finalPayload = preparePayload(data);
 
     try {
@@ -350,7 +342,6 @@ const DocForm = ({ toolConfig }) => {
     try {
       setLoading(true);
       const formData = watch();
-      // Apply same payload transformation for download
       const finalPayload = preparePayload(formData);
       
       const blob = await DocGenService.getDownload(toolConfig.downloadEndpoint, finalPayload);
@@ -367,7 +358,6 @@ const DocForm = ({ toolConfig }) => {
     <div className="tf-tool-form-page">
       <form
         className="tf-layout-container"
-        // Bind onFormError to catch validation failures
         onSubmit={handleSubmit(onFormSubmit, onFormError)}
       >
         {/* Left Sidebar / Navigation */}
@@ -417,9 +407,9 @@ const DocForm = ({ toolConfig }) => {
                 <div className="tf-nav-controls">
                   <button
                     type="submit"
-                    disabled={loading} 
+                    disabled={loading || (!isReviewing && !isFormValid)} 
                     className="tf-nav-btn tf-generate"
-                    title={isReviewing ? 'REGENERATE' : 'GENERATE'}
+                    title={(!isReviewing && !isFormValid) ? "Please fill all required fields to generate" : (isReviewing ? 'REGENERATE' : 'GENERATE')}
                   >
                     {loading && !isReviewing ? (
                       <Loader2 size={20} className="tf-animate-spin tf-spin" />
@@ -443,7 +433,7 @@ const DocForm = ({ toolConfig }) => {
                   <div className="tf-preview-header">
                     <h2 className="tf-preview-title">
                       <FileText size={18} style={{ marginRight: '0.5rem' }} />
-                      Generated Document (Preview)
+                      Preview
                    </h2>
                     <div className="tf-preview-actions">
                       <button
@@ -498,7 +488,6 @@ const DocForm = ({ toolConfig }) => {
                             control={control} 
                             section={section} 
                             formData={allFormData}
-                            listError={sectionErrors[section.listName]} 
                           />
                         );
                       }

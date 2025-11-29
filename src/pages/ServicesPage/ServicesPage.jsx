@@ -72,8 +72,8 @@ const ServicesPage = () => {
 
   return (
     <TSPage 
-      title="Our Services" 
-      subtitle="Expert services for your legal practice"
+      title="Legal Services" 
+      subtitle="Expert Legal Services Only for You"
     >
       {filteredServices.length > 0 ? (
         filteredServices.map(service => (
@@ -87,7 +87,7 @@ const ServicesPage = () => {
         ))
       ) : (
         <div className="ts-empty-state">
-          No services found matching your criteria.
+          No such services found
         </div>
       )}
     </TSPage>

@@ -1,3 +1,5 @@
+/* src/pages/LegalChat/DocAnalyzerModal.css */
+
 @keyframes modalFadeIn {
   from { opacity: 0; transform: scale(0.95); }
   to { opacity: 1; transform: scale(1); }
@@ -17,6 +19,7 @@
   align-items: center;
   justify-content: center;
   padding: 1rem;
+  /* Ensure pointer events work but no click handler is attached in JS */
 }
 
 .dam-content {
@@ -36,30 +39,7 @@
   font-family: 'Outfit', sans-serif;
 }
 
-.dam-close-btn-floating {
-  position: absolute;
-  top: 1.25rem;
-  right: 1.25rem;
-  z-index: 20;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1px solid var(--border-light);
-  color: var(--text-muted);
-  cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 50%;
-  transition: all var(--transition-speed) ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-sm);
-}
-
-.dam-close-btn-floating:hover {
-  background: var(--primary-black);
-  color: var(--text-inverse);
-  border-color: var(--primary-black);
-  transform: rotate(90deg);
-}
+/* Removed .dam-close-btn-floating styles as the button is deleted */
 
 .dam-body {
   padding: 3rem 2.5rem 1rem 2.5rem;

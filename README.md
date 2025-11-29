@@ -85,3 +85,39 @@ Start the development server:
 npm run dev
 
 The application will launch at http://localhost:5173 (or the port shown in your terminal).
+
+-----------------------------------------
+
+LegalMate AI RAG Docs: 
+
+BNS.pdf: Bharatiya Nyaya Sanhita (Replaces the Indian Penal Code/IPC).
+
+BNSS.pdf: Bharatiya Nagarik Suraksha Sanhita (Replaces the Code of Criminal Procedure/CrPC).
+
+BSA.pdf: Bharatiya Sakshya Adhiniyam (Replaces the Indian Evidence Act).
+
+CCP.pdf: Code of Civil Procedure, 1908.
+
+CPA.pdf: Consumer Protection Act, 2019.
+
+HMA.pdf: Hindu Marriage Act, 1955.
+
+HSA.pdf: Hindu Succession Act, 1956.
+
+ICA.pdf: Indian Contract Act, 1872.
+
+ITA.pdf: Information Technology Act, 2000 (or possibly Income Tax Act, but IT Act is more likely for general legal bots).
+
+LA.pdf: Limitation Act, 1963 (Could also be Land Acquisition, but Limitation is a core procedural law).
+
+MVA.pdf: Motor Vehicles Act, 1988.
+
+NIA.pdf: Negotiable Instruments Act, 1881 (Deals with cheques, promissory notes).
+
+PWDVA.pdf: Protection of Women from Domestic Violence Act, 2005.
+
+RTI.pdf: Right to Information Act, 2005.
+
+SMA.pdf: Special Marriage Act, 1954.
+
+TCI.pdf: The Constitution of India.

@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader2 } from 'lucide-react';
 import DOMPurify from 'dompurify';
-import { 
-  searchBlogsByTopic, 
-  searchAllCategories, 
-  fetchMoreBlogs 
-} from '../../../api';
-import legalLogo from '../../../assets/legal-logo.png';
-import { useSearch } from '../../../contexts/SearchContext';
+import { fetchAllBlogs } from '../../../api';
 import './AllBlogsPage.css';
 
 // --- Constants & Helpers ---
@@ -18,13 +11,6 @@ const thumbnailImages = [
   '/images/blogc.webp',
   '/images/blogd.webp'
 ];
-
-const categories = [
-    "All", "Trending", "Property Law", "Criminal Law", "Corporate Law", 
-    "Family Law", "Constitutional Law", "Tax Law", "Cyber Law"
-];
-
-const subCategories = categories.filter(c => c !== "All" && c !== "Trending");
 
 const getNumericId = (id) => {
   if (!id) return 0;
@@ -54,123 +40,59 @@ const ArrowIcon = ({ id }) => (
 );
 
 const AllBlogsPage = () => {
-  const [blogsByCategory, setBlogsByCategory] = useState({});
+  const [allBlogs, setAllBlogs] = useState([]); 
   const [loading, setLoading] = useState(true);
-  const [loadingMore, setLoadingMore] = useState({}); 
   const [error, setError] = useState(null);
-  const [activeCategory, setActiveCategory] = useState("All"); 
   
-  const { setSearchQuery } = useSearch();
   const navigate = useNavigate();
 
-  // Helper: Rate limiting logic
-  const checkGenerationAllowed = () => {
-    const lastGenTime = localStorage.getItem('lastBlogGenerationTime');
-    if (!lastGenTime) return true; 
-    const now = Date.now();
-    return (now - parseInt(lastGenTime)) > (24 * 60 * 60 * 1000);
-  };
-
-  const updateGenerationTimestamp = () => {
-    localStorage.setItem('lastBlogGenerationTime', Date.now().toString());
-  };
-
   useEffect(() => {
-    const fetchInitialData = async () => {
-      setError(null);
-
-      // Cache check
-      if (activeCategory === "All" && Object.keys(blogsByCategory).length > 2) {
-        setLoading(false);
-        return;
-      }
-      if (activeCategory !== "All" && blogsByCategory[activeCategory]) {
-        setLoading(false);
-        return;
-      }
-
+    const loadAllData = async () => {
       setLoading(true);
       try {
-        if (activeCategory === "All") {
-          const allBlogs = await searchAllCategories(subCategories, false);
-          setBlogsByCategory(prev => ({ ...prev, ...allBlogs }));
-        } else {
-          const singleCategoryBlogs = await searchBlogsByTopic(activeCategory, false);
-          setBlogsByCategory(prev => ({ ...prev, [activeCategory]: singleCategoryBlogs || [] }));
-        }
+        const blogs = await fetchAllBlogs();
+        setAllBlogs(blogs);
       } catch (err) {
-        setError("Failed to fetch blogs. The AI might be busy, please try again.");
+        setError("Failed to fetch blogs.");
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
+    loadAllData();
+  }, []);
 
-    fetchInitialData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeCategory]);
-
-  const handleCategoryClick = (category) => {
-    setSearchQuery(''); 
-    setActiveCategory(category);
-    navigate('/blogs'); 
-  };
-
-  const handleLoadMore = async (category) => {
-    setLoadingMore(prev => ({ ...prev, [category]: true }));
-    const existingTitles = blogsByCategory[category]?.map(blog => blog.title) || [];
-    
-    try {
-        let newBlogs = await fetchMoreBlogs(category, existingTitles, false);
-
-        if (!newBlogs || newBlogs.length === 0) {
-            const isStandardCategory = categories.includes(category);
-            const allowGeneration = !isStandardCategory || checkGenerationAllowed();
-
-            if (allowGeneration) {
-                console.log(`Triggering generation for "${category}"...`);
-                newBlogs = await fetchMoreBlogs(category, existingTitles, true);
-                if (newBlogs?.length > 0 && isStandardCategory) {
-                    updateGenerationTimestamp();
-                }
-            }
-        }
-        
-        if (newBlogs?.length > 0) {
-          setBlogsByCategory(prev => ({
-            ...prev,
-            [category]: [...(prev[category] || []), ...newBlogs]
-          }));
-        }
-    } catch (err) {
-        console.error("Error loading more", err);
-    } finally {
-        setLoadingMore(prev => ({ ...prev, [category]: false }));
-    }
-  };
-
+  // === UPDATED FUNCTION BELOW ===
   const getPreview = (content, maxLength = 300) => {
     if (!content) return '';
-    const sanitized = DOMPurify.sanitize(content, { ALLOWED_TAGS: [], KEEP_CONTENT: true });
-    return sanitized.length <= maxLength ? sanitized : sanitized.slice(0, maxLength).trim() + '…';
+    
+    // 1. Regex to remove lines starting with '# ' (Markdown headers)
+    const cleanContent = content.replace(/^#\s+.*$/gm, '');
+
+    // 2. Sanitize HTML
+    const sanitized = DOMPurify.sanitize(cleanContent, { ALLOWED_TAGS: [], KEEP_CONTENT: true });
+    
+    // 3. Trim whitespace
+    const trimmed = sanitized.trim();
+
+    return trimmed.length <= maxLength ? trimmed : trimmed.slice(0, maxLength).trim() + '…';
   };
   
   const handleCardClick = (blog) => {
-    let trendingToSend = blogsByCategory['Trending'] || [];
-    if (trendingToSend.length === 0) {
-        trendingToSend = blogsByCategory['All'] || blogsByCategory[activeCategory] || [];
-    }
-
+    const trendingSubset = allBlogs.slice(0, 8); 
+    
     navigate(`/blogs/${blog.id}`, { 
-        state: { blog, trendingBlogs: trendingToSend } 
+        state: { 
+            blog, 
+            trendingBlogs: trendingSubset,
+            allBlogsContext: allBlogs 
+        } 
     });
   };
 
-  // Reusable Component for Cards
   const renderBlogCards = (blogs) => {
-    if (blogs === null) {
-      // Skeleton State
-      return Array(3).fill(0).map((_, index) => (
+    if (loading) {
+      return Array(6).fill(0).map((_, index) => (
         <div key={index} className="blog-card-skeleton">
           <div className="skeleton-thumbnail"></div>
           <div className="skeleton-text-container">
@@ -181,13 +103,10 @@ const AllBlogsPage = () => {
       ));
     }
 
-    if (blogs.length === 0) {
+    if (!blogs || blogs.length === 0) {
         return (
             <div className="no-results-wrapper">
-                <p className="no-blogs-message">No blogs found for "{activeCategory}".</p>
-                <button className="back-to-feed-btn" onClick={() => handleCategoryClick("All")}>
-                    View All Blogs
-                </button>
+                <p className="no-blogs-message">No blogs available.</p>
             </div>
         );
     }
@@ -210,6 +129,7 @@ const AllBlogsPage = () => {
           
           <div className="blog-card-content">
             <h3 className="blog-card-title">{blog.title}</h3>
+            {/* The preview will now be clean of the # Title */}
             <p className="blog-card-preview">{getPreview(blog.content)}</p>
             <div className="blog-card-actions">
               <ArrowIcon id={numericId} />
@@ -220,91 +140,35 @@ const AllBlogsPage = () => {
     });
   };
 
-  // Reusable Load More Button
-  const LoadMoreBtn = ({ category }) => (
-    <div className="load-more-container">
-        <button 
-            className="load-more-btn"
-            onClick={() => handleLoadMore(category)}
-            disabled={loadingMore[category]}
-        >
-            {loadingMore[category] ? <><Loader2 className="spinner" size={16} /> Loading...</> : `More on ${category}`}
-        </button>
-    </div>
-  );
-
-  const renderContent = () => {
-    if (error) {
-        return (
-            <div className="no-results-wrapper">
-                <p className="no-blogs-message error-message">{error}</p>
-                 <button className="back-to-feed-btn" onClick={() => handleCategoryClick("All")}>Go Back</button>
-            </div>
-        );
-    }
-
-    // 1. Search Results / Single Category
-    if (activeCategory !== "All") {
-        return (
-            <section className="category-section">
-                { !categories.includes(activeCategory) && 
-                   <h2 className="category-section-title">Search Results for: "{activeCategory}"</h2> 
-                }
-                <div className="blog-grid">
-                    {loading ? renderBlogCards(null) : renderBlogCards(blogsByCategory[activeCategory] || [])}
-                </div>
-                {!loading && blogsByCategory[activeCategory]?.length > 0 && <LoadMoreBtn category={activeCategory} />}
-            </section>
-        );
-    }
-
-    // 2. All Categories (Feed)
-    if (loading && Object.keys(blogsByCategory).length === 0) {
-        return subCategories.slice(0, 3).map(category => (
-            <section key={category} className="category-section">
-                <h2 className="category-section-title">{category}</h2>
-                <div className="blog-grid">{renderBlogCards(null)}</div>
-            </section>
-        ));
-    }
-      
-    return Object.entries(blogsByCategory).map(([category, blogs]) => (
-        <section key={category} className="category-section">
-            <h2 className="category-section-title">{category}</h2>
-            <div className="blog-grid">{renderBlogCards(blogs)}</div>
-            <LoadMoreBtn category={category} />
-        </section>
-    ));
-  };
-
   return (
     <div className="all-blogs-container">
       <div className="blogs-header-wrapper">
         <div className="blogs-header">
           <div className="title-with-logo">
-            <img src={legalLogo} alt="LegalMate" className="page-logo" />
-            <h1 className="blogs-title">
-                {activeCategory === "All" ? "The Law Blog Feed" : `Blogs on: ${activeCategory}`}
-            </h1>
+            <img 
+                src="/legal-logo.webp" 
+                alt="LegalMate" 
+                className="page-logo"
+                onError={(e) => e.target.style.display = 'none'} 
+            />
+            <h1 className="blogs-title">Blog Feed</h1>
           </div>
-          <p className="blogs-subtitle">Stay updated with the latest in the legal world.</p>
+          <p className="blogs-subtitle">Stay updated with the Latest in the Legal World.</p>
         </div>
-
-        <header className="blog-category-filters">
-          {categories.map(category => (
-            <button 
-              key={category} 
-              className={`category-button ${activeCategory === category ? 'active' : ''}`}
-              onClick={() => handleCategoryClick(category)}
-            >
-              {category}
-            </button>
-          ))}
-        </header>
       </div>
       
       <div className="blogs-content-wrapper">
-        {renderContent()}
+        {error ? (
+             <div className="no-results-wrapper">
+                <p className="error-message">{error}</p>
+            </div>
+        ) : (
+             <section className="category-section">
+                <div className="blog-grid">
+                    {renderBlogCards(allBlogs)}
+                </div>
+            </section>
+        )}
       </div>
     </div>
   );
