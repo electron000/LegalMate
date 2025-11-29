@@ -7,7 +7,7 @@ export const CHATBOT_API_URL = import.meta.env.VITE_CHATBOT_API_URL || 'http://l
 
 export const BLOG_API_URL = 
   import.meta.env.VITE_BLOG_API_URL || 
-  (isDev ? 'https://legalblog-backend.onrender.com' : 'http://localhost:8000');
+  (isDev ? 'http://localhost:8000' : 'https://legalblog-backend.onrender.com'); 
 
 export const DOCGEN_API_URL = 
   import.meta.env.VITE_DOCGEN_API_URL || 
