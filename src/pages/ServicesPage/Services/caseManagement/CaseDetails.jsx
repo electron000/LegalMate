@@ -137,13 +137,11 @@ const CaseDetails = () => {
     }
   };
 
-  if (loading) return <div className="p-8 flex items-center justify-center h-full text-gray-500">Loading Case Files...</div>;
+  if (loading) return <div className="p-8 flex items-center justify-center h-full text-gray-500"> <Loader2 className="spinner" size={20} />Loading Case Files...</div>;
   if (!caseInfo) return <div className="p-8 text-red-500 font-bold">Case not found.</div>;
 
   return (
     <div className="case-details-container">
-      
-      {/* --- TOP NAV BAR (Back + Delete) --- */}
       <div className="nav-bar">
         <button 
           onClick={() => navigate('/case-management/clients')}
@@ -160,10 +158,7 @@ const CaseDetails = () => {
           <Trash2 size={16} /> Delete
         </button>
       </div>
-
-      {/* --- HEADER SECTION --- */}
       <div className="case-header-card">
-        {/* Left Group: Status, Title, Number */}
         <div className="header-left">
           <div className="header-status-row">
              <span className={getStatusClass(caseInfo.status)}>
@@ -177,16 +172,12 @@ const CaseDetails = () => {
             <span className="case-number-sub-desktop">#{caseInfo.case_number}</span>
           </div>
         </div>
-
-        {/* Middle Group: Court Info */}
         <div className="header-middle">
           <Gavel size={14} />
           <span className="court-name" title={caseInfo.court_name}>
             {caseInfo.court_name}
           </span>
         </div>
-
-        {/* Right Group: Next Hearing */}
         <div className="header-right">
           <span className="next-hearing-label">Next Hearing:</span>
           <div className="next-hearing-date">
@@ -199,17 +190,12 @@ const CaseDetails = () => {
           </div>
         </div>
       </div>
-
-      {/* --- MAIN GRID --- */}
       <div className="details-grid">
-        
-        {/* LEFT: TIMELINE */}
         <div className="panel-card timeline-panel">
           <div className="panel-header">
             <h3 className="panel-title">
               <Clock size={18} className="text-gray-600"/> Case Timeline
             </h3>
-            
             <button 
                onClick={() => setIsHearingModalOpen(true)}
                className="schedule-btn"

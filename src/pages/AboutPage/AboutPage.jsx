@@ -144,7 +144,7 @@ const AboutPage = () => {
         <div className="roots-content">
           <h3>Our Roots</h3>
           <p>
-            AI LegalMate is a product of innovation from <strong>Computer Science & Engineering Dept., Dhemaji Engineering College</strong>. 
+            LegalMate is a product of innovation from <strong>Computer Science & Engineering Dept., Dhemaji Engineering College</strong>. 
             Built by a dedicated team of Computer Science engineers, we are committed to building a future 
             where law is not a barrier, but a bridge to a better society.
           </p>

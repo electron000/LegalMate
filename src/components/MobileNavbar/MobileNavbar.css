@@ -4,7 +4,7 @@
     --mn-height: 60px;
     --mn-bg: #ffffff;
     --mn-text: #1a1a1a;
-    --mn-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+    --mn-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     --mn-radius: 999px;
     --popup-width: 200px;
 }
@@ -85,7 +85,7 @@
     height: 42px;
     border-radius: 50%;
     border: none;
-    background-color: #f3f4f6;
+    background-color: #ffffff;
     color: #111;
     display: flex;
     align-items: center;

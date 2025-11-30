@@ -57,11 +57,11 @@ const MobileNavbar = ({ onContactClick }) => {
     return (
         <>
             {/* --- The Floating Pill Navbar --- */}
+            {/* mix-blend-mode: difference is applied via CSS class 'mobile-nav-pill' */}
             <nav className={`mobile-nav-pill ${scrolled ? 'scrolled' : ''}`}>
                 
                 {/* 1. Left: Brand */}
                 <Link to="/" className="mobile-brand" onClick={() => setIsOpen(false)}>
-                    {/* Updated to use public folder logo */}
                     <img src="/legal-logo.webp" alt="LegalMate" className="mobile-logo-img" />
                     <span className="mobile-logo-text">LEGALMATE</span>
                 </Link>
@@ -88,6 +88,7 @@ const MobileNavbar = ({ onContactClick }) => {
             </nav>
 
             {/* --- Pop-up Menu (Floating Card) --- */}
+            {/* The popup menu is separated so it doesn't get the blend mode, keeping it readable */}
             <div ref={menuRef} className={`mobile-popup-menu ${isOpen ? 'active' : ''}`}>
                 <div className="menu-links-list">
                     {MOBILE_LINKS.map((link) => (

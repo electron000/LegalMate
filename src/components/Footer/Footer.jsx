@@ -55,10 +55,16 @@ import './Footer.css';
             <div className="footer-content">
                 <div className="company-info">  
                   <div className="footer-logo">
-                        <div className="footer-brand-text">
-                            LegalMate
-                        </div>
-                    </div>                  
+    {/* ADDED IMAGE HERE */}
+    <img 
+        src="/legal-logo.webp" 
+        alt="LegalMate Logo" 
+        className="footer-logo-image"
+           />
+        <div className="footer-brand-text">
+        LegalMate
+       </div>
+       </div>                  
                   <p className="company-description">
                         Empowering Indian citizens and legal professionals with advanced AI tools, 
                         making legal processes simpler, faster, and more accessible.

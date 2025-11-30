@@ -87,8 +87,6 @@ const handleAxiosError = (error) => {
   }
 };
 
-// Apply interceptors
-// Added caseManagementClient to the list below
 [
   legalMateClient, 
   legalResearchClient, 

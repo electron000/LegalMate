@@ -55,7 +55,7 @@
 
 /* Header */
 .modal-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: 1.5rem;
   padding-right: 1.5rem; /* Prevents text hitting close button on small screens */
   padding-left: 1.5rem;
@@ -67,11 +67,6 @@
   margin-bottom: 0.5rem;
   font-weight: 700;
   line-height: 1.2;
-}
-
-.modal-header p {
-  color: var(--text-secondary, #6b7280);
-  font-size: 0.95rem;
 }
 
 /* Form Layout */
@@ -172,12 +167,18 @@
 
 /* Success State */
 .modal-success-state {
-  text-align: center;
-  padding: 2rem 0;
+  display: flex;             
+  flex-direction: column;    
+  align-items: center;       
+  justify-content: center;    
+  text-align: center;        
+  padding: 3rem 2rem;       
+  min-height: 300px;         
   color: var(--text-primary, #111827);
 }
 
 .success-icon {
+  align-items: center;
   color: #10b981;
   margin-bottom: 1rem;
 }
@@ -249,9 +250,7 @@
 
   /* Footer adjustments */
   .modal-footer-info {
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1.25rem;
+    margin-top: 0.75rem;
   }
   
   .separator { 

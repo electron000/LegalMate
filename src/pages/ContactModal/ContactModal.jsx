@@ -18,12 +18,13 @@ const ContactModal = ({ isOpen, onClose }) => {
       setStatus('');
     }
   }, [isOpen]);
-
-  // Prevent background scrolling when modal is open
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden';
-    else document.body.style.overflow = 'unset';
-    return () => { document.body.style.overflow = 'unset'; };
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   const handleChange = (e) => {
@@ -40,8 +41,8 @@ const ContactModal = ({ isOpen, onClose }) => {
       setStatus('sent');
       setTimeout(() => {
         setStatus('');
-        onClose(); // Auto close after success
-      }, 2000);
+        onClose(); 
+      }, 2500); 
     }, 1500);
   };
 
@@ -56,22 +57,22 @@ const ContactModal = ({ isOpen, onClose }) => {
           <X size={24} />
         </button>
 
-        {/* Header */}
-        <div className="modal-header">
-          <h2>Get in Touch</h2>
-          <p>Have a query? Send us a message.</p>
-        </div>
-
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="modal-form" noValidate>
-          {status === 'sent' ? (
-            <div className="modal-success-state">
-              <CheckCircle2 size={48} className="success-icon" />
-              <h3>Message Sent!</h3>
-              <p>We'll get back to you shortly.</p>
+        {/* Success State (Done Modal) */}
+        {status === 'sent' ? (
+          <div className="modal-success-state">
+            <CheckCircle2 size={64} className="success-icon" />
+            <h3>Message Sent!</h3>
+            <p>Thank you for reaching out.<br/>We will get back to you shortly.</p>
+          </div>
+        ) : (
+          /* Normal Form State */
+          <>
+            <div className="modal-header">
+              <h2>Get in Touch</h2>
             </div>
-          ) : (
-            <>
+
+            <form onSubmit={handleSubmit} className="modal-form" noValidate>
+              
               {/* Row 1: Name & Email */}
               <div className="modal-row">
                 <div className="modal-input-group">
@@ -111,9 +112,9 @@ const ContactModal = ({ isOpen, onClose }) => {
                     <select name="subject" value={formData.subject} onChange={handleChange}>
                       <option value="" disabled>Select Subject</option>
                       <option value="case-inquiry">Case Inquiry</option>
-                      <option value="billing">Billing</option>
-                      <option value="tech-support">Tech Support</option>
-                      <option value="other">Other</option>
+                      <option value="billing">Billing Support</option>
+                      <option value="tech-support">Technical Support</option>
+                      <option value="other">Other Query</option>
                     </select>
                   </div>
                 </div>
@@ -123,7 +124,7 @@ const ContactModal = ({ isOpen, onClose }) => {
                 <div className="input-wrapper textarea-wrapper">
                   <MessageSquare size={18} className="input-icon top-aligned" />
                   <textarea 
-                    name="message" rows={4} placeholder="How can we help?" 
+                    name="message" placeholder="How can we assist you today?" 
                     value={formData.message} onChange={handleChange} required
                   ></textarea>
                 </div>
@@ -136,17 +137,15 @@ const ContactModal = ({ isOpen, onClose }) => {
               >
                 {status === 'sending' ? 'Sending...' : <>Send Message <Send size={18} /></>}
               </button>
-            </>
-          )}
-        </form>
+            </form>
 
-        {/* Footer Info */}
-        {status !== 'sent' && (
-          <div className="modal-footer-info">
-            <a href="mailto:legalmate.ai@gmail.com"><Mail size={14} /> legalmate.ai@gmail.com</a>
-            <span className="separator">•</span>
-            <a href="tel:+916002239926"><Phone size={14} /> +91 6002239926</a>
-          </div>
+            {/* Footer Info */}
+            <div className="modal-footer-info">
+              <a href="mailto:legalmate.ai@gmail.com"><Mail size={16} /> legalmate.ai@gmail.com</a>
+              <span className="separator">•</span>
+              <a href="tel:6002239926"><Phone size={16} />6002239926</a>
+            </div>
+          </>
         )}
       </div>
     </div>

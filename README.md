@@ -33,7 +33,7 @@ This repository contains the **Frontend** application, built with modern web tec
 * **Data Processing:** Pandas, NumPy  
 * **Architecture:** Split into Blog, Chatbot, and DocGen microservices.
 
-## **🚀 Getting Started**
+## ** Getting Started**
 
 Follow these steps to set up the frontend locally and connect it to your backend services.
 
@@ -58,7 +58,7 @@ Create a .env file in the root directory of the project. You need to define the 
 **Create a file named .env and paste the following:**
 
 \# \==========================================  
-\# 🔌 MICROSERVICES CONNECTION CONFIG  
+\#  MICROSERVICES CONNECTION CONFIG  
 \# \==========================================
 
 \# 1\. Blog Service (Running on Port 8000\)  
@@ -69,9 +69,6 @@ VITE\_CHATBOT\_API\_URL=\[http://127.0.0.1:8001\](http://127.0.0.1:8001)
 
 \# 3\. Document Generation Service (Running on Port 8002\)  
 VITE\_DOCGEN\_API\_URL=\[http://127.0.0.1:8002\](http://127.0.0.1:8002)
-
-\# 4\. Authentication Service (Optional/Future)  
-\# VITE\_AUTH\_API\_BASE=http://localhost:5000
 
 \# Optional: Feature Flags  
 VITE\_ENABLE\_DEBUG=true

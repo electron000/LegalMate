@@ -4,8 +4,6 @@ import DOMPurify from 'dompurify';
 import { fetchAllBlogs } from '../../../api';
 import './AllBlogsPage.css';
 
-// --- Constants & Helpers ---
-// UPDATED: Paths now point directly to the public root (removed '/images/')
 const thumbnailImages = [
   '/bloga.webp',
   '/blogb.webp',
@@ -152,7 +150,7 @@ const AllBlogsPage = () => {
                 className="page-logo"
                 onError={(e) => e.target.style.display = 'none'} 
             />
-            <h1 className="blogs-title">Blog Feed</h1>
+            <h1 className="blogs-title">The Blog Feed</h1>
           </div>
           <p className="blogs-subtitle">Stay updated with the Latest in the Legal World.</p>
         </div>

@@ -27,6 +27,12 @@
     margin-bottom: 1.5rem;
 }
 
+.footer-logo-image {
+    height: 32px; 
+    width: auto;  
+    object-fit: contain;
+}
+
 .footer-brand-text {
     font-size: clamp(1.5rem, 1.5vw, 1.8rem);
     font-weight: 700;

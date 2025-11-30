@@ -27,19 +27,19 @@
   align-items: center;
 }
 
-.brand-logo {
+.cms-brand-logo {
   width: 3rem;    
   height: 3rem;
   object-fit: contain;
   filter: invert(1);
 }
 
-.brand-text {
+.cms-brand-text {
   display: flex;
   flex-direction: column;
 }
 
-.brand-title {
+.cms-brand-title {
   font-size: 1.25rem; /* text-xl */
   font-weight: 700;
   color: var(--primary-black, #111);
@@ -47,7 +47,7 @@
   line-height: 1.2;
 }
 
-.brand-subtitle {
+.cms-brand-subtitle {
   font-size: 0.75rem; /* text-xs */
   color: var(--text-secondary, #6b7280);
   margin: 0;

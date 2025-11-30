@@ -13,19 +13,18 @@ const CMSLayout = () => {
 
   return (
     <div className="cms-layout-container">
-      {/* CMS Sidebar (Becomes Header on Mobile) */}
       <aside className="cms-sidebar">
-        <div className="sidebar-header">
+        <Link to="/" className="sidebar-header">
           <img 
             src="/legal-logo.webp" 
             alt="LegalMate Logo" 
-            className="brand-logo" 
+            className="cms-brand-logo" 
           />
-          <div className="brand-text">
-            <h2 className="brand-title">LegalMate</h2>
-            <p className="brand-subtitle">Case Management System</p>
+          <div className="cms-brand-text">
+            <h2 className="cms-brand-title">LegalMate</h2>
+            <p className="cms-brand-subtitle">Case Management System</p>
           </div>
-        </div>
+        </Link>
         
         {/* Navigation Tabs */}
         <nav className="sidebar-nav">
@@ -42,8 +41,6 @@ const CMSLayout = () => {
               </Link>
             );
           })}
-
-          {/* Illustration - Hidden on Mobile */}
           <div className="sidebar-illustration">
             <img 
               src="/LegalMate_A.webp" 
@@ -52,14 +49,11 @@ const CMSLayout = () => {
             />
           </div>
         </nav>
-
-        {/* User Profile - Top Right on Mobile */}
         <div className="sidebar-footer">
           <div className="user-profile">
             <div className="user-avatar">
               AJ
             </div>
-            {/* User Info text hidden on mobile to show just the icon */}
             <div className="user-info">
               <span className="user-name">Arun Jyoti</span>
               <span className="user-role">Profile</span>
@@ -67,8 +61,6 @@ const CMSLayout = () => {
           </div>
         </div>
       </aside>
-
-      {/* Main Content Area */}
       <main className="main-content">
         <Outlet />
       </main>

@@ -125,7 +125,7 @@ const PlatformHighlights = () => {
         },
         {
             title: "Case Management Suite",
-            description: "Organize case files, track deadlines, and manage clients.",
+            description: "Organize case files, track hearings, and manage clients.",
             icon: Briefcase,
             onClick: () => navigate('/case-management'),
         },

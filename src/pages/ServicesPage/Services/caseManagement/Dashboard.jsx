@@ -174,7 +174,7 @@ const Dashboard = () => {
               {upcomingHearings.length === 0 ? (
                 <tr>
                   <td colSpan="5" className="empty-state">
-                    No upcoming hearings found on the docket.
+                    No upcoming hearings found.
                   </td>
                 </tr>
               ) : (
