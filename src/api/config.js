@@ -25,7 +25,7 @@ export const LEGAL_RESEARCH_API_URL =
 
 export const CASE_MANAGEMENT_API_URL = 
   import.meta.env.VITE_CASE_MANAGEMENT_API_URL ||
-  (isDev ? 'http://localhost:8006' : "https://cms-bd.onrender.com"); 
+  (isDev ? 'http://localhost:8005' : "https://cms-bd.onrender.com"); 
 
 // 1. LegalMate Client
 export const legalMateClient = axios.create({
