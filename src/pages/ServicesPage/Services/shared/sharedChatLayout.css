@@ -86,7 +86,7 @@
 .new-chat-mini-btn { background-color: var(--sidebar-btn-active); color: var(--text-inverse); }
 .new-chat-mini-btn:hover { background-color: var(--primary-black-hover); }
 
-.sidebar-header { display: flex; align-items: center; padding: 12px 14px; gap: 12px; }
+.sidebar-header { display: flex; flex-direction: column; padding: 12px 10px; }
 .new-chat-container { padding: 8px 14px; }
 
 .new-chat-btn {

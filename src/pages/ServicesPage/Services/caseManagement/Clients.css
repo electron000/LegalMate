@@ -1,0 +1,507 @@
+/* Clients.css */
+
+.clients-container {
+  max-width: 72rem; /* max-w-6xl */
+  margin: 0 auto;
+  padding-bottom: 5rem;
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  position: relative;
+  /* Added for mobile spacing */
+  padding-left: 0.5rem; 
+}
+
+@media (min-width: 768px) {
+  .clients-container {
+    padding-left: 0;
+    padding-right: 0.5rem;
+  }
+}
+
+.clients-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.page-title {
+  font-size: 1.875rem; /* text-3xl */
+  font-weight: 700;
+  color: var(--primary-black, #111);
+  margin: 0;
+}
+
+.add-btn {
+  background-color: black;
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s;
+}
+
+.add-btn:hover {
+  background-color: #1f2937; /* bg-gray-800 */
+}
+
+.clients-table-card {
+  background-color: white;
+  border: 1px solid var(--border-light, #e5e7eb);
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+}
+
+.table-responsive {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .table-responsive {
+    overflow-x: auto;
+  }
+}
+
+.clients-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+/* Desktop Only Table Header Styles */
+@media (min-width: 768px) {
+  .clients-table thead tr {
+    background-color: #f3f4f6;
+    border-bottom: 1px solid #e5e7eb;
+    color: #4b5563;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .clients-table th {
+    padding: 0.75rem 1.5rem;
+    font-weight: 700;
+  }
+  
+  .client-row td {
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+
+.client-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background-color 0.2s;
+}
+
+.client-row:hover {
+  background-color: #f9fafb;
+}
+
+.client-row.expanded {
+  background-color: rgba(249, 250, 251, 0.5);
+}
+
+.client-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.action-cell-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.icon-btn.delete {
+  color: #9ca3af;
+}
+.icon-btn.delete:hover {
+  color: #ef4444;
+}
+
+.icon-btn.expand {
+  color: #6b7280;
+}
+.icon-btn.expand:hover {
+  color: #374151;
+}
+.icon-btn.expand.rotated {
+  transform: rotate(180deg);
+}
+
+/* Expanded Row Styles */
+.expanded-row-content {
+  background-color: #f9fafb;
+  padding: 1rem;
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
+}
+
+.expanded-inner {
+  padding-left: 1rem;
+  padding-right: 0.5rem;
+}
+
+.cases-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.cases-title {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.new-case-btn {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: white;
+  background-color: #4b5563;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.new-case-btn:hover {
+  background-color: #374151;
+}
+
+.nested-table-container {
+  background-color: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.25rem;
+  overflow: hidden;
+}
+
+.cases-table {
+  width: 100%;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+/* Desktop Only Case Table Styles */
+@media (min-width: 768px) {
+  .cases-table thead {
+    background-color: #f3f4f6;
+    color: #4b5563;
+    font-weight: 500;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .cases-table th, .cases-table td {
+    padding: 0.5rem 1rem;
+  }
+}
+
+.case-row {
+  border-bottom: 1px solid #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.case-row:hover {
+  background-color: #f9fafb;
+}
+
+.case-number {
+  font-family: monospace;
+  color: #4b5563;
+}
+
+.case-row:hover .case-number {
+  color: #374151;
+}
+
+.case-title {
+  font-weight: 500;
+  color: #1f2937;
+}
+
+.case-status {
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700; 
+  text-transform: uppercase; 
+}
+
+/* Status Colors */
+.case-status.open, .case-status.scheduled { background-color: #dbeafe; color: #1e40af; }
+.case-status.closed { background-color: #f3f4f6; color: #4b5563; }
+.case-status.completed { background-color: #dcfce7; color: #166534; }
+.case-status.pending { background-color: #fef3c7; color: #92400e; }
+.case-status.ongoing { background-color: #f3e8ff; color: #6b21a8; }
+.case-status.judgment { background-color: #fce7f3; color: #be185d; }
+
+
+.loading-text { padding: 1rem; text-align: center; color: #6b7280; }
+.empty-text { padding: 2rem; text-align: center; color: #9ca3af; font-style: italic; }
+
+/* Modal Styles (Unchanged mostly, just ensure responsive widths) */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  backdrop-filter: blur(2px);
+  padding: 1rem; /* Ensure padding on small screens */
+}
+
+.delete-modal {
+  background-color: white;
+  border-radius: 0.75rem;
+  width: 100%;
+  max-width: 28rem;
+  padding: 1.5rem;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: scaleIn 0.2s ease-out;
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.delete-modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.warning-icon-wrapper {
+  background-color: #fee2e2;
+  color: #dc2626;
+  padding: 0.75rem;
+  border-radius: 9999px;
+  display: inline-flex;
+}
+
+.delete-modal-title { font-size: 1.125rem; font-weight: 700; color: #111827; margin: 0; }
+.delete-modal-desc { font-size: 0.875rem; color: #6b7280; margin: 0; line-height: 1.5; }
+.delete-modal-actions { display: flex; gap: 0.75rem; justify-content: center; }
+
+.btn-modal-cancel {
+  padding: 0.5rem 1rem;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  flex: 1;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-cancel:hover { background-color: #f9fafb; }
+
+.btn-modal-confirm {
+  padding: 0.5rem 1rem;
+  background-color: #dc2626;
+  border: 1px solid transparent;
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  flex: 1;
+  transition: background-color 0.2s;
+}
+
+.btn-modal-confirm:hover { background-color: #b91c1c; }
+
+
+/* ========================================= */
+/* MOBILE RESPONSIVE STYLES (Max Width 767px) */
+/* ========================================= */
+
+@media (max-width: 767px) {
+  /* Header Stack */
+  .clients-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+  }
+  
+  .add-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+
+  /* Main Table -> Cards */
+  .clients-table thead {
+    display: none;
+  }
+
+  .client-row {
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  .client-row td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    text-align: right;
+  }
+
+  /* Hide the SL (Serial Number) on mobile to save space */
+  .client-row td.sl-cell {
+    display: none;
+  }
+
+  .client-row td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6b7280;
+    text-align: left;
+    margin-right: 1rem;
+  }
+
+  /* Action Cell at the bottom of the card */
+  .client-row td.action-cell {
+    justify-content: flex-end; /* Align icons to right */
+    background-color: #f9fafb;
+    border-bottom: none;
+    border-top: 1px solid #eee;
+  }
+  
+  .client-row td.action-cell::before {
+    display: none; /* Hide "Action" label */
+  }
+
+  /* Expanded View Handling */
+  .expanded-container-row {
+    display: flex;
+    flex-direction: column;
+    border: none;
+    background: transparent;
+    margin-top: -0.5rem; /* Pull up to connect visually */
+    margin-bottom: 1rem;
+  }
+
+  .expanded-row-content {
+    display: block;
+    width: 100%;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .expanded-inner {
+    padding: 0;
+    margin-left: 0.5rem; /* Slight indent */
+    margin-right: 0;
+    border-left: 2px solid #e5e7eb; /* Visual connection line */
+    padding-left: 0.5rem;
+  }
+
+  .cases-header {
+    flex-direction: row; /* Keep header items inline if possible, or stack */
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cases-title-text {
+    font-size: 0.75rem;
+  }
+  
+  .btn-text {
+    display: none; /* Icon only for "New Case" on very small screens? Or keep text */
+  }
+  @media (min-width: 400px) {
+    .btn-text { display: inline; }
+  }
+
+  /* Nested Cases Table -> Cards */
+  .cases-table thead {
+    display: none;
+  }
+
+  .cases-table tbody tr {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 0.5rem;
+    border-radius: 0.375rem;
+  }
+
+  .cases-table td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  .cases-table td:last-child {
+    border-bottom: none;
+    /* justify-content: flex-end; */
+    background-color: #fafafa;
+  }
+
+  .cases-table td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    font-size: 0.7rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+  }
+  
+  .action-btn-custom {
+    margin: 0 !important;
+  }
+}

@@ -23,6 +23,12 @@ import DocGenTool from './pages/ToolsPage/Tools/DocGenTool/DocGenTool';
 import AllBlogsPage from './pages/BlogPage/AllBlogsPage/AllBlogsPage';
 import BlogViewPage from './pages/BlogPage/BlogViewPage/BlogViewPage';
 
+// CMS Imports
+import CMSLayout from './pages/ServicesPage/Services/caseManagement/CMSLayout';
+import CMSDashboard from './pages/ServicesPage/Services/caseManagement/Dashboard';
+import CMSClients from './pages/ServicesPage/Services/caseManagement/Clients';
+import CaseDetails from './pages/ServicesPage/Services/caseManagement/CaseDetails';
+
 const AppRoutes = () => {
   return (
     <Routes>
@@ -39,17 +45,22 @@ const AppRoutes = () => {
       <Route path="/legal-research" element={<LegalResearch />} /> 
 
       {/* --- TOOLS ROUTING --- */}
-      {/* 1. The Dashboard (List of all tools) */}
       <Route path="/tools" element={<ToolsPage />} />
-      
-      {/* 2. The Dynamic Engine (Handles cra, will, mfa, sd, and all future tools) */}
       <Route path="/tools/:toolId" element={<DocGenTool />} />
 
       {/* Blog Pages */}
       <Route path="/blogs" element={<AllBlogsPage isUserPage={false} />} />
       <Route path="/blogs/:blogId" element={<BlogViewPage />} />
       <Route path="*" element={<div>Page Not Found</div>} />
+
+      {/* --- CASE MANAGEMENT SYSTEM ROUTING --- */}
+      <Route path="/case-management" element={<CMSLayout />}>
+      <Route index element={<CMSDashboard />} />
+      <Route path="clients" element={<CMSClients />} />
+      <Route path="case/:caseNumber" element={<CaseDetails />} />
+      </Route>
     </Routes>
+
   );
 };
 

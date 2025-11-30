@@ -29,7 +29,9 @@ function App() {
     '/legalmate-ai', 
     '/doc-analyzer', 
     '/case-management', 
-    '/legal-research'
+    '/legal-research',
+    '/case-management/clients',
+    '/case-management/case/'
   ];
 
   const shouldSkipAnimation = noAnimationPaths.includes(location.pathname);
@@ -41,7 +43,8 @@ function App() {
     '/legal-research',
     '/blogs/', 
     '/tools/',    
-    '/services/'  
+    '/services/',
+    '/case-management' 
   ];
   
   const noNavbarPaths = [
@@ -49,8 +52,9 @@ function App() {
     '/doc-analyzer',
     '/legal-research',
     '/tools/',    
-    '/services/'  
-  ];
+    '/services/',
+    '/case-management' 
+];
 
   const shouldShowFooter = !noFooterPaths.some(path => location.pathname.startsWith(path));
   const shouldShowNavbar = !noNavbarPaths.some(path => location.pathname.startsWith(path));

@@ -18,3 +18,5 @@ export * from './Blogs/BlogAPI';
 
 // 5. Export DocAnalyzer APIs
 export * from './DocAnalyzer/DocAnalyzerAPI';
+
+export * from './CMS/cmsAPI';

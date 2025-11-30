@@ -8,8 +8,8 @@ export const BLOG_API_URL =
   (isDev ? 'http://localhost:8000' : 'https://legalblog-backend.onrender.com'); 
 
 export const CHATBOT_API_URL = 
-import.meta.env.VITE_CHATBOT_API_URL ||
-(isDev ? 'http://localhost:8001' : "https://legalmate-agent.onrender.com")
+  import.meta.env.VITE_CHATBOT_API_URL ||
+  (isDev ? 'http://localhost:8001' : "https://legalmate-agent.onrender.com")
 
 export const DOCGEN_API_URL = 
   import.meta.env.VITE_DOCGEN_API_URL || 
@@ -22,6 +22,10 @@ export const DOC_ANALYZER_API_URL =
 export const LEGAL_RESEARCH_API_URL = 
   import.meta.env.VITE_LEGAL_RESEARCH_API_URL ||
   (isDev ? 'http://localhost:8004' : "https://legal-research-agent.onrender.com"); 
+
+export const CASE_MANAGEMENT_API_URL = 
+  import.meta.env.VITE_CASE_MANAGEMENT_API_URL ||
+  (isDev ? 'http://localhost:8006' : "https://cms-bd.onrender.com"); 
 
 // 1. LegalMate Client
 export const legalMateClient = axios.create({
@@ -55,9 +59,17 @@ export const blogClient = axios.create({
   },
 });
 
-// 5. Doc Analyzer Client (Port 8003)
+// 5. Doc Analyzer Client
 export const docAnalyzerClient = axios.create({
   baseURL: DOC_ANALYZER_API_URL,
+});
+
+// 6. Case Management Client
+export const caseManagementClient = axios.create({
+  baseURL: CASE_MANAGEMENT_API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
 // Helper to standardize error handling across all clients
@@ -76,7 +88,15 @@ const handleAxiosError = (error) => {
 };
 
 // Apply interceptors
-[legalMateClient, legalResearchClient, docGenClient, blogClient, docAnalyzerClient].forEach(client => {
+// Added caseManagementClient to the list below
+[
+  legalMateClient, 
+  legalResearchClient, 
+  docGenClient, 
+  blogClient, 
+  docAnalyzerClient, 
+  caseManagementClient
+].forEach(client => {
   client.interceptors.response.use(
     (response) => response,
     (error) => handleAxiosError(error)

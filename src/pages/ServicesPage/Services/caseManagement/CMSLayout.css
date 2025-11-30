@@ -1,0 +1,238 @@
+/* CMSLayout.css */
+
+.cms-layout-container {
+  display: flex;
+  height: 100vh;
+  background-color: var(--background, #f9fafb);
+  overflow: hidden; /* Prevent double scrollbars */
+}
+
+/* Sidebar Styles (Desktop Default) */
+.cms-sidebar {
+  width: 16rem; /* w-64 */
+  background-color: var(--surface, #ffffff);
+  border-right: 1px solid var(--border-light, #e5e7eb);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-light, #e5e7eb);
+  display: flex; 
+  flex-direction: row;    
+  gap: 0.75rem;       
+  align-items: center;
+}
+
+.brand-logo {
+  width: 3rem;    
+  height: 3rem;
+  object-fit: contain;
+  filter: invert(1);
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-title {
+  font-size: 1.25rem; /* text-xl */
+  font-weight: 700;
+  color: var(--primary-black, #111);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem; /* text-xs */
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* space-y-2 */
+}
+
+/* New Styles for the image below buttons */
+.sidebar-illustration {
+  margin-top: 1.5rem; /* Space between buttons and image */
+  padding: 0 0.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.illustration-img {
+  width: 100%;
+  height: auto;
+  border-radius: 0.75rem; /* Soft corners */
+  object-fit: cover;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem; /* text-sm */
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.nav-link.active {
+  background-color: var(--primary-black, #111);
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link.inactive {
+  color: var(--text-secondary, #6b7280);
+}
+
+.nav-link.inactive:hover {
+  background-color: var(--surface-hover, #f3f4f6);
+  color: var(--primary-black, #111);
+}
+
+.sidebar-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--border-light, #e5e7eb);
+}
+
+.user-profile {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-avatar {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: var(--primary-black, #111);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary, #1f2937);
+}
+
+.user-role {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #6b7280);
+}
+
+/* Main Content Styles */
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  background-color: var(--gray-50, #f9fafb);
+  padding: 2rem;
+  width: 100%;
+}
+
+/* ========================================= */
+/* MOBILE RESPONSIVE STYLES (Max Width 768px) */
+/* ========================================= */
+
+@media (max-width: 768px) {
+  .cms-layout-container {
+    flex-direction: column; /* Stack vertically */
+  }
+
+  /* 1. Sidebar becomes Header */
+  .cms-sidebar {
+    width: 100%;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border-light, #e5e7eb);
+    position: relative; /* Context for absolute positioning of avatar */
+  }
+
+  /* 2. Header Adjustment */
+  .sidebar-header {
+    border-bottom: none; /* Remove separator between logo and nav on mobile */
+    padding: 1rem;
+    padding-right: 4rem; /* Make room for the Avatar on the right */
+  }
+
+  .brand-logo {
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+  
+  .brand-title {
+    font-size: 1.125rem;
+  }
+
+  /* 3. Navigation becomes a Row */
+  .sidebar-nav {
+    flex-direction: row;
+    overflow-x: auto; /* Allow horizontal scroll if tabs are many */
+    padding: 0 1rem 1rem 1rem;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .nav-link {
+    flex: 1;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+
+  /* 4. Hide Illustration */
+  .sidebar-illustration {
+    display: none;
+  }
+
+  /* 5. Avatar Positioned Top Right */
+  .sidebar-footer {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    border-top: none;
+    padding: 0;
+  }
+
+  /* Hide Text Info, keep only Avatar Circle */
+  .user-info {
+    display: none;
+  }
+  
+  .user-avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  /* 6. Main Content Adjustment */
+  .main-content {
+    padding: 1rem; /* Less padding on mobile */
+    padding-bottom: 5rem; /* Extra space at bottom for scrolling */
+  }
+}

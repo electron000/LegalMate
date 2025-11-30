@@ -19,14 +19,9 @@ const Navbar = () => {
 
     const searchRef = useRef(null);
     const inputRef = useRef(null);
-    // REMOVED: useNavigate hook (was causing unused var error)
     const location = useLocation();
     const { searchQuery, setSearchQuery } = useSearch();
-
-    // -- Derived State --
-    // Search only shows for Tools & Services
     const showSearch = ['/tools', '/services'].some(path => location.pathname.startsWith(path));
-    
     const isHomePage = location.pathname === '/';
     const isNavbarActive = !isHomePage || state.scrolled;
 
