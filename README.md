@@ -12,7 +12,6 @@ This repository contains the **Frontend** application, built with modern web tec
 * **📚 AI Legal Research:** A dedicated research engine capable of citing case law, statutes, and legal precedents relevant to specific queries.  
 * **📂 Case Management System:** A streamlined dashboard for lawyers and clients to organize case files, track status updates, and manage legal schedules efficiently.  
 * **📰 AI-Powered Blogs:** A dynamic blog section with infinite scrolling, auto-fetched legal news, and AI-generated content.  
-* **⚡ Modern UI/UX:** Responsive design with smooth animations using **Framer Motion** and **Tailwind CSS**.
 
 ## **🛠️ Tech Stack**
 

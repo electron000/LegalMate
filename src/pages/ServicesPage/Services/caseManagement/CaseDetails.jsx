@@ -5,7 +5,7 @@ import CaseModal from './components/caseModal';
 import { 
   Plus, Gavel, Calendar, Trash2, Clock, 
   CheckCircle2, AlertCircle, Send, FileText, ArrowLeft,
-  AlertTriangle 
+  AlertTriangle, Loader2 
 } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import './CaseDetails.css';
