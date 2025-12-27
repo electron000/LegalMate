@@ -2,7 +2,7 @@ import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 
 // --- Page Imports ---
-
+import AuthPage from './pages/AuthPage/authpage';
 // Core Pages
 import Home from './pages/HomePage/HomePage';
 import AboutPage from './pages/AboutPage/AboutPage';
@@ -34,6 +34,7 @@ const AppRoutes = () => {
     <Routes>
       {/* Core Pages */}
       <Route path="/" element={<Home />} />
+      <Route path='/auth' element={<AuthPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/services" element={<ServicesPage />} />
       <Route path="/pricing" element={<PricingPage />} />

@@ -38,6 +38,7 @@ function App() {
   
   // Logic to hide Navbar/Footer on specific paths
   const noFooterPaths = [
+    '/auth',
     '/legalmate-ai', 
     '/doc-analyzer',
     '/legal-research',
@@ -48,6 +49,7 @@ function App() {
   ];
   
   const noNavbarPaths = [
+    '/auth',
     '/legalmate-ai', 
     '/doc-analyzer',
     '/legal-research',
